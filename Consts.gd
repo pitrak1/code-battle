@@ -2,8 +2,8 @@ extends Node2D
 
 enum {HIGH, LOW, MIDDLE, ROCK, TREE, WATER}
 
-const TILE_WIDTH = 55
-const TILE_HEIGHT = 40
+const TILE_DIAMETER = 55
+const TILE_ROW_HEIGHT = 40
 
 const START_POSITION = Vector2(330, 110)
 
@@ -17,4 +17,8 @@ const LEVEL_1 = [
 	[null, 	LOW, 	LOW, 	TREE, 	WATER, 	LOW, 	ROCK, 	HIGH, 	HIGH],
 	[null, 	null, 	LOW, 	LOW, 	LOW, 	LOW, 	HIGH, 	ROCK, 	null],
 	[null, 	null, 	null, 	LOW, 	LOW, 	MIDDLE, 	HIGH, 	null, 	null]
+]
+
+const LEVEL_2 = [
+	[LOW]
 ]

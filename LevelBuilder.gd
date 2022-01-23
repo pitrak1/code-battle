@@ -14,10 +14,10 @@ func run(parent, level):
 				parent.add_child(obj)
 				obj.setup(tile)
 				obj.position = currentPosition
-			currentPosition += Vector2(Consts.TILE_WIDTH, 0)
+			currentPosition += Vector2(Consts.TILE_DIAMETER, 0)
 		currentPosition = Vector2(
-			Consts.START_POSITION.x - Consts.TILE_WIDTH * 0.5 * (i + 1), 
-			Consts.START_POSITION.y + Consts.TILE_HEIGHT * (i + 1)
+			Consts.START_POSITION.x - Consts.TILE_DIAMETER * 0.5 * (i + 1), 
+			Consts.START_POSITION.y + Consts.TILE_ROW_HEIGHT * (i + 1)
 		)
 
 	
