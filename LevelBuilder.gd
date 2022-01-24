@@ -3,8 +3,14 @@ extends Node2D
 var __tileScene = preload("res://Tile.tscn")
 
 func run(parent, level):
-	var currentPosition = Consts.START_POSITION
+	var window_dimensions = parent.get_viewport_rect().size
 	var dimensions = len(level)
+	
+	var start_y = (window_dimensions.y - dimensions * Consts.TILE_ROW_HEIGHT) / 2
+	var start_x = (window_dimensions.x / 2) - ((dimensions - 1) * 0.25 * Consts.TILE_DIAMETER)
+	
+	var start_position = Vector2(start_x, start_y)
+	var currentPosition = start_position
 	
 	for i in range(dimensions):
 		for j in range(dimensions):
@@ -16,8 +22,8 @@ func run(parent, level):
 				obj.position = currentPosition
 			currentPosition += Vector2(Consts.TILE_DIAMETER, 0)
 		currentPosition = Vector2(
-			Consts.START_POSITION.x - Consts.TILE_DIAMETER * 0.5 * (i + 1), 
-			Consts.START_POSITION.y + Consts.TILE_ROW_HEIGHT * (i + 1)
+			start_position.x - Consts.TILE_DIAMETER * 0.5 * (i + 1), 
+			start_position.y + Consts.TILE_ROW_HEIGHT * (i + 1)
 		)
 
 	
