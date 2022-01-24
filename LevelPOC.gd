@@ -14,8 +14,14 @@ func _ready():
 	__parser = commandLineParserScript.new()
 	__parser.setup()
 	
+	$UI.setup(self)
 	
-func _input(event):
-	if event is InputEventKey and event.pressed and event.scancode == KEY_ENTER:
-		__parser.parse($LineEdit.get_text())
+func _on_restart():
+	print('restart')
+	
+func _on_next():
+	print('next')
+	
+func _on_select_file(path):
+	print(path)
 	

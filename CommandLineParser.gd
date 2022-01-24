@@ -1,4 +1,3 @@
-
 var __whitespace_regex
 
 func setup():
@@ -7,7 +6,7 @@ func setup():
 
 func parse(line):
 	var words = __get_words(line)
-	print(words)
+	__first_word(words)
 		
 func __get_words(line):
 	var words = []
@@ -15,3 +14,19 @@ func __get_words(line):
 		words.push_back(word.get_string())
 	return words
 	
+func __first_word(words):
+	match words[0]:
+		'ls':
+			self.__ls(words)
+		'run':
+			self.__run(words)
+		_:
+			print('error')
+	
+func __ls(words):
+	print('ls')
+	
+func __run(words):
+	print('run')
+	
+
