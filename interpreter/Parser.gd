@@ -1,32 +1,15 @@
-class ParseNode:
-	var type
-	var operator
-	var value
-	var left
-	var right
-	var function
-	var args = []
-	
-	func _init(__type):
-		self.type = __type
-		
-
 func run(tokens):
 	var instructions = []
 	var current_instruction = []
-	var current_token_index = 0
-	var current_token = tokens[current_token_index]
 	
-	while (current_token.type != Consts.TOKEN_TYPE.EOF):
-		if (current_token.type == Consts.TOKEN_TYPE.SEMICOLON):
+	for token in tokens:
+		if (token['type'] == 'semicolon'):
 			var parsed_instruction = __parse_instruction(current_instruction)
 			instructions.push_back(parsed_instruction)
 			current_instruction = []
 		else:
-			current_instruction.push_back(current_token)
-		current_token_index += 1
-		current_token = tokens[current_token_index]
-	
+			current_instruction.push_back(token)
+
 	return instructions
 	
 var depth
@@ -43,78 +26,76 @@ func __print_ast_recursive(instruction):
 	for _i in range(0, depth):
 		text += '\t'
 		
-	text += Consts.ASL_NODE_TYPE_TO_STRING[instruction.type]
-	if (instruction.value):
-		text += ': ' + instruction.value
+	text += instruction['type']
+	if (instruction.get('value')):
+		text += ': ' + instruction['value']
 		
 	print(text)
 	
-	if instruction.left:
-		__print_ast_recursive(instruction.left)
+	if instruction.get('left'):
+		__print_ast_recursive(instruction['left'])
 		depth -= 1
 		
-	if instruction.right:
-		__print_ast_recursive(instruction.right)
+	if instruction.get('right'):
+		__print_ast_recursive(instruction['right'])
 		depth -= 1
-
-
-#func __print_instruction(instruction):
-#	print('INSTRUCTION:')
-#	for i in instruction:
-#		print(i.text)
 
 
 func __parse_instruction(instruction):
 	var assignment_index = __get_assignment_operator_index(instruction)
 	var mathematical_index = __get_mathematical_operator_index(instruction)
-#	__print_instruction(instruction)
+
 	if assignment_index:
-		var node = ParseNode.new(Consts.ASL_NODE_TYPE.ASSIGNMENT)
-		node.operator = Consts.TOKEN_TYPE.EQUALS
-		node.left = __parse_instruction(instruction.slice(0, assignment_index - 1))
-		node.right = __parse_instruction(instruction.slice(assignment_index + 1, instruction.size() - 1))
-		return node
+		return {
+			'type': 'assignment',
+			'operator': '=',
+			'left': __parse_instruction(instruction.slice(0, assignment_index - 1)),
+			'right': __parse_instruction(instruction.slice(assignment_index + 1, instruction.size() - 1))
+		}
 	elif mathematical_index:
-		var node = ParseNode.new(Consts.ASL_NODE_TYPE.OPERATION)
-		node.operator = instruction[mathematical_index].type
-		node.left = __parse_instruction(instruction.slice(0, mathematical_index - 1))
-		node.right = __parse_instruction(instruction.slice(mathematical_index + 1, instruction.size() - 1))
-		return node
-	elif instruction[0].type == Consts.TOKEN_TYPE.KEYWORD:
-		assert(instruction[0].text == 'var')
+		return {
+			'type': 'operation',
+			'operator': instruction[mathematical_index]['value'],
+			'left': __parse_instruction(instruction.slice(0, mathematical_index - 1)),
+			'right': __parse_instruction(instruction.slice(mathematical_index + 1, instruction.size() - 1))
+		}
+	elif instruction[0].type == 'keyword':
+		assert(instruction[0]['value'] == 'var')
 		assert(instruction.size() == 2)
-		assert(instruction[1].type == Consts.TOKEN_TYPE.IDENTIFIER)
-		var node = ParseNode.new(Consts.ASL_NODE_TYPE.DECLARATION)
-		node.value = instruction[1].text
-		return node
-	elif instruction[0].type == Consts.TOKEN_TYPE.IDENTIFIER:
+		assert(instruction[1]['type'] == 'identifier')
+		return {
+			'type': 'declaration',
+			'value': instruction[1]['value']
+		}
+	elif instruction[0]['type'] == 'identifier':
 		assert(instruction.size() == 1)
-		var node = ParseNode.new(Consts.ASL_NODE_TYPE.VARIABLE)
-		node.value = instruction[0].text
-		return node
-	elif instruction[0].type == Consts.TOKEN_TYPE.NUMBER:
+		return {
+			'type': 'variable',
+			'value': instruction[0]['value']
+		}
+	elif instruction[0]['type'] == 'number':
 		assert(instruction.size() == 1)
-		var node = ParseNode.new(Consts.ASL_NODE_TYPE.NUMBER)
-		node.value = instruction[0].text
-		return node
-	elif instruction[0].type == Consts.TOKEN_TYPE.STRING:
+		return {
+			'type': 'number',
+			'value': instruction[0]['value']
+		}
+	elif instruction[0]['type'] == 'string':
 		assert(instruction.size() == 1)
-		var node = ParseNode.new(Consts.ASL_NODE_TYPE.STRING)
-		node.value = instruction[0].text
-		return node
+		return {
+			'type': 'string',
+			'value': instruction[0]['value']
+		}
 	else:
 		print('ERROR')
 		
 func __get_assignment_operator_index(instruction):
 	for i in range(instruction.size()):
-		if instruction[i].type == Consts.TOKEN_TYPE.EQUALS:
+		if instruction[i]['type'] == 'assignment':
 			return i
 			
 func __get_mathematical_operator_index(instruction):
 	var i = instruction.size() - 1
 	while i >= 0:
-		if instruction[i].type == Consts.TOKEN_TYPE.ADD or instruction[i].type == Consts.TOKEN_TYPE.MULTIPLY:
+		if instruction[i]['type'] == 'operation':
 			return i
-		i -= 1
-		
-		
+		i -= 1		

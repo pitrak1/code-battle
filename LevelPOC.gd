@@ -3,11 +3,13 @@ extends Node2D
 var levelBuilderScript = preload("res://LevelBuilder.gd")
 var lexer = preload("res://interpreter/Lexer.gd")
 var parser = preload("res://interpreter/Parser.gd")
+var interpreter = preload("res://interpreter/Interpreter.gd")
 
 var tileScene = preload("res://Tile.tscn")
 
 var __lexer
 var __parser
+var __interpreter
 
 func _ready():
 	var __levelBuilder = levelBuilderScript.new()
@@ -21,7 +23,8 @@ func _ready():
 	__parser = parser.new()
 	var instructions = __parser.run(tokens)
 
-	__parser.print_ast(instructions)
+	__interpreter = interpreter.new()
+	__interpreter.run(instructions)
 
 	print("DONE")
 	
