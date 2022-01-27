@@ -30,6 +30,12 @@ func __interpret_instruction(instruction, scopes):
 				return operand_1 + operand_2
 			elif instruction['operator'] == '*':
 				return operand_1 * operand_2
+		'call':
+			var args = []
+			for arg in instruction['args']:
+				args.push_back(__interpret_instruction(arg, scopes))
+			var function_name = instruction['function']
+			print(args[0])
 
 func __find_variable(key, scopes):
 	var i = scopes.size() - 1

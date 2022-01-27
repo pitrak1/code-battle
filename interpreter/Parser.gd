@@ -44,7 +44,7 @@ func __print_ast_recursive(instruction):
 func __parse_instruction(instruction):
 	var assignment_index = __get_assignment_operator_index(instruction)
 	var mathematical_index = __get_mathematical_operator_index(instruction)
-
+	
 	if assignment_index:
 		return {
 			'type': 'assignment',
@@ -52,20 +52,35 @@ func __parse_instruction(instruction):
 			'left': __parse_instruction(instruction.slice(0, assignment_index - 1)),
 			'right': __parse_instruction(instruction.slice(assignment_index + 1, instruction.size() - 1))
 		}
+	elif instruction[0].type == 'keyword':
+		if instruction[0]['value'] == 'var':
+			assert(instruction.size() == 2)
+			assert(instruction[1]['type'] == 'identifier')
+			return {
+				'type': 'declaration',
+				'value': instruction[1]['value']
+			}
+		elif instruction[0]['value'] == 'print':		
+			assert(instruction[1]['type'] == 'parenthesis')
+			assert(instruction[instruction.size() - 1]['type'] == 'parenthesis')
+			
+			var instruction_range
+			if instruction.size() <= 3:
+				instruction_range = __parse_instruction(instruction.slice(2, 2))
+			else:
+				instruction_range = __parse_instruction(instruction.slice(2, instruction.size() - 2))
+				
+			return {
+				'type': 'call',
+				'function': 'print',
+				'args': [instruction_range]
+			}
 	elif mathematical_index:
 		return {
 			'type': 'operation',
 			'operator': instruction[mathematical_index]['value'],
 			'left': __parse_instruction(instruction.slice(0, mathematical_index - 1)),
 			'right': __parse_instruction(instruction.slice(mathematical_index + 1, instruction.size() - 1))
-		}
-	elif instruction[0].type == 'keyword':
-		assert(instruction[0]['value'] == 'var')
-		assert(instruction.size() == 2)
-		assert(instruction[1]['type'] == 'identifier')
-		return {
-			'type': 'declaration',
-			'value': instruction[1]['value']
 		}
 	elif instruction[0]['type'] == 'identifier':
 		assert(instruction.size() == 1)
@@ -99,8 +114,8 @@ const operators = ['+', '*']
 func __get_mathematical_operator_index(instruction):
 	var i = instruction.size() - 1
 	
-	var operator_priority = 3
-	var operator_location = 3
+	var operator_priority = operators.size()
+	var operator_location = operators.size()
 	
 	while i >= 0:
 		if instruction[i]['type'] == 'operation':
@@ -110,5 +125,5 @@ func __get_mathematical_operator_index(instruction):
 				operator_location = i
 		i -= 1		
 		
-	if operator_priority != 3:
+	if operator_priority != operators.size():
 		return operator_location

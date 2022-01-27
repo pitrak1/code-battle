@@ -19,6 +19,9 @@ func _ready():
 	
 	__lexer = lexer.new()
 	var tokens = __lexer.run("/Users/nickpitrak/Desktop/test.btl")
+	
+	for token in tokens:
+		print(token['value'] + ' ' + token['type'])
 
 	__parser = parser.new()
 	var instructions = __parser.run(tokens)

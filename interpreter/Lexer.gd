@@ -2,7 +2,7 @@ const quotes = ['\'', '"']
 const whitespace = ['\t', '\n', ' ']
 const digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-const keywords = ['var']
+const keywords = ['var', 'print']
 
 var tokens
 var line_number
@@ -47,6 +47,9 @@ func run(path):
 			elif current_character == '+' or current_character == '*':
 				current_column += 1
 				tokens.push_back(__create_token('operation', current_character, line_number, start_column))
+			elif current_character == '(' or current_character == ')':
+				current_column += 1
+				tokens.push_back(__create_token('parenthesis', current_character, line_number, start_column))
 			elif current_character == '=':
 				current_column += 1
 				tokens.push_back(__create_token('assignment', current_character, line_number, start_column))
