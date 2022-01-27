@@ -23,6 +23,8 @@ func _ready():
 	__parser = parser.new()
 	var instructions = __parser.run(tokens)
 
+	__parser.print_ast(instructions)
+
 	__interpreter = interpreter.new()
 	__interpreter.run(instructions)
 

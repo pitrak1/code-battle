@@ -93,9 +93,22 @@ func __get_assignment_operator_index(instruction):
 		if instruction[i]['type'] == 'assignment':
 			return i
 			
+			
+const operators = ['+', '*']
+			
 func __get_mathematical_operator_index(instruction):
 	var i = instruction.size() - 1
+	
+	var operator_priority = 3
+	var operator_location = 3
+	
 	while i >= 0:
 		if instruction[i]['type'] == 'operation':
-			return i
+			var current_operator_priority = operators.find(instruction[i]['value'])
+			if current_operator_priority < operator_priority:
+				operator_priority = current_operator_priority
+				operator_location = i
 		i -= 1		
+		
+	if operator_priority != 3:
+		return operator_location
