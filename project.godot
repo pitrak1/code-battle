@@ -18,6 +18,10 @@ config/icon="res://icon.png"
 
 Consts="*res://Consts.gd"
 
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/gut/plugin.cfg" )
+
 [physics]
 
 common/enable_pause_aware_picking=true

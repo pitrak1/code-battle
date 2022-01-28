@@ -17,8 +17,13 @@ func _ready():
 	
 	$UI.setup(self)
 	
+	var file = File.new()
+	file.open("/Users/nickpitrak/Desktop/test.btl", File.READ)
+	var contents = file.get_as_text()
+	file.close()
+	
 	__lexer = lexer.new()
-	var tokens = __lexer.run("/Users/nickpitrak/Desktop/test.btl")
+	var tokens = __lexer.run(contents)
 	
 	__lexer.print_tokens()
 

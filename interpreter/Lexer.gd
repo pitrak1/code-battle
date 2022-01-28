@@ -21,15 +21,14 @@ func print_tokens():
 	for token in tokens:
 		print(token.value + ' ' + Consts.TOKEN_TYPE_STRINGS[token.type])
 
-func run(path):
-	var file = File.new()
-	file.open(path, File.READ)
-	
+func run(contents):
 	tokens = []
 	line_number = 0
 	
-	while file.get_position() < file.get_len():
-		line = file.get_line()
+	var lines = contents.split('\n')
+	
+	for line_number in range(lines.size()):
+		line = lines[line_number]
 		line_number += 1
 		
 		current_column = 0
@@ -69,8 +68,6 @@ func run(path):
 					break
 			else:
 				current_column += 1
-	
-	file.close()
 	
 	return tokens
 	
