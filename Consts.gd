@@ -22,3 +22,58 @@ const LEVEL_1 = [
 const LEVEL_2 = [
 	[LOW]
 ]
+
+# INTERPRETER CONSTS
+
+const QUOTES = ['\'', '"']
+const WHITESPACE = ['\t', '\n', ' ']
+const DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+const LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+const KEYWORDS = ['var', 'print']
+const SEPARATORS = ['(', ')', '{', '}', ',']
+const MATHEMATICAL_OPERATORS = ['+', '*']
+const BOOLEAN_OPERATORS = ['==']
+
+enum TOKEN_TYPES {
+	NUMBER,
+	STRING,
+	BOOLEAN,
+	KEYWORD,
+	IDENTIFIER,
+	ASSIGNMENT,
+	SEPARATOR, 
+	OPERATOR, 
+	SEMICOLON
+}
+
+const TOKEN_TYPE_STRINGS = [
+	'NUMBER',
+	'STRING',
+	'BOOLEAN',
+	'KEYWORD',
+	'IDENTIFIER',
+	'ASSIGNMENT',
+	'SEPARATOR',
+	'OPERATOR',
+	'SEMICOLON'
+]
+
+enum INSTRUCTION_TYPES {
+	ASSIGNMENT,
+	DECLARATION,
+	BUILTIN,
+	OPERATION,
+	VARIABLE,
+	NUMBER,
+	STRING
+}
+
+const INSTRUCTION_TYPE_STRINGS = [
+	'ASSIGNMENT',
+	'DECLARATION',
+	'BUILTIN',
+	'OPERATION',
+	'VARIABLE',
+	'NUMBER',
+	'STRING'
+]

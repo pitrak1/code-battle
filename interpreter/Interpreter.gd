@@ -11,32 +11,32 @@ func run(instructions):
 		print()
 		
 func __interpret_instruction(instruction, scopes):
-	match (instruction['type']):
-		'assignment':
-			var scope_info = __interpret_instruction(instruction['left'], scopes)
-			var value = __interpret_instruction(instruction['right'], scopes)
-			scopes[scope_info['index']][scope_info['key']] = value
-		'declaration':
-			scopes[scopes.size() - 1][instruction['value']] = null
-			return {'index': scopes.size() - 1, 'key': instruction['value']}
-		'number':
-			return int(float(instruction['value']))
-		'variable':
-			return __find_variable(instruction['value'], scopes)
-		'operation':
-			var operand_1 = __interpret_instruction(instruction['left'], scopes)
-			var operand_2 = __interpret_instruction(instruction['right'], scopes)
-			if instruction['operator'] == '+':
+	match (instruction.type):
+		Consts.INSTRUCTION_TYPES.ASSIGNMENT:
+			var scope_info = __interpret_instruction(instruction.left, scopes)
+			var value = __interpret_instruction(instruction.right, scopes)
+			scopes[scope_info.index][scope_info.key] = value
+		Consts.INSTRUCTION_TYPES.DECLARATION:
+			scopes[scopes.size() - 1][instruction.value] = null
+			return {'index': scopes.size() - 1, 'key': instruction.value}
+		Consts.INSTRUCTION_TYPES.NUMBER:
+			return int(float(instruction.value))
+		Consts.INSTRUCTION_TYPES.VARIABLE:
+			return __find_variable(instruction.value, scopes)
+		Consts.INSTRUCTION_TYPES.OPERATION:
+			var operand_1 = __interpret_instruction(instruction.left, scopes)
+			var operand_2 = __interpret_instruction(instruction.right, scopes)
+			if instruction.operator == '+':
 				return operand_1 + operand_2
-			elif instruction['operator'] == '*':
+			elif instruction.operator == '*':
 				return operand_1 * operand_2
-			elif instruction['operator'] == '==':
+			elif instruction.operator == '==':
 				return operand_1 == operand_2
-		'builtin':
+		Consts.INSTRUCTION_TYPES.BUILTIN:
 			var args = []
-			for arg in instruction['args']:
+			for arg in instruction.args:
 				args.push_back(__interpret_instruction(arg, scopes))
-			var function_name = instruction['function']
+			var function_name = instruction.function
 			print(args[0])
 
 func __find_variable(key, scopes):

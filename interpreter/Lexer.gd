@@ -1,8 +1,14 @@
-const quotes = ['\'', '"']
-const whitespace = ['\t', '\n', ' ']
-const digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-const keywords = ['var', 'print']
+class Token:
+	var type
+	var value
+	var line_number
+	var start_column
+	
+	func _init(__type, __value, __line_number, __start_column):
+		type = __type
+		value = __value
+		line_number = __line_number
+		start_column = __start_column
 
 var tokens
 var line_number
@@ -10,6 +16,10 @@ var 	line
 var current_column
 var current_character
 var start_column
+
+func print_tokens():
+	for token in tokens:
+		print(token.value + ' ' + Consts.TOKEN_TYPE_STRINGS[token.type])
 
 func run(path):
 	var file = File.new()
@@ -35,32 +45,23 @@ func run(path):
 				__handle_string()
 			elif __is_alpha_or_underscore(current_character):
 				__handle_word()
-			elif current_character == '(' or current_character == ')':
+			elif current_character in Consts.SEPARATORS:
 				current_column += 1
-				tokens.push_back(__create_token('parenthesis', current_character, line_number, start_column))
-			elif current_character == '{' or current_character == '}':
+				tokens.push_back(Token.new(Consts.TOKEN_TYPES.SEPARATOR, current_character, line_number, start_column))
+			elif current_character in Consts.MATHEMATICAL_OPERATORS or current_character in Consts.BOOLEAN_OPERATORS:
 				current_column += 1
-				tokens.push_back(__create_token('brace', current_character, line_number, start_column))
-			elif current_character == ',':
-				current_column += 1
-				tokens.push_back(__create_token('comma', current_character, line_number, start_column))
-			elif current_character == '+' or current_character == '*':
-				current_column += 1
-				tokens.push_back(__create_token('operation', current_character, line_number, start_column))
-			elif current_character == '(' or current_character == ')':
-				current_column += 1
-				tokens.push_back(__create_token('parenthesis', current_character, line_number, start_column))
+				tokens.push_back(Token.new(Consts.TOKEN_TYPES.OPERATOR, current_character, line_number, start_column))
 			elif current_character == '=':
 				current_column += 1
 				var next_character = line[current_column]
 				if next_character == '=':
 					current_column += 1
-					tokens.push_back(__create_token('equality', '==', line_number, start_column))
+					tokens.push_back(Token.new(Consts.TOKEN_TYPES.OPERATOR, '==', line_number, start_column))
 				else:
-					tokens.push_back(__create_token('assignment', current_character, line_number, start_column))
+					tokens.push_back(Token.new(Consts.TOKEN_TYPES.ASSIGNMENT, current_character, line_number, start_column))
 			elif current_character == ';':
 				current_column += 1
-				tokens.push_back(__create_token('semicolon', current_character, line_number, start_column))
+				tokens.push_back(Token.new(Consts.TOKEN_TYPES.SEMICOLON, current_character, line_number, start_column))
 			elif current_character == '/':
 				current_column += 1
 				var next_character = line[current_column]
@@ -75,35 +76,27 @@ func run(path):
 	
 	
 func __is_whitespace(character):
-	return character in whitespace
+	return character in Consts.WHITESPACE
 	
 func __is_digit(character):
-	return character in digits
+	return character in Consts.DIGITS
 	
 func __is_alpha_or_underscore(character):
-	return character in letters or character == '_'
+	return character in Consts.LETTERS or character == '_'
 	
 func __is_alphanumeric_or_underscore(character):
 	return __is_alpha_or_underscore(character) or __is_digit(character)
 	
 func __is_quote(character):
-	return character in quotes
+	return character in Consts.QUOTES
 	
-func __create_token(type, value, line_number, start_column):
-	return {
-		'type': type, 
-		'value': value, 
-		'line_number': line_number, 
-		'start_column': start_column
-	}
-
 func __handle_number():
 	var number = ''
 	while current_column < line.length() and __is_digit(current_character):
 		number += current_character
 		current_column += 1
 		current_character = line[current_column]
-	tokens.push_back(__create_token('number', number, line_number, start_column))
+	tokens.push_back(Token.new(Consts.TOKEN_TYPES.NUMBER, number, line_number, start_column))
 
 func __handle_string():
 	var starting_quote = current_character
@@ -116,7 +109,7 @@ func __handle_string():
 		current_character = line[current_column]
 	string += current_character
 	current_column += 1
-	tokens.push_back(__create_token('string', string, line_number, start_column))
+	tokens.push_back(Token.new(Consts.TOKEN_TYPES.STRING, string, line_number, start_column))
 	
 func __handle_word():
 	var identifier = ''
@@ -124,9 +117,9 @@ func __handle_word():
 		identifier += current_character
 		current_column += 1
 		current_character = line[current_column]
-	if identifier in keywords:
-		tokens.push_back(__create_token('keyword', identifier, line_number, start_column))
+	if identifier in Consts.KEYWORDS:
+		tokens.push_back(Token.new(Consts.TOKEN_TYPES.KEYWORD, identifier, line_number, start_column))
 	elif identifier == 'true' or identifier == 'false':
-		tokens.push_back(__create_token('boolean', identifier, line_number, start_column))
+		tokens.push_back(Token.new(Consts.TOKEN_TYPES.BOOLEAN, identifier, line_number, start_column))
 	else:
-		tokens.push_back(__create_token('identifier', identifier, line_number, start_column))
+		tokens.push_back(Token.new(Consts.TOKEN_TYPES.IDENTIFIER, identifier, line_number, start_column))
