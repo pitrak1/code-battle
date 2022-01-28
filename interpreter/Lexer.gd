@@ -52,7 +52,12 @@ func run(path):
 				tokens.push_back(__create_token('parenthesis', current_character, line_number, start_column))
 			elif current_character == '=':
 				current_column += 1
-				tokens.push_back(__create_token('assignment', current_character, line_number, start_column))
+				var next_character = line[current_column]
+				if next_character == '=':
+					current_column += 1
+					tokens.push_back(__create_token('equality', '==', line_number, start_column))
+				else:
+					tokens.push_back(__create_token('assignment', current_character, line_number, start_column))
 			elif current_character == ';':
 				current_column += 1
 				tokens.push_back(__create_token('semicolon', current_character, line_number, start_column))

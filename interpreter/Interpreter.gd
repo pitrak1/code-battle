@@ -30,7 +30,9 @@ func __interpret_instruction(instruction, scopes):
 				return operand_1 + operand_2
 			elif instruction['operator'] == '*':
 				return operand_1 * operand_2
-		'call':
+			elif instruction['operator'] == '==':
+				return operand_1 == operand_2
+		'builtin':
 			var args = []
 			for arg in instruction['args']:
 				args.push_back(__interpret_instruction(arg, scopes))

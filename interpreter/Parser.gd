@@ -44,6 +44,7 @@ func __print_ast_recursive(instruction):
 func __parse_instruction(instruction):
 	var assignment_index = __get_assignment_operator_index(instruction)
 	var mathematical_index = __get_mathematical_operator_index(instruction)
+	var boolean_index = __get_boolean_operator_index(instruction)
 	
 	if assignment_index:
 		return {
@@ -71,10 +72,17 @@ func __parse_instruction(instruction):
 				instruction_range = __parse_instruction(instruction.slice(2, instruction.size() - 2))
 				
 			return {
-				'type': 'call',
+				'type': 'builtin',
 				'function': 'print',
 				'args': [instruction_range]
 			}
+	elif boolean_index:
+		return {
+			'type': 'operation',
+			'operator': instruction[boolean_index]['value'],
+			'left': __parse_instruction(instruction.slice(0, boolean_index - 1)),
+			'right': __parse_instruction(instruction.slice(boolean_index + 1, instruction.size() - 1))
+		}
 	elif mathematical_index:
 		return {
 			'type': 'operation',
@@ -127,3 +135,8 @@ func __get_mathematical_operator_index(instruction):
 		
 	if operator_priority != operators.size():
 		return operator_location
+		
+func __get_boolean_operator_index(instruction):
+	for i in range(instruction.size()):
+		if instruction[i]['type'] == 'equality':
+			return i
