@@ -61,6 +61,11 @@ func run(path):
 			elif current_character == ';':
 				current_column += 1
 				tokens.push_back(__create_token('semicolon', current_character, line_number, start_column))
+			elif current_character == '/':
+				current_column += 1
+				var next_character = line[current_column]
+				if next_character == '/':
+					break
 			else:
 				current_column += 1
 	
