@@ -21,4 +21,7 @@ func _ready():
 
 func setup(tileType):
 	$Sprite.texture = __sprites[tileType]
+	
+func highlight():
+	$HighlightSprite.show()
 			

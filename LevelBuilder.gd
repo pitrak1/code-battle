@@ -12,7 +12,10 @@ func run(parent, level):
 	var start_position = Vector2(start_x, start_y)
 	var currentPosition = start_position
 	
+	var tiles = []
+	
 	for i in range(dimensions):
+		tiles.push_back([])
 		for j in range(dimensions):
 			var tile = level[i][j]
 			if tile != null:
@@ -20,11 +23,14 @@ func run(parent, level):
 				parent.add_child(obj)
 				obj.setup(tile)
 				obj.position = currentPosition
+				tiles[i].push_back(obj)
 			currentPosition += Vector2(Consts.TILE_DIAMETER, 0)
 		currentPosition = Vector2(
 			start_position.x - Consts.TILE_DIAMETER * 0.5 * (i + 1), 
 			start_position.y + Consts.TILE_ROW_HEIGHT * (i + 1)
 		)
+		
+	return tiles
 
 	
 

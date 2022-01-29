@@ -11,9 +11,11 @@ var __lexer
 var __parser
 var __interpreter
 
+var tiles
+
 func _ready():
 	var __levelBuilder = levelBuilderScript.new()
-	__levelBuilder.run(self, Consts.LEVEL_1)
+	tiles = __levelBuilder.run(self, Consts.LEVEL_1)
 	
 	$UI.setup(self)
 	
@@ -53,4 +55,5 @@ func handle_print(args):
 	
 func handle_highlight(args):
 	print('got here ' + str(args[0]) + str(args[1]))
+	tiles[args[0]][args[1]].highlight()
 	
