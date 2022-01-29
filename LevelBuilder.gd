@@ -24,6 +24,8 @@ func run(parent, level):
 				obj.setup(tile)
 				obj.position = currentPosition
 				tiles[i].push_back(obj)
+			else:
+				tiles[i].push_back(null)
 			currentPosition += Vector2(Consts.TILE_DIAMETER, 0)
 		currentPosition = Vector2(
 			start_position.x - Consts.TILE_DIAMETER * 0.5 * (i + 1), 
