@@ -95,6 +95,28 @@ func __parse_token_set(token_set):
 				instruction_range = __parse_token_set(token_set.slice(2, token_set.size() - 2))
 				
 			return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, 'print', [instruction_range])
+		elif token_set[0].value == 'highlight':		
+			assert(token_set[1].value == '(')
+			assert(token_set[token_set.size() - 1].value == ')')
+			
+			var instruction_start = 2
+			var instruction_end = 2
+			
+			var args = []
+			
+			while instruction_end < token_set.size():
+				if token_set[instruction_end + 1].type == Consts.TOKEN_TYPES.SEPARATOR:
+					if token_set[instruction_end + 1].value == ',':
+						args.push_back(__parse_token_set(token_set.slice(instruction_start, instruction_end)))
+						instruction_start = instruction_end + 2
+						instruction_end = instruction_start
+					elif token_set[instruction_end + 1].value == ')':
+						args.push_back(__parse_token_set(token_set.slice(instruction_start, instruction_end)))
+						break
+					else:
+						instruction_end += 1
+				
+			return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, 'highlight', args)
 	elif operation_index:
 		return Instruction.new().set_operation(
 			Consts.INSTRUCTION_TYPES.OPERATION,

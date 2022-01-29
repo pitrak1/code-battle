@@ -129,4 +129,4 @@ func test_supports_builtins_and_parenthesis():
 	var tokens = lexer.run("print('12345');")
 	var instructions = parser.run(tokens)
 	var scopes = interpreter.run(instructions)
-	assert_signal_emitted_with_parameters(interpreter, 'call_print', ['12345'])
+	assert_signal_emitted_with_parameters(interpreter, 'call_print', [['12345']])

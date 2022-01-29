@@ -270,3 +270,19 @@ func test_supports_builtins_and_parenthesis():
 		}]
 	}]
 	assert_instructions(instructions, expected_instructions)
+	
+func test_supports_multiple_arguments():
+	var tokens = lexer.run("highlight(5, 6);")
+	var instructions = parser.run(tokens)
+	var expected_instructions = [{
+		'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
+		'function': 'highlight',
+		'args': [{
+			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+			'value': '5'
+		},{
+			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+			'value': '6'
+		}]
+	}]
+	assert_instructions(instructions, expected_instructions)

@@ -1,4 +1,5 @@
 signal call_print
+signal call_highlight
 
 func run(instructions):
 	var scopes = []
@@ -46,7 +47,7 @@ func __interpret_instruction(instruction, scopes):
 			for arg in instruction.args:
 				args.push_back(__interpret_instruction(arg, scopes))
 			var function_name = instruction.function
-			emit_signal("call_print", args[0])
+			emit_signal("call_" + function_name, args)
 
 func __find_variable(key, scopes):
 	var i = scopes.size() - 1

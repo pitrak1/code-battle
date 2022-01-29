@@ -25,7 +25,7 @@ func _ready():
 	__lexer = lexer.new()
 	var tokens = __lexer.run(contents)
 	
-	__lexer.print_tokens()
+#	__lexer.print_tokens()
 
 	__parser = parser.new()
 	var instructions = __parser.run(tokens)
@@ -34,6 +34,7 @@ func _ready():
 
 	__interpreter = interpreter.new()
 	__interpreter.connect("call_print", self, "handle_print")
+	__interpreter.connect("call_highlight", self, "handle_highlight")
 	__interpreter.run(instructions)
 
 	print("DONE")
@@ -47,6 +48,9 @@ func _on_next():
 func _on_select_file(path):
 	$UI.set_file(path)
 	
-func handle_print(arg):
-	print(arg)
+func handle_print(args):
+	print(args[0])
+	
+func handle_highlight(args):
+	print('got here ' + str(args[0]) + str(args[1]))
 	
