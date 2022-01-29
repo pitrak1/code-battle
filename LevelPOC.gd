@@ -33,6 +33,7 @@ func _ready():
 	__parser.print_ast(instructions)
 
 	__interpreter = interpreter.new()
+	__interpreter.connect("call_print", self, "handle_print")
 	__interpreter.run(instructions)
 
 	print("DONE")
@@ -44,15 +45,8 @@ func _on_next():
 	print('next')
 	
 func _on_select_file(path):
-#	__lexer = lexer.new()
-#	var tokens = __lexer.run(path)
-#
-#	__parser = parser.new()
-#	var instructions = __parser.run(tokens)
-#
-#	__parser.print_ast(instructions)
-#
-#	print(path)
-
 	$UI.set_file(path)
+	
+func handle_print(arg):
+	print(arg)
 	

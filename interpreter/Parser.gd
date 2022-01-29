@@ -55,7 +55,7 @@ func __print_ast_recursive(instruction):
 		
 	text += Consts.INSTRUCTION_TYPE_STRINGS[instruction.type]
 	if instruction.value:
-		text += ': ' + instruction.value
+		text += ': ' + str(instruction.value)
 		
 	print(text)
 	
@@ -110,7 +110,14 @@ func __parse_token_set(token_set):
 		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.NUMBER, token_set[0].value)
 	elif token_set[0].type == Consts.TOKEN_TYPES.STRING:
 		assert(token_set.size() == 1)
-		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.STRING, token_set[0].value)
+		var stringValue = token_set[0].value
+		stringValue.erase(0, 1)
+		stringValue.erase(stringValue.length() - 1, 1)
+		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.STRING, stringValue)
+	elif token_set[0].type == Consts.TOKEN_TYPES.BOOLEAN:
+		assert(token_set.size() == 1)
+		var value = token_set[0].value == 'true'
+		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.BOOLEAN, value)
 
 		
 func __get_assignment_operator_index(token_set):

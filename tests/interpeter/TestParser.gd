@@ -72,7 +72,7 @@ func test_supports_single_quote_string_assignment():
 		},
 		'right': {
 			'type': Consts.INSTRUCTION_TYPES.STRING,
-			'value': "'test1'"
+			'value': "test1"
 		}
 	}]
 	assert_instructions(instructions, expected_instructions)
@@ -89,7 +89,7 @@ func test_supports_double_quote_string_assignment():
 		},
 		'right': {
 			'type': Consts.INSTRUCTION_TYPES.STRING,
-			'value': "\"test1\""
+			'value': "test1"
 		}
 	}]
 	assert_instructions(instructions, expected_instructions)
@@ -106,7 +106,7 @@ func test_supports_boolean_assignment():
 		},
 		'right': {
 			'type': Consts.INSTRUCTION_TYPES.BOOLEAN,
-			'value': "true"
+			'value': true
 		}
 	}]
 	assert_instructions(instructions, expected_instructions)
@@ -266,7 +266,7 @@ func test_supports_builtins_and_parenthesis():
 		'function': 'print',
 		'args': [{
 			'type': Consts.INSTRUCTION_TYPES.STRING,
-			'value': "'12345'"
+			'value': "12345"
 		}]
 	}]
 	assert_instructions(instructions, expected_instructions)

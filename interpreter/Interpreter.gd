@@ -1,3 +1,5 @@
+signal call_print
+
 func run(instructions):
 	var scopes = []
 	scopes.push_back({})
@@ -5,6 +7,9 @@ func run(instructions):
 	for instruction in instructions:
 		__interpret_instruction(instruction, scopes)
 		
+	return scopes
+	
+func print_scopes(scopes):	
 	for scope in scopes:
 		for key in scope.keys():
 			print(key + ': ' + str(scope[key]))
@@ -23,6 +28,10 @@ func __interpret_instruction(instruction, scopes):
 			return int(float(instruction.value))
 		Consts.INSTRUCTION_TYPES.VARIABLE:
 			return __find_variable(instruction.value, scopes)
+		Consts.INSTRUCTION_TYPES.STRING:
+			return instruction.value
+		Consts.INSTRUCTION_TYPES.BOOLEAN:
+			return instruction.value
 		Consts.INSTRUCTION_TYPES.OPERATION:
 			var operand_1 = __interpret_instruction(instruction.left, scopes)
 			var operand_2 = __interpret_instruction(instruction.right, scopes)
@@ -37,7 +46,7 @@ func __interpret_instruction(instruction, scopes):
 			for arg in instruction.args:
 				args.push_back(__interpret_instruction(arg, scopes))
 			var function_name = instruction.function
-			print(args[0])
+			emit_signal("call_print", args[0])
 
 func __find_variable(key, scopes):
 	var i = scopes.size() - 1
