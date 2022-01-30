@@ -70,6 +70,14 @@ func __interpret_instruction(instruction, scopes, left_side = false):
 				for inst in instruction.instructions:
 					__interpret_instruction(inst, scopes)
 				scopes.pop_back()
+		Consts.INSTRUCTION_TYPES.WHILE:
+			var expression = __interpret_instruction(instruction.expression, scopes)
+			scopes.push_back({})
+			while (expression):
+				for inst in instruction.instructions:
+					__interpret_instruction(inst, scopes)
+				expression = __interpret_instruction(instruction.expression, scopes)
+			scopes.pop_back()
 
 func __find_variable(key, scopes):
 	var i = scopes.size() - 1

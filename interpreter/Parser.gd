@@ -125,7 +125,7 @@ func __parse_token_set(token_set):
 						instruction_end += 1
 				
 			return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, 'highlight', args)
-		elif token_set[0].value == 'if':
+		elif token_set[0].value == 'if' or token_set[0].value == 'while':
 			assert(token_set[1].value == '(')
 			assert(token_set[token_set.size() - 1].value == ')')
 			
@@ -140,7 +140,13 @@ func __parse_token_set(token_set):
 					break
 				else:
 					instruction_end += 1
-			return Instruction.new().set_if(Consts.INSTRUCTION_TYPES.IF, expression)
+					
+			var type
+			if token_set[0].value == 'if': 
+				type = Consts.INSTRUCTION_TYPES.IF
+			else:
+				type = Consts.INSTRUCTION_TYPES.WHILE
+			return Instruction.new().set_if(type, expression)
 			
 	elif operation_index:
 		return Instruction.new().set_operation(

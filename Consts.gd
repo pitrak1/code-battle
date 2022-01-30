@@ -29,7 +29,7 @@ const QUOTES = ['\'', '"']
 const WHITESPACE = ['\t', '\n', ' ']
 const DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 const LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-const KEYWORDS = ['var', 'print', 'highlight', 'if']
+const KEYWORDS = ['var', 'print', 'highlight', 'if', 'while']
 const SEPARATORS = ['(', ')', '{', '}', ',']
 const MATHEMATICAL_OPERATORS = ['+', '*']
 const BOOLEAN_OPERATORS = ['==', '<', '>']
@@ -67,7 +67,8 @@ enum INSTRUCTION_TYPES {
 	NUMBER,
 	STRING,
 	BOOLEAN,
-	IF
+	IF,
+	WHILE
 }
 
 const INSTRUCTION_TYPE_STRINGS = [
@@ -79,5 +80,6 @@ const INSTRUCTION_TYPE_STRINGS = [
 	'NUMBER',
 	'STRING', 
 	'BOOLEAN',
-	'IF'
+	'IF',
+	'WHILE'
 ]
