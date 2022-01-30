@@ -16,11 +16,19 @@ func print_scopes(scopes):
 			print(key + ': ' + str(scope[key]))
 		print()
 		
-func __interpret_instruction(instruction, scopes):
+func __interpret_instruction(instruction, scopes, left_side = false):
+#	var text = ''
+#
+#	text += Consts.INSTRUCTION_TYPE_STRINGS[instruction.type]
+#	if instruction.value:
+#		text += ': ' + str(instruction.value)
+#
+#	print(text)
+#
 	match (instruction.type):
 		Consts.INSTRUCTION_TYPES.ASSIGNMENT:
-			var scope_info = __interpret_instruction(instruction.left, scopes)
 			var value = __interpret_instruction(instruction.right, scopes)
+			var scope_info = __interpret_instruction(instruction.left, scopes, true)
 			scopes[scope_info.index][scope_info.key] = value
 		Consts.INSTRUCTION_TYPES.DECLARATION:
 			scopes[scopes.size() - 1][instruction.value] = null
@@ -28,14 +36,17 @@ func __interpret_instruction(instruction, scopes):
 		Consts.INSTRUCTION_TYPES.NUMBER:
 			return int(float(instruction.value))
 		Consts.INSTRUCTION_TYPES.VARIABLE:
-			return __find_variable(instruction.value, scopes)
+			if left_side:
+				return {'index': scopes.size() - 1, 'key': instruction.value}
+			else:
+				return __find_variable(instruction.value, scopes)
 		Consts.INSTRUCTION_TYPES.STRING:
 			return instruction.value
 		Consts.INSTRUCTION_TYPES.BOOLEAN:
 			return instruction.value
 		Consts.INSTRUCTION_TYPES.OPERATION:
-			var operand_1 = __interpret_instruction(instruction.left, scopes)
 			var operand_2 = __interpret_instruction(instruction.right, scopes)
+			var operand_1 = __interpret_instruction(instruction.left, scopes)
 			if instruction.operator == '+':
 				return operand_1 + operand_2
 			elif instruction.operator == '*':
