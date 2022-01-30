@@ -227,6 +227,40 @@ func test_supports_equality_operator():
 		}
 	}]
 	assert_instructions(instructions, expected_instructions)
+	
+func test_supports_less_than_operator():
+	var tokens = lexer.run("x < 6;")
+	var instructions = parser.run(tokens)
+	var expected_instructions = [{
+		'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+		'operator': '<',
+		'left': {
+			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+			'value': 'x'
+		},
+		'right': {
+			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+			'value': 6
+		}
+	}]
+	assert_instructions(instructions, expected_instructions)
+	
+func test_supports_greater_than_operator():
+	var tokens = lexer.run("x > 6;")
+	var instructions = parser.run(tokens)
+	var expected_instructions = [{
+		'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+		'operator': '>',
+		'left': {
+			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+			'value': 'x'
+		},
+		'right': {
+			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+			'value': 6
+		}
+	}]
+	assert_instructions(instructions, expected_instructions)
 
 func test_supports_mixed_operators():
 	var tokens = lexer.run("x + 5 == 6 * 3;")

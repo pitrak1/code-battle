@@ -128,6 +128,26 @@ func test_supports_equality_operator():
 	]
 	assert_tokens(tokens, expected_tokens)
 	
+func test_supports_less_than_operator():
+	var tokens = lexer.run("x < 6;")
+	var expected_tokens = [
+		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
+		{'type': Consts.TOKEN_TYPES.OPERATOR, 'value': '<'},
+		{'type': Consts.TOKEN_TYPES.NUMBER, 'value': '6'},
+		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
+	]
+	assert_tokens(tokens, expected_tokens)
+	
+func test_supports_greater_than_operator():
+	var tokens = lexer.run("x > 6;")
+	var expected_tokens = [
+		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
+		{'type': Consts.TOKEN_TYPES.OPERATOR, 'value': '>'},
+		{'type': Consts.TOKEN_TYPES.NUMBER, 'value': '6'},
+		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
+	]
+	assert_tokens(tokens, expected_tokens)
+	
 func test_supports_mixed_operators():
 	var tokens = lexer.run("x + 5 == 6 * 3;")
 	var expected_tokens = [

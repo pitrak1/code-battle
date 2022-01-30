@@ -32,7 +32,7 @@ const LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm'
 const KEYWORDS = ['var', 'print', 'highlight', 'if']
 const SEPARATORS = ['(', ')', '{', '}', ',']
 const MATHEMATICAL_OPERATORS = ['+', '*']
-const BOOLEAN_OPERATORS = ['==']
+const BOOLEAN_OPERATORS = ['==', '<', '>']
 
 enum TOKEN_TYPES {
 	NUMBER,

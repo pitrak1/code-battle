@@ -112,6 +112,24 @@ func test_supports_equality_operator():
 		{'x': false}
 	]
 	assert_scopes(scopes, expected_scopes)
+	
+func test_supports_less_than_operator():
+	var tokens = lexer.run("var x = 4 < 6;")
+	var instructions = parser.run(tokens)
+	var scopes = interpreter.run(instructions)
+	var expected_scopes = [
+		{'x': true}
+	]
+	assert_scopes(scopes, expected_scopes)
+	
+func test_supports_greater_than_operator():
+	var tokens = lexer.run("var x = 4 > 6;")
+	var instructions = parser.run(tokens)
+	var scopes = interpreter.run(instructions)
+	var expected_scopes = [
+		{'x': false}
+	]
+	assert_scopes(scopes, expected_scopes)
 
 func test_supports_mixed_operators():
 	var tokens = lexer.run("var x = 7 + 5 == 6 * 2;")

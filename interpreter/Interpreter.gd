@@ -42,6 +42,10 @@ func __interpret_instruction(instruction, scopes):
 				return operand_1 * operand_2
 			elif instruction.operator == '==':
 				return operand_1 == operand_2
+			elif instruction.operator == '<':
+				return operand_1 < operand_2
+			elif instruction.operator == '>':
+				return operand_1 > operand_2
 		Consts.INSTRUCTION_TYPES.BUILTIN:
 			var args = []
 			for arg in instruction.args:
