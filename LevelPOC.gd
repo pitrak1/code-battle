@@ -26,7 +26,7 @@ func _ready():
 	
 	__lexer = lexer.new()
 	var tokens = __lexer.run(contents)
-	
+
 #	__lexer.print_tokens()
 
 	__parser = parser.new()

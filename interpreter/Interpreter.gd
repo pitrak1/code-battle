@@ -48,9 +48,17 @@ func __interpret_instruction(instruction, scopes):
 				args.push_back(__interpret_instruction(arg, scopes))
 			var function_name = instruction.function
 			emit_signal("call_" + function_name, args)
+		Consts.INSTRUCTION_TYPES.IF:
+			var expression = __interpret_instruction(instruction.expression, scopes)
+			if (expression):
+				scopes.push_back({})
+				for inst in instruction.instructions:
+					__interpret_instruction(inst, scopes)
+				scopes.pop_back()
 
 func __find_variable(key, scopes):
 	var i = scopes.size() - 1
 	while i >= 0:
 		if scopes[i].has(key):
 			return scopes[i][key]
+		i -= 1

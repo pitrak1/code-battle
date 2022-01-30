@@ -130,3 +130,12 @@ func test_supports_builtins_and_parenthesis():
 	var instructions = parser.run(tokens)
 	var scopes = interpreter.run(instructions)
 	assert_signal_emitted_with_parameters(interpreter, 'call_print', [['12345']])
+	
+# CONDITIONALS AND LOOPS
+
+func test_supports_if_statements():
+	watch_signals(interpreter)
+	var tokens = lexer.run("if (false) { print('12345'); }")
+	var instructions = parser.run(tokens)
+	var scopes = interpreter.run(instructions)
+	assert_signal_not_emitted(interpreter, 'call_print')

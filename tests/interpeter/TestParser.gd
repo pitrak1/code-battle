@@ -29,6 +29,11 @@ func __assert_instruction(instruction, expected_instruction):
 					__assert_instruction(instruction['args'][i], expected_instruction['args'][i])
 			elif key != 'left' and key != 'right':
 				assert_eq(instruction[key], expected_instruction[key])
+			elif key == 'expression':
+				__assert_instruction(instruction['expression'], expected_instruction['expression'])
+			elif key == 'instructions':
+				for i in range(instruction['instructions'].size()):
+					__assert_instruction(instruction['instructions'][i], expected_instruction['instructions'][i])
 			else:
 				__assert_instruction(instruction[key], expected_instruction[key])
 			
@@ -55,7 +60,7 @@ func test_supports_number_assignment():
 		},
 		'right': {
 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': '5'
+			'value': 5
 		}
 	}]
 	assert_instructions(instructions, expected_instructions)
@@ -147,7 +152,7 @@ func test_supports_expression_assignment():
 			},
 			'right': {
 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': '5'
+				'value': 5
 			}
 		}
 	}]
@@ -165,7 +170,7 @@ func test_supports_declaration_assignment():
 		},
 		'right': {
 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': "5"
+			'value': 5
 		}
 	}]
 	assert_instructions(instructions, expected_instructions)
@@ -184,7 +189,7 @@ func test_supports_addition_operator():
 		},
 		'right': {
 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': "6"
+			'value': 6
 		}
 	}]
 	assert_instructions(instructions, expected_instructions)
@@ -201,7 +206,7 @@ func test_supports_multiplication_operator():
 		},
 		'right': {
 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': "6"
+			'value': 6
 		}
 	}]
 	assert_instructions(instructions, expected_instructions)
@@ -218,7 +223,7 @@ func test_supports_equality_operator():
 		},
 		'right': {
 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': "6"
+			'value': 6
 		}
 	}]
 	assert_instructions(instructions, expected_instructions)
@@ -238,7 +243,7 @@ func test_supports_mixed_operators():
 			},
 			'right': {
 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': '5'
+				'value': 5
 			}
 		},
 		'right': {
@@ -246,11 +251,11 @@ func test_supports_mixed_operators():
 			'operator': '*',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': '6'
+				'value': 6
 			},
 			'right': {
 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': '3'
+				'value': 3
 			}
 		}
 	}]
@@ -279,10 +284,32 @@ func test_supports_multiple_arguments():
 		'function': 'highlight',
 		'args': [{
 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': '5'
+			'value': 5
 		},{
 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': '6'
+			'value': 6
+		}]
+	}]
+	assert_instructions(instructions, expected_instructions)
+	
+# CONDITIONALS AND LOOPS
+
+func test_supports_if_statements():
+	var tokens = lexer.run("if (true) { print('asdf'); }")
+	var instructions = parser.run(tokens)
+	var expected_instructions = [{
+		'type': Consts.INSTRUCTION_TYPES.IF, 
+		'expression': {
+			'type': Consts.INSTRUCTION_TYPES.BOOLEAN,
+			'value': true
+		},
+		'instructions': [{
+			'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
+			'function': 'print',
+			'args': [{
+				'type': Consts.INSTRUCTION_TYPES.STRING,
+				'value': 'asdf'
+			}]
 		}]
 	}]
 	assert_instructions(instructions, expected_instructions)
