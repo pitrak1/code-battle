@@ -181,7 +181,7 @@ func __get_assignment_operator_index(token_set):
 func __get_mathematical_operator_index(token_set):
 	var i = token_set.size() - 1
 	
-	var operators = Consts.BOOLEAN_OPERATORS + Consts.MATHEMATICAL_OPERATORS
+	var operators = Consts.OPERATORS
 	
 	var operator_priority = operators.size()
 	var operator_location = operators.size()

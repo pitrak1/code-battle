@@ -31,8 +31,7 @@ const DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 const LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 const KEYWORDS = ['var', 'print', 'highlight', 'if', 'while']
 const SEPARATORS = ['(', ')', '{', '}', ',']
-const MATHEMATICAL_OPERATORS = ['+', '*']
-const BOOLEAN_OPERATORS = ['==', '<', '>']
+const OPERATORS = ['==', '<', '>', '+', '*']
 
 enum TOKEN_TYPES {
 	NUMBER,
@@ -43,7 +42,9 @@ enum TOKEN_TYPES {
 	ASSIGNMENT,
 	SEPARATOR, 
 	OPERATOR, 
-	SEMICOLON
+	SEMICOLON,
+	WHITESPACE,
+	COMMENT
 }
 
 const TOKEN_TYPE_STRINGS = [
@@ -55,7 +56,9 @@ const TOKEN_TYPE_STRINGS = [
 	'ASSIGNMENT',
 	'SEPARATOR',
 	'OPERATOR',
-	'SEMICOLON'
+	'SEMICOLON',
+	'WHITESPACE',
+	'COMMENT'
 ]
 
 enum INSTRUCTION_TYPES {
