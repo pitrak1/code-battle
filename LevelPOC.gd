@@ -25,12 +25,15 @@ func _ready():
 	file.close()
 	
 	__lexer = lexer.new()
-	var tokens = __lexer.run(contents)
+	var results = __lexer.run(contents)
+	
+	if results['status'] != 'success':
+		print("ERROR")
 
 #	__lexer.print_tokens()
 
 	__parser = parser.new()
-	var instructions = __parser.run(tokens)
+	var instructions = __parser.run(results['tokens'])
 
 	__parser.print_ast(instructions)
 

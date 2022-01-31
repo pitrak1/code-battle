@@ -22,8 +22,8 @@ func assert_scopes(scopes, expected_scopes):
 # DECLARATION AND ASSIGNMENT
 
 func test_supports_declaration():
-	var tokens = lexer.run("var x;")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("var x;")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	var expected_scopes = [
 		{'x': null},
@@ -31,8 +31,8 @@ func test_supports_declaration():
 	assert_scopes(scopes, expected_scopes)
 
 func test_supports_number_assignment():
-	var tokens = lexer.run("var x = 5;")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("var x = 5;")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	var expected_scopes = [
 		{'x': 5},
@@ -40,8 +40,8 @@ func test_supports_number_assignment():
 	assert_scopes(scopes, expected_scopes)
 
 func test_supports_single_quote_string_assignment():
-	var tokens = lexer.run("var x = 'test1';")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("var x = 'test1';")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	var expected_scopes = [
 		{'x': "test1"},
@@ -49,8 +49,8 @@ func test_supports_single_quote_string_assignment():
 	assert_scopes(scopes, expected_scopes)
 
 func test_supports_double_quote_string_assignment():
-	var tokens = lexer.run("var x = \"test1\";")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("var x = \"test1\";")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	var expected_scopes = [
 		{'x': "test1"},
@@ -58,8 +58,8 @@ func test_supports_double_quote_string_assignment():
 	assert_scopes(scopes, expected_scopes)
 
 func test_supports_boolean_assignment():
-	var tokens = lexer.run("var x = true;")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("var x = true;")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	var expected_scopes = [
 		{'x': true},
@@ -67,8 +67,8 @@ func test_supports_boolean_assignment():
 	assert_scopes(scopes, expected_scopes)
 
 func test_supports_identifier_assignment():
-	var tokens = lexer.run("var x = 5; var y = x;")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("var x = 5; var y = x;")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	var expected_scopes = [
 		{'x': 5, 'y': 5}
@@ -76,8 +76,8 @@ func test_supports_identifier_assignment():
 	assert_scopes(scopes, expected_scopes)
 
 func test_supports_expression_assignment():
-	var tokens = lexer.run("var x = 5; var y = x + 6;")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("var x = 5; var y = x + 6;")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	var expected_scopes = [
 		{'x': 5, 'y': 11}
@@ -87,8 +87,8 @@ func test_supports_expression_assignment():
 # OPERATORS
 
 func test_supports_addition_operator():
-	var tokens = lexer.run("var x = 5 + 6;")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("var x = 5 + 6;")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	var expected_scopes = [
 		{'x': 11}
@@ -96,8 +96,8 @@ func test_supports_addition_operator():
 	assert_scopes(scopes, expected_scopes)
 
 func test_supports_multiplication_operator():
-	var tokens = lexer.run("var x = 5 * 6;")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("var x = 5 * 6;")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	var expected_scopes = [
 		{'x': 30}
@@ -105,8 +105,8 @@ func test_supports_multiplication_operator():
 	assert_scopes(scopes, expected_scopes)
 
 func test_supports_equality_operator():
-	var tokens = lexer.run("var x = 4 == 6;")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("var x = 4 == 6;")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	var expected_scopes = [
 		{'x': false}
@@ -114,8 +114,8 @@ func test_supports_equality_operator():
 	assert_scopes(scopes, expected_scopes)
 	
 func test_supports_less_than_operator():
-	var tokens = lexer.run("var x = 4 < 6;")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("var x = 4 < 6;")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	var expected_scopes = [
 		{'x': true}
@@ -123,8 +123,8 @@ func test_supports_less_than_operator():
 	assert_scopes(scopes, expected_scopes)
 	
 func test_supports_greater_than_operator():
-	var tokens = lexer.run("var x = 4 > 6;")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("var x = 4 > 6;")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	var expected_scopes = [
 		{'x': false}
@@ -132,8 +132,8 @@ func test_supports_greater_than_operator():
 	assert_scopes(scopes, expected_scopes)
 
 func test_supports_mixed_operators():
-	var tokens = lexer.run("var x = 7 + 5 == 6 * 2;")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("var x = 7 + 5 == 6 * 2;")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	var expected_scopes = [
 		{'x': true}
@@ -144,8 +144,8 @@ func test_supports_mixed_operators():
 
 func test_supports_builtins_and_parenthesis():
 	watch_signals(interpreter)
-	var tokens = lexer.run("print('12345');")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("print('12345');")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	assert_signal_emitted_with_parameters(interpreter, 'call_print', [['12345']])
 	
@@ -153,7 +153,7 @@ func test_supports_builtins_and_parenthesis():
 
 func test_supports_if_statements():
 	watch_signals(interpreter)
-	var tokens = lexer.run("if (false) { print('12345'); }")
-	var instructions = parser.run(tokens)
+	var lexer_results = lexer.run("if (false) { print('12345'); }")
+	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	assert_signal_not_emitted(interpreter, 'call_print')

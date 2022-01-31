@@ -15,66 +15,66 @@ func assert_tokens(tokens, expected_tokens):
 # DECLARATION AND ASSIGNMENT
 
 func test_supports_declaration():
-	var tokens = lexer.run("var x;")
+	var results = lexer.run("var x;")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.KEYWORD, 'value': 'var'},
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 func test_supports_number_assignment():
-	var tokens = lexer.run("x = 5;")
+	var results = lexer.run("x = 5;")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
 		{'type': Consts.TOKEN_TYPES.ASSIGNMENT, 'value': '='},
 		{'type': Consts.TOKEN_TYPES.NUMBER, 'value': '5'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 func test_supports_single_quote_string_assignment():
-	var tokens = lexer.run("x = 'test1';")
+	var results = lexer.run("x = 'test1';")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
 		{'type': Consts.TOKEN_TYPES.ASSIGNMENT, 'value': '='},
 		{'type': Consts.TOKEN_TYPES.STRING, 'value': '\'test1\''},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 func test_supports_double_quote_string_assignment():
-	var tokens = lexer.run("x = \"test1\";")
+	var results = lexer.run("x = \"test1\";")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
 		{'type': Consts.TOKEN_TYPES.ASSIGNMENT, 'value': '='},
 		{'type': Consts.TOKEN_TYPES.STRING, 'value': '"test1"'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 func test_supports_boolean_assignment():
-	var tokens = lexer.run("x = true;")
+	var results = lexer.run("x = true;")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
 		{'type': Consts.TOKEN_TYPES.ASSIGNMENT, 'value': '='},
 		{'type': Consts.TOKEN_TYPES.BOOLEAN, 'value': 'true'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 func test_supports_identifier_assignment():
-	var tokens = lexer.run("x = y;")
+	var results = lexer.run("x = y;")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
 		{'type': Consts.TOKEN_TYPES.ASSIGNMENT, 'value': '='},
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'y'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 func test_supports_expression_assignment():
-	var tokens = lexer.run("x = y + 5;")
+	var results = lexer.run("x = y + 5;")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
 		{'type': Consts.TOKEN_TYPES.ASSIGNMENT, 'value': '='},
@@ -83,10 +83,10 @@ func test_supports_expression_assignment():
 		{'type': Consts.TOKEN_TYPES.NUMBER, 'value': '5'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 func test_supports_declaration_assignment():
-	var tokens = lexer.run("var x = 5;")
+	var results = lexer.run("var x = 5;")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.KEYWORD, 'value': 'var'},
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
@@ -94,62 +94,62 @@ func test_supports_declaration_assignment():
 		{'type': Consts.TOKEN_TYPES.NUMBER, 'value': '5'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 # OPERATORS
 
 func test_supports_addition_operator():
-	var tokens = lexer.run("x + 6;")
+	var results = lexer.run("x + 6;")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
 		{'type': Consts.TOKEN_TYPES.OPERATOR, 'value': '+'},
 		{'type': Consts.TOKEN_TYPES.NUMBER, 'value': '6'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 func test_supports_multiplication_operator():
-	var tokens = lexer.run("x * 6;")
+	var results = lexer.run("x * 6;")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
 		{'type': Consts.TOKEN_TYPES.OPERATOR, 'value': '*'},
 		{'type': Consts.TOKEN_TYPES.NUMBER, 'value': '6'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 func test_supports_equality_operator():
-	var tokens = lexer.run("x == 6;")
+	var results = lexer.run("x == 6;")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
 		{'type': Consts.TOKEN_TYPES.OPERATOR, 'value': '=='},
 		{'type': Consts.TOKEN_TYPES.NUMBER, 'value': '6'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 func test_supports_less_than_operator():
-	var tokens = lexer.run("x < 6;")
+	var results = lexer.run("x < 6;")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
 		{'type': Consts.TOKEN_TYPES.OPERATOR, 'value': '<'},
 		{'type': Consts.TOKEN_TYPES.NUMBER, 'value': '6'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 func test_supports_greater_than_operator():
-	var tokens = lexer.run("x > 6;")
+	var results = lexer.run("x > 6;")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
 		{'type': Consts.TOKEN_TYPES.OPERATOR, 'value': '>'},
 		{'type': Consts.TOKEN_TYPES.NUMBER, 'value': '6'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 func test_supports_mixed_operators():
-	var tokens = lexer.run("x + 5 == 6 * 3;")
+	var results = lexer.run("x + 5 == 6 * 3;")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'x'},
 		{'type': Consts.TOKEN_TYPES.OPERATOR, 'value': '+'},
@@ -160,12 +160,12 @@ func test_supports_mixed_operators():
 		{'type': Consts.TOKEN_TYPES.NUMBER, 'value': '3'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 # FUNCTIONS AND SEPARATORS
 
 func test_supports_functions_and_parenthesis():
-	var tokens = lexer.run("print('12345');")
+	var results = lexer.run("print('12345');")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.KEYWORD, 'value': 'print'},
 		{'type': Consts.TOKEN_TYPES.SEPARATOR, 'value': '('},
@@ -173,10 +173,10 @@ func test_supports_functions_and_parenthesis():
 		{'type': Consts.TOKEN_TYPES.SEPARATOR, 'value': ')'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 func test_supports_multiple_arguments():
-	var tokens = lexer.run("func('12345', 3);")
+	var results = lexer.run("func('12345', 3);")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'func'},
 		{'type': Consts.TOKEN_TYPES.SEPARATOR, 'value': '('},
@@ -186,10 +186,10 @@ func test_supports_multiple_arguments():
 		{'type': Consts.TOKEN_TYPES.SEPARATOR, 'value': ')'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)
 	
 func test_supports_braces():
-	var tokens = lexer.run("func({});")
+	var results = lexer.run("func({});")
 	var expected_tokens = [
 		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'func'},
 		{'type': Consts.TOKEN_TYPES.SEPARATOR, 'value': '('},
@@ -198,4 +198,4 @@ func test_supports_braces():
 		{'type': Consts.TOKEN_TYPES.SEPARATOR, 'value': ')'},
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
-	assert_tokens(tokens, expected_tokens)
+	assert_tokens(results['tokens'], expected_tokens)

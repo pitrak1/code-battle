@@ -41,16 +41,16 @@ func __assert_instruction(instruction, expected_instruction):
 # DECLARATION AND ASSIGNMENT
 
 func test_supports_declaration():
-	var tokens = lexer.run("var x;")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("var x;")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [
 		{'type': Consts.INSTRUCTION_TYPES.DECLARATION, 'value': 'x'},
 	]
 	assert_instructions(instructions, expected_instructions)
 
 func test_supports_number_assignment():
-	var tokens = lexer.run("x = 5;")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("x = 5;")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
 		'operator': '=',
@@ -66,8 +66,8 @@ func test_supports_number_assignment():
 	assert_instructions(instructions, expected_instructions)
 
 func test_supports_single_quote_string_assignment():
-	var tokens = lexer.run("x = 'test1';")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("x = 'test1';")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
 		'operator': '=',
@@ -83,8 +83,8 @@ func test_supports_single_quote_string_assignment():
 	assert_instructions(instructions, expected_instructions)
 
 func test_supports_double_quote_string_assignment():
-	var tokens = lexer.run("x = \"test1\";")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("x = \"test1\";")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
 		'operator': '=',
@@ -100,8 +100,8 @@ func test_supports_double_quote_string_assignment():
 	assert_instructions(instructions, expected_instructions)
 
 func test_supports_boolean_assignment():
-	var tokens = lexer.run("x = true;")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("x = true;")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
 		'operator': '=',
@@ -117,8 +117,8 @@ func test_supports_boolean_assignment():
 	assert_instructions(instructions, expected_instructions)
 
 func test_supports_identifier_assignment():
-	var tokens = lexer.run("x = y;")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("x = y;")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
 		'operator': '=',
@@ -134,8 +134,8 @@ func test_supports_identifier_assignment():
 	assert_instructions(instructions, expected_instructions)
 
 func test_supports_expression_assignment():
-	var tokens = lexer.run("x = y + 5;")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("x = y + 5;")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
 		'operator': '=',
@@ -159,8 +159,8 @@ func test_supports_expression_assignment():
 	assert_instructions(instructions, expected_instructions)
 
 func test_supports_declaration_assignment():
-	var tokens = lexer.run("var x = 5;")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("var x = 5;")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
 		'operator': '=',
@@ -178,8 +178,8 @@ func test_supports_declaration_assignment():
 # OPERATORS
 
 func test_supports_addition_operator():
-	var tokens = lexer.run("x + 6;")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("x + 6;")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.OPERATION, 
 		'operator': '+',
@@ -195,8 +195,8 @@ func test_supports_addition_operator():
 	assert_instructions(instructions, expected_instructions)
 
 func test_supports_multiplication_operator():
-	var tokens = lexer.run("x * 6;")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("x * 6;")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.OPERATION, 
 		'operator': '*',
@@ -212,8 +212,8 @@ func test_supports_multiplication_operator():
 	assert_instructions(instructions, expected_instructions)
 
 func test_supports_equality_operator():
-	var tokens = lexer.run("x == 6;")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("x == 6;")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.OPERATION, 
 		'operator': '==',
@@ -229,8 +229,8 @@ func test_supports_equality_operator():
 	assert_instructions(instructions, expected_instructions)
 	
 func test_supports_less_than_operator():
-	var tokens = lexer.run("x < 6;")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("x < 6;")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.OPERATION, 
 		'operator': '<',
@@ -246,8 +246,8 @@ func test_supports_less_than_operator():
 	assert_instructions(instructions, expected_instructions)
 	
 func test_supports_greater_than_operator():
-	var tokens = lexer.run("x > 6;")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("x > 6;")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.OPERATION, 
 		'operator': '>',
@@ -263,8 +263,8 @@ func test_supports_greater_than_operator():
 	assert_instructions(instructions, expected_instructions)
 
 func test_supports_mixed_operators():
-	var tokens = lexer.run("x + 5 == 6 * 3;")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("x + 5 == 6 * 3;")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.OPERATION, 
 		'operator': '==',
@@ -298,8 +298,8 @@ func test_supports_mixed_operators():
 # FUNCTIONS AND SEPARATORS
 
 func test_supports_builtins_and_parenthesis():
-	var tokens = lexer.run("print('12345');")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("print('12345');")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
 		'function': 'print',
@@ -311,8 +311,8 @@ func test_supports_builtins_and_parenthesis():
 	assert_instructions(instructions, expected_instructions)
 	
 func test_supports_multiple_arguments():
-	var tokens = lexer.run("highlight(5, 6);")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("highlight(5, 6);")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
 		'function': 'highlight',
@@ -329,8 +329,8 @@ func test_supports_multiple_arguments():
 # CONDITIONALS AND LOOPS
 
 func test_supports_if_statements():
-	var tokens = lexer.run("if (true) { print('asdf'); }")
-	var instructions = parser.run(tokens)
+	var tokens_results = lexer.run("if (true) { print('asdf'); }")
+	var instructions = parser.run(tokens_results['tokens'])
 	var expected_instructions = [{
 		'type': Consts.INSTRUCTION_TYPES.IF, 
 		'expression': {
