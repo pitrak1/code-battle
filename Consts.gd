@@ -23,6 +23,23 @@ const LEVEL_2 = [
 	[LOW]
 ]
 
+enum CHARACTERS {PALADIN, PRIEST, ROGUE, WARRIOR}
+
+const CHARACTER_DATA = [
+	{
+		'sprite': 'res://assets/paladin.png'
+	},
+	{
+		'sprite': 'res://assets/priest.png'
+	},
+	{
+		'sprite': 'res://assets/rogue.png'
+	},
+	{
+		'sprite': 'res://assets/warrior.png'
+	}
+]
+
 # INTERPRETER CONSTS
 
 const QUOTES = ['\'', '"']

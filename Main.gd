@@ -1,21 +1,19 @@
 extends Node2D
 
-var levelBuilderScript = preload("res://LevelBuilder.gd")
+var worldScene = preload("res://World.tscn")
 var lexer = preload("res://interpreter/Lexer.gd")
 var parser = preload("res://interpreter/Parser.gd")
 var interpreter = preload("res://interpreter/Interpreter.gd")
-
-var tileScene = preload("res://Tile.tscn")
 
 var __lexer
 var __parser
 var __interpreter
 
-var tiles
-
 func _ready():
-	var __levelBuilder = levelBuilderScript.new()
-	tiles = __levelBuilder.run(self, Consts.LEVEL_1)
+	var world = worldScene.instance()
+	add_child(world)
+	world.setup(Consts.LEVEL_1)
+	world.place_character(Consts.CHARACTERS.PALADIN, 5, 6)
 	
 	$UI.setup(self)
 	
@@ -58,5 +56,4 @@ func handle_print(args):
 	
 func handle_highlight(args):
 	print('got here ' + str(args[0]) + str(args[1]))
-	tiles[args[0]][args[1]].highlight()
 	
