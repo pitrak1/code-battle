@@ -1,6 +1,7 @@
 extends Node2D
 
 var __tileScene = preload("res://Tile.tscn")
+var __actorScene = preload("res://Actor.tscn")
 
 var tiles = []
 var actors = []
@@ -34,6 +35,8 @@ func setup(level):
 		)
 		
 func place_actor(character_type, x, y):
-	actors.push_back({'type': character_type})
-	tiles[x][y].set_actor(character_type)
+	var __actor = __actorScene.instance()
+	actors.push_back(__actor)
+	tiles[x][y].set_actor(__actor)
+	__actor.set_character(character_type)
 
