@@ -36,12 +36,12 @@ func _ready():
 func setup(tile_type):
 	$Sprite.texture = __tile_sprites[tile_type]
 	
-func set_character(character_type):
+func set_actor(character_type):
 	if character_type != null:
-		$CharacterSprite.show()
-		$CharacterSprite.texture = __character_sprites[character_type]
+		$ActorSprite.show()
+		$ActorSprite.texture = __character_sprites[character_type]
 	else:
-		$CharacterSprite.hide()
+		$ActorSprite.hide()
 	
 func highlight():
 	$HighlightSprite.show()

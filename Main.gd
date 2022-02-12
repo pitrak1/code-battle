@@ -13,12 +13,12 @@ func _ready():
 	var world = worldScene.instance()
 	add_child(world)
 	world.setup(Consts.LEVEL_1)
-	world.place_character(Consts.CHARACTERS.PALADIN, 5, 6)
+	world.place_actor(Consts.CHARACTERS.PALADIN, 5, 6)
 	
 	$UI.setup(self)
 	
 	var file = File.new()
-	file.open("/Users/nickpitrak/Desktop/test.btl", File.READ)
+	file.open("C:/Users/pitra/Desktop/test.btl", File.READ)
 	var contents = file.get_as_text()
 	file.close()
 	

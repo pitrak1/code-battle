@@ -3,7 +3,7 @@ extends Node2D
 var __tileScene = preload("res://Tile.tscn")
 
 var tiles = []
-var characters = []
+var actors = []
 
 func setup(level):
 	var window_dimensions = self.get_viewport_rect().size
@@ -33,7 +33,7 @@ func setup(level):
 			start_position.y + Consts.TILE_ROW_HEIGHT * (i + 1)
 		)
 		
-func place_character(character_type, x, y):
-	characters.push_back({'type': character_type})
-	tiles[x][y].set_character(character_type)
+func place_actor(character_type, x, y):
+	actors.push_back({'type': character_type})
+	tiles[x][y].set_actor(character_type)
 
