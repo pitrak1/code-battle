@@ -34,9 +34,22 @@ func setup(level):
 			start_position.y + Consts.TILE_ROW_HEIGHT * (i + 1)
 		)
 		
-func place_actor(character_type, x, y):
+func create_and_place_actor(actor_name, character_type, grid_position):
 	var __actor = __actorScene.instance()
+	__actor.setup(actor_name, character_type, grid_position)
 	actors.push_back(__actor)
-	tiles[x][y].set_actor(__actor)
-	__actor.set_character(character_type)
+	tiles[grid_position.x][grid_position.y].set_actor(__actor)
 
+func move_actor(actor_name, grid_position):
+	var __actor
+	for actor in actors:
+		if actor.actor_name == actor_name:
+			__actor = actor
+			break
+			
+	if __actor:
+		var __current_position = __actor.grid_position
+		tiles[__current_position.x][__current_position.y].set_actor(null)
+		__actor.grid_position = grid_position
+		tiles[grid_position.x][grid_position.y].set_actor(__actor)
+	

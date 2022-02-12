@@ -8,6 +8,7 @@ var __tree_sprite = preload("res://assets/tree.png")
 var __water_sprite = preload("res://assets/water.png")
 
 var __tile_sprites
+var __actor
 
 func _ready():
 	__tile_sprites = {
@@ -23,7 +24,13 @@ func setup(tile_type):
 	$Sprite.texture = __tile_sprites[tile_type]
 	
 func set_actor(actor):
-	add_child(actor)
+	if __actor:
+		remove_child(__actor)
+		
+	if actor:
+		add_child(actor)
+		
+	__actor = actor
 	
 func highlight():
 	$HighlightSprite.show()
