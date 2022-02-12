@@ -8,6 +8,8 @@ var __tree_sprite = preload("res://assets/tree.png")
 var __water_sprite = preload("res://assets/water.png")
 
 var __tile_sprites
+
+var __tile_type
 var __actor
 
 func _ready():
@@ -21,7 +23,9 @@ func _ready():
 	}
 
 func setup(tile_type):
+	__tile_type = tile_type
 	$Sprite.texture = __tile_sprites[tile_type]
+	$HighlightSprite.position = Vector2(0, Consts.TILE_HIGHLIGHT_OFFSET + Consts.TILE_SPRITE_OFFSETS[tile_type])
 	
 func set_actor(actor):
 	if __actor:
@@ -29,6 +33,7 @@ func set_actor(actor):
 		
 	if actor:
 		add_child(actor)
+		actor.position = Vector2(0, Consts.TILE_SPRITE_OFFSETS[__tile_type])
 		
 	__actor = actor
 	

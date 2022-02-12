@@ -2,6 +2,16 @@ extends Node2D
 
 enum {HIGH, LOW, MIDDLE, ROCK, TREE, WATER}
 
+const TILE_SPRITE_OFFSETS = [
+	-30,
+	0,
+	-10,
+	0, 
+	0,
+	0,
+]
+const TILE_HIGHLIGHT_OFFSET = -18
+
 const TILE_DIAMETER = 55
 const TILE_ROW_HEIGHT = 40
 

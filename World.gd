@@ -53,3 +53,5 @@ func move_actor(actor_name, grid_position):
 		__actor.grid_position = grid_position
 		tiles[grid_position.x][grid_position.y].set_actor(__actor)
 	
+func highlight(grid_position):
+	tiles[grid_position.x][grid_position.y].highlight()
