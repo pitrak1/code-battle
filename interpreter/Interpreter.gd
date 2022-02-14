@@ -78,6 +78,11 @@ func __interpret_instruction(instruction, scopes, left_side = false):
 					__interpret_instruction(inst, scopes)
 				expression = __interpret_instruction(instruction.expression, scopes)
 			scopes.pop_back()
+		Consts.INSTRUCTION_TYPES.ARRAY:
+			var results = []
+			for inst in instruction.value:
+				results.push_back(__interpret_instruction(inst, scopes))
+			return results
 
 func __find_variable(key, scopes):
 	var i = scopes.size() - 1

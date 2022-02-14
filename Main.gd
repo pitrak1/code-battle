@@ -30,7 +30,7 @@ func _ready():
 	if results['status'] != 'success':
 		print("ERROR")
 
-#	__lexer.print_tokens()
+	__lexer.print_tokens()
 
 	__parser = parser.new()
 	var instructions = __parser.run(results['tokens'])
@@ -40,7 +40,9 @@ func _ready():
 	__interpreter = interpreter.new()
 	__interpreter.connect("call_print", self, "handle_print")
 	__interpreter.connect("call_highlight", self, "handle_highlight")
-	__interpreter.run(instructions)
+	var scopes = __interpreter.run(instructions)
+	
+	__interpreter.print_scopes(scopes)
 
 	print("DONE")
 	

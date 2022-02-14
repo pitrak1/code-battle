@@ -199,3 +199,15 @@ func test_supports_braces():
 		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 	]
 	assert_tokens(results['tokens'], expected_tokens)
+	
+func test_supports_square_brackets():
+	var results = lexer.run("func([]);")
+	var expected_tokens = [
+		{'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': 'func'},
+		{'type': Consts.TOKEN_TYPES.SEPARATOR, 'value': '('},
+		{'type': Consts.TOKEN_TYPES.SEPARATOR, 'value': '['},
+		{'type': Consts.TOKEN_TYPES.SEPARATOR, 'value': ']'},
+		{'type': Consts.TOKEN_TYPES.SEPARATOR, 'value': ')'},
+		{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
+	]
+	assert_tokens(results['tokens'], expected_tokens)

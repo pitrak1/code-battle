@@ -155,6 +155,15 @@ func __parse_token_set(token_set):
 			__parse_token_set(token_set.slice(0, operation_index - 1)),
 			__parse_token_set(token_set.slice(operation_index + 1, token_set.size() - 1))
 		)
+	elif token_set[0].type == Consts.TOKEN_TYPES.SEPARATOR:
+		assert(token_set[0].value == '[')
+		var token_index = 1
+		var results = []
+		while token_set[token_index].value != ']':
+			if token_set[token_index].value != ',':
+				results.push_back(__parse_token_set(token_set.slice(token_index, token_index)))
+			token_index += 1
+		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.ARRAY, results)
 	elif token_set[0].type == Consts.TOKEN_TYPES.IDENTIFIER:
 		assert(token_set.size() == 1)
 		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.VARIABLE, token_set[0].value)

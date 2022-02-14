@@ -83,6 +83,15 @@ func test_supports_expression_assignment():
 		{'x': 5, 'y': 11}
 	]
 	assert_scopes(scopes, expected_scopes)
+	
+func test_supports_array_assignment():
+	var lexer_results = lexer.run("var x =[1, 2, 3]; var y = [x, 'asdf', 6];")
+	var instructions = parser.run(lexer_results['tokens'])
+	var scopes = interpreter.run(instructions)
+	var expected_scopes = [
+		{'x': [1, 2, 3], 'y': [[1, 2, 3], 'asdf', 6]}
+	]
+	assert_scopes(scopes, expected_scopes)
 
 # OPERATORS
 

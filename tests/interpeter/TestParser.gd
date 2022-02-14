@@ -34,8 +34,12 @@ func __assert_instruction(instruction, expected_instruction):
 			elif key == 'instructions':
 				for i in range(instruction['instructions'].size()):
 					__assert_instruction(instruction['instructions'][i], expected_instruction['instructions'][i])
-			else:
-				__assert_instruction(instruction[key], expected_instruction[key])
+			elif key == 'value':
+				if typeof(instruction['value']) == TYPE_ARRAY: 
+					for i in range(instruction['value'].size()):
+						__assert_instruction(instruction['value'][i], expected_instruction['value'][i])
+				else:
+					__assert_instruction(instruction[key], expected_instruction[key])
 			
 			
 # DECLARATION AND ASSIGNMENT
@@ -171,6 +175,27 @@ func test_supports_declaration_assignment():
 		'right': {
 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
 			'value': 5
+		}
+	}]
+	assert_instructions(instructions, expected_instructions)
+	
+func test_supports_array_assignment():
+	var tokens_results = lexer.run("var x = [1, 2, 3];")
+	var instructions = parser.run(tokens_results['tokens'])
+	var expected_instructions = [{
+		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+		'operator': '=',
+		'left': {
+			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+			'value': 'x'
+		},
+		'right': {
+			'type': Consts.INSTRUCTION_TYPES.ARRAY,
+			'value': [
+				{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 1}, 
+				{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 2}, 
+				{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 3} 
+			]
 		}
 	}]
 	assert_instructions(instructions, expected_instructions)
