@@ -8,6 +8,7 @@ class Instruction:
 	var instructions
 	var function
 	var args
+	var index
 	
 	func set_operation(__type, __operator, __left, __right):
 		type = __type
@@ -31,6 +32,12 @@ class Instruction:
 		type = __type
 		expression = __expression
 		instructions = []
+		return self
+		
+	func set_index(__type, __value, __index):
+		type = __type
+		value = __value
+		index = __index
 		return self
 
 var instructions
@@ -165,8 +172,13 @@ func __parse_token_set(token_set):
 			token_index += 1
 		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.ARRAY, results)
 	elif token_set[0].type == Consts.TOKEN_TYPES.IDENTIFIER:
-		assert(token_set.size() == 1)
-		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.VARIABLE, token_set[0].value)
+		if (token_set.size() == 1):
+			return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.VARIABLE, token_set[0].value)
+		else:
+			assert(token_set[1].value == '[')
+			assert(token_set[token_set.size() - 1].value == ']')
+			return Instruction.new().set_index(Consts.INSTRUCTION_TYPES.INDEX, token_set[0].value, __parse_token_set(token_set.slice(2, token_set.size() - 2)))
+			
 	elif token_set[0].type == Consts.TOKEN_TYPES.NUMBER:
 		assert(token_set.size() == 1)
 		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.NUMBER, int(float(token_set[0].value)))

@@ -158,6 +158,15 @@ func test_supports_builtins_and_parenthesis():
 	var scopes = interpreter.run(instructions)
 	assert_signal_emitted_with_parameters(interpreter, 'call_print', [['12345']])
 	
+func test_supports_indexing():
+	var lexer_results = lexer.run("var x = [1, 2, 3]; var y = x[2];")
+	var instructions = parser.run(lexer_results['tokens'])
+	var scopes = interpreter.run(instructions)
+	var expected_scopes = [
+		{'x': [1, 2, 3], 'y': 3}
+	]
+	assert_scopes(scopes, expected_scopes)
+	
 # CONDITIONALS AND LOOPS
 
 func test_supports_if_statements():

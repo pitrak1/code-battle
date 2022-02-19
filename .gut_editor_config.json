@@ -29,5 +29,5 @@
  "tests": [
 
  ],
- "unit_test_name": "test_supports_array_assignment"
+ "unit_test_name": "test_supports_indexing"
 }

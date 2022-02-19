@@ -83,6 +83,10 @@ func __interpret_instruction(instruction, scopes, left_side = false):
 			for inst in instruction.value:
 				results.push_back(__interpret_instruction(inst, scopes))
 			return results
+		Consts.INSTRUCTION_TYPES.INDEX:
+			var variable = __find_variable(instruction.value, scopes)
+			var index = __interpret_instruction(instruction.index, scopes)
+			return variable[index]
 
 func __find_variable(key, scopes):
 	var i = scopes.size() - 1

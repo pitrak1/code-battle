@@ -351,6 +351,19 @@ func test_supports_multiple_arguments():
 	}]
 	assert_instructions(instructions, expected_instructions)
 	
+func test_supports_indexing():
+	var tokens_results = lexer.run("x[5];")
+	var instructions = parser.run(tokens_results['tokens'])
+	var expected_instructions = [{
+		'type': Consts.INSTRUCTION_TYPES.INDEX, 
+		'value': 'x',
+		'index': {
+			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+			'value': 5
+		}
+	}]
+	assert_instructions(instructions, expected_instructions)
+	
 # CONDITIONALS AND LOOPS
 
 func test_supports_if_statements():
