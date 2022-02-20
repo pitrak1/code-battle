@@ -1,8 +1,9 @@
 var Token = preload("res://interpreter/Token.gd")
+var Utilities = preload("res://interpreter/Utilities.gd")
 
 var tokens
 var line_number
-var 	line
+var line
 var current_column
 var current_character
 var next_character
@@ -87,18 +88,21 @@ func __get_token_type(character, next_character):
 		return Consts.TOKEN_TYPES.COMMENT
 
 func __handle_number():
-	var number = __get_characters_in_collection(Consts.DIGITS)
+	var number = Utilities.get_characters_in_collection(line, current_column, Consts.DIGITS)
+	current_column += number.length()
 	tokens.push_back(Token.new(Consts.TOKEN_TYPES.NUMBER, number, line_number, start_column))
 
 func __handle_string():
 	var starting_quote = current_character
 	__load_character()
-	var string = starting_quote + __get_characters_in_collection([starting_quote], true) + starting_quote
-	current_column += 1
+	var string_body = Utilities.get_characters_in_collection(line, current_column, [starting_quote], true)
+	var string = starting_quote + string_body + starting_quote
+	current_column += 1 + string_body.length()
 	tokens.push_back(Token.new(Consts.TOKEN_TYPES.STRING, string, line_number, start_column))
 	
 func __handle_word():
-	var identifier = __get_characters_in_collection([Consts.DIGITS, Consts.LETTERS, '_'])
+	var identifier = Utilities.get_characters_in_collection(line, current_column, [Consts.DIGITS, Consts.LETTERS, '_'])
+	current_column += identifier.length()
 
 	if identifier in Consts.KEYWORDS:
 		tokens.push_back(Token.new(Consts.TOKEN_TYPES.KEYWORD, identifier, line_number, start_column))
@@ -116,26 +120,3 @@ func __handle_operator():
 		result = current_character + line[current_column + 1]
 		current_column += 2
 	tokens.push_back(Token.new(Consts.TOKEN_TYPES.OPERATOR, result, line_number, start_column))
-	
-func __get_characters_in_collection(collection, invert = false):
-	var result_collection = []
-	for entry in collection:
-		var type = typeof(entry)
-		if type == TYPE_ARRAY:
-			for character in entry:
-				result_collection.push_back(character)
-		elif type == TYPE_STRING:
-			result_collection.push_back(entry)
-	
-	var string = ''
-	if invert:
-		while current_column < line.length() - 1 and not current_character in result_collection:
-			string += current_character
-			__load_character()
-	else:
-		while current_column < line.length() - 1 and current_character in result_collection:
-			string += current_character
-			__load_character()
-	return string
-		
-
