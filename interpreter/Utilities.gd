@@ -35,3 +35,7 @@ static func __join_collections(collection):
 			result_collection.push_back(entry)
 
 	return result_collection
+
+static func print_lexer_results(results):
+	for token in results['tokens']:
+		print(token.value + ' ' + Consts.TOKEN_TYPE_STRINGS[token.type])

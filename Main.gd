@@ -4,6 +4,7 @@ var worldScene = preload("res://World.tscn")
 var lexer = preload("res://interpreter/Lexer.gd")
 var parser = preload("res://interpreter/Parser.gd")
 var interpreter = preload("res://interpreter/Interpreter.gd")
+var Utilities = preload("res://interpreter/Utilities.gd")
 
 var __lexer
 var __parser
@@ -30,7 +31,7 @@ func _ready():
 	if results['status'] != 'success':
 		print("ERROR")
 
-	__lexer.print_tokens(results['tokens'])
+	Utilities.print_lexer_results(results)
 
 	__parser = parser.new()
 	var instructions = __parser.run(results['tokens'])

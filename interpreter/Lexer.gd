@@ -1,10 +1,6 @@
 var Token = preload("res://interpreter/Token.gd")
 var Utilities = preload("res://interpreter/Utilities.gd")
 
-func print_tokens(tokens):
-	for token in tokens:
-		print(token.value + ' ' + Consts.TOKEN_TYPE_STRINGS[token.type])
-
 func run(contents):
 	var tokens = []
 	
@@ -12,7 +8,9 @@ func run(contents):
 	
 	for line_number in range(lines.size()):
 		var line = lines[line_number]
-		__handle_line(tokens, line, line_number)
+		var result = __handle_line(tokens, line, line_number)
+		if result['type'] == 'error':
+			return {'status': 'error', 'line_number': line_number, 'column': result['index']}
 		
 	return {'status': 'success', 'tokens': tokens}
 
@@ -21,7 +19,9 @@ func __handle_line(tokens, input_string, line_number):
 	while index < input_string.length():
 		var result = __handle_next_token(input_string, index)
 
-		if not result:
+		if result['type'] == 'error':
+			return {'type': 'error', 'index': index}
+		elif result['type'] == 'comment':
 			return
 		elif result['type'] == Consts.TOKEN_TYPES.WHITESPACE:
 			index += 1
@@ -52,7 +52,9 @@ func __handle_next_token(input_string, index):
 	elif next_characters[0] == ';':
 		return {'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': next_characters[0]}
 	elif next_characters == '//':
-		return null
+		return {'type': 'comment'}
+	else:
+		return {'type': 'error'}
 
 
 func __get_next_two_characters(input_string, index):
