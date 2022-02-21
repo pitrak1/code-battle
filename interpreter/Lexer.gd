@@ -43,8 +43,10 @@ func __handle_next_token(input_string, index):
 		return {'type': Consts.TOKEN_TYPES.SEPARATOR, 'value': next_characters[0]}
 	elif next_characters[0] in Consts.LETTERS or next_characters[0] == '_':
 		return __handle_word(input_string, index)
-	elif next_characters[0] in Consts.OPERATORS or next_characters in Consts.OPERATORS:
-		return __handle_operator(input_string, index)
+	elif next_characters in Consts.OPERATORS:
+		return {'type': Consts.TOKEN_TYPES.OPERATOR, 'value': next_characters}
+	elif next_characters[0] in Consts.OPERATORS:
+		return {'type': Consts.TOKEN_TYPES.OPERATOR, 'value': next_characters[0]}
 	elif next_characters[0] == '=':
 		return {'type': Consts.TOKEN_TYPES.ASSIGNMENT, 'value': next_characters[0]}
 	elif next_characters[0] == ';':
@@ -83,13 +85,3 @@ func __handle_word(input_string, index):
 	else:
 		return {'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': identifier}
 		
-func __handle_operator(input_string, index):
-	var result
-	var current_character = input_string[index]
-	if current_character in Consts.OPERATORS:
-		result = current_character
-		index += 1
-	else:
-		result = current_character + input_string[index + 1]
-		index += 2
-	return {'type': Consts.TOKEN_TYPES.OPERATOR, 'value': result}
