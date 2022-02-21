@@ -33,11 +33,17 @@ func run(contents):
 				Consts.TOKEN_TYPES.WHITESPACE:
 					current_column += 1
 				Consts.TOKEN_TYPES.NUMBER:
-					__handle_number()
+					var token = __handle_number(line, current_column, line_number, start_column)
+					tokens.push_back(token)
+					current_column += token.value.length()
 				Consts.TOKEN_TYPES.STRING:
-					__handle_string()
+					var token = __handle_string(line, current_column, line_number, start_column)
+					tokens.push_back(token)
+					current_column += token.value.length()
 				Consts.TOKEN_TYPES.IDENTIFIER:
-					__handle_word()
+					var token = __handle_word(line, current_column, line_number, start_column)
+					tokens.push_back(token)
+					current_column += token.value.length()
 				Consts.TOKEN_TYPES.SEPARATOR:
 					current_column += 1
 					tokens.push_back(Token.new(Consts.TOKEN_TYPES.SEPARATOR, current_character, line_number, start_column))
@@ -87,29 +93,27 @@ func __get_token_type(character, next_character):
 	elif character + next_character == '//':
 		return Consts.TOKEN_TYPES.COMMENT
 
-func __handle_number():
-	var number = Utilities.get_characters_in_collection(line, current_column, Consts.DIGITS)
-	current_column += number.length()
-	tokens.push_back(Token.new(Consts.TOKEN_TYPES.NUMBER, number, line_number, start_column))
+func __handle_number(input_string, index, line_number, start_column):
+	var number = Utilities.get_characters_in_collection(input_string, index, Consts.DIGITS)
+	return Token.new(Consts.TOKEN_TYPES.NUMBER, number, line_number, start_column)
 
-func __handle_string():
-	var starting_quote = current_character
-	__load_character()
-	var string_body = Utilities.get_characters_not_in_collection(line, current_column, [starting_quote])
+func __handle_string(input_string, index, line_number, start_column):
+	var starting_quote = input_string[index]
+	index += 1
+	var string_body = Utilities.get_characters_not_in_collection(input_string, index, [starting_quote])
 	var string = starting_quote + string_body + starting_quote
-	current_column += 1 + string_body.length()
-	tokens.push_back(Token.new(Consts.TOKEN_TYPES.STRING, string, line_number, start_column))
+	return Token.new(Consts.TOKEN_TYPES.STRING, string, line_number, start_column)
 	
-func __handle_word():
-	var identifier = Utilities.get_characters_in_collection(line, current_column, [Consts.DIGITS, Consts.LETTERS, '_'])
-	current_column += identifier.length()
+func __handle_word(input_string, index, line_number, start_column):
+	var identifier = Utilities.get_characters_in_collection(input_string, index, [Consts.DIGITS, Consts.LETTERS, '_'])
+	index += identifier.length()
 
 	if identifier in Consts.KEYWORDS:
-		tokens.push_back(Token.new(Consts.TOKEN_TYPES.KEYWORD, identifier, line_number, start_column))
+		return Token.new(Consts.TOKEN_TYPES.KEYWORD, identifier, line_number, start_column)
 	elif identifier == 'true' or identifier == 'false':
-		tokens.push_back(Token.new(Consts.TOKEN_TYPES.BOOLEAN, identifier, line_number, start_column))
+		return Token.new(Consts.TOKEN_TYPES.BOOLEAN, identifier, line_number, start_column)
 	else:
-		tokens.push_back(Token.new(Consts.TOKEN_TYPES.IDENTIFIER, identifier, line_number, start_column))
+		return Token.new(Consts.TOKEN_TYPES.IDENTIFIER, identifier, line_number, start_column)
 		
 func __handle_operator():
 	var result
