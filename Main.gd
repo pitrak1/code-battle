@@ -30,7 +30,7 @@ func _ready():
 	if results['status'] != 'success':
 		print("ERROR")
 
-	__lexer.print_tokens()
+	__lexer.print_tokens(results['tokens'])
 
 	__parser = parser.new()
 	var instructions = __parser.run(results['tokens'])
