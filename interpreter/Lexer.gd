@@ -48,7 +48,9 @@ func run(contents):
 					current_column += 1
 					tokens.push_back(Token.new(Consts.TOKEN_TYPES.SEPARATOR, current_character, line_number, start_column))
 				Consts.TOKEN_TYPES.OPERATOR:
-					__handle_operator()
+					var token = __handle_operator(line, current_column, line_number, start_column)
+					tokens.push_back(token)
+					current_column += token.value.length()
 				Consts.TOKEN_TYPES.ASSIGNMENT:
 					current_column += 1
 					tokens.push_back(Token.new(Consts.TOKEN_TYPES.ASSIGNMENT, current_character, line_number, start_column))
@@ -115,12 +117,13 @@ func __handle_word(input_string, index, line_number, start_column):
 	else:
 		return Token.new(Consts.TOKEN_TYPES.IDENTIFIER, identifier, line_number, start_column)
 		
-func __handle_operator():
+func __handle_operator(input_string, index, line_number, start_column):
 	var result
+	var current_character = input_string[index]
 	if current_character in Consts.OPERATORS:
 		result = current_character
-		current_column += 1
+		index += 1
 	else:
-		result = current_character + line[current_column + 1]
-		current_column += 2
-	tokens.push_back(Token.new(Consts.TOKEN_TYPES.OPERATOR, result, line_number, start_column))
+		result = current_character + input_string[index + 1]
+		index += 2
+	return Token.new(Consts.TOKEN_TYPES.OPERATOR, result, line_number, start_column)
