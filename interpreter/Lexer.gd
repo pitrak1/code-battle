@@ -95,7 +95,7 @@ func __handle_number():
 func __handle_string():
 	var starting_quote = current_character
 	__load_character()
-	var string_body = Utilities.get_characters_in_collection(line, current_column, [starting_quote], true)
+	var string_body = Utilities.get_characters_not_in_collection(line, current_column, [starting_quote])
 	var string = starting_quote + string_body + starting_quote
 	current_column += 1 + string_body.length()
 	tokens.push_back(Token.new(Consts.TOKEN_TYPES.STRING, string, line_number, start_column))

@@ -1,4 +1,10 @@
-static func get_characters_in_collection(input_string, index, collection, invert = false):
+static func get_characters_in_collection(input_string, index, collection):
+	return __get_characters_in_collection(input_string, index, collection)
+	
+static func get_characters_not_in_collection(input_string, index, collection):
+	return __get_characters_in_collection(input_string, index, collection, true)
+
+static func __get_characters_in_collection(input_string, index, collection, invert = false):
 	var result_collection = __join_collections(collection)
 	
 	var result_string = ''
