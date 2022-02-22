@@ -1,23 +1,18 @@
 var Instruction = preload("res://interpreter/Instruction.gd")
 
-var instructions
-var tokens
 var token_index
-var scopes
 
 func run(__tokens):
-	instructions = []
 	
-	tokens = __tokens
 	token_index = 0
+	var instructions = []
+	var scopes = [instructions]
 	
-	scopes = [instructions]
-	
-	__read_instructions_into_scope(0)
+	__read_instructions_into_scope(__tokens, scopes, 0)
 
 	return instructions
 	
-func __read_instructions_into_scope(scope_index):
+func __read_instructions_into_scope(tokens, scopes, scope_index):
 	var current_token_set = []
 	
 	while token_index < tokens.size():
@@ -33,12 +28,12 @@ func __read_instructions_into_scope(scope_index):
 			current_token_set = []
 			scopes.push_back(parsed_instruction.instructions)
 			token_index += 1
-			__read_instructions_into_scope(scope_index + 1)
+			__read_instructions_into_scope(tokens, scopes, scope_index + 1)
 		elif (token.type == Consts.TOKEN_TYPES.SEPARATOR and token.value == '}'):
 			current_token_set = []
 			scopes.pop_back()
 			token_index += 1
-			__read_instructions_into_scope(scope_index - 1)
+			__read_instructions_into_scope(tokens, scopes, scope_index - 1)
 		else:
 			current_token_set.push_back(token)
 			token_index += 1
@@ -48,111 +43,21 @@ func __parse_token_set(token_set):
 	var operation_index = __get_mathematical_operator_index(token_set)
 	
 	if assignment_index:
-		return Instruction.new().set_operation(
-			Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
-			'=',
-			__parse_token_set(token_set.slice(0, assignment_index - 1)),
-			__parse_token_set(token_set.slice(assignment_index + 1, token_set.size() - 1))
-		)
+		return __handle_assignment(token_set, assignment_index)
 	elif token_set[0].type == Consts.TOKEN_TYPES.KEYWORD:
-		if token_set[0].value == 'var':
-			assert(token_set.size() == 2)
-			assert(token_set[1].type == Consts.TOKEN_TYPES.IDENTIFIER)
-			return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.DECLARATION, token_set[1].value)
-		elif token_set[0].value == 'print':		
-			assert(token_set[1].value == '(')
-			assert(token_set[token_set.size() - 1].value == ')')
-			
-			var instruction_range
-			if token_set.size() <= 3:
-				instruction_range = __parse_token_set(token_set.slice(2, 2))
-			else:
-				instruction_range = __parse_token_set(token_set.slice(2, token_set.size() - 2))
-				
-			return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, 'print', [instruction_range])
-		elif token_set[0].value == 'highlight':		
-			assert(token_set[1].value == '(')
-			assert(token_set[token_set.size() - 1].value == ')')
-			
-			var instruction_start = 2
-			var instruction_end = 2
-			
-			var args = []
-			
-			while instruction_end < token_set.size():
-				if token_set[instruction_end + 1].type == Consts.TOKEN_TYPES.SEPARATOR:
-					if token_set[instruction_end + 1].value == ',':
-						args.push_back(__parse_token_set(token_set.slice(instruction_start, instruction_end)))
-						instruction_start = instruction_end + 2
-						instruction_end = instruction_start
-					elif token_set[instruction_end + 1].value == ')':
-						args.push_back(__parse_token_set(token_set.slice(instruction_start, instruction_end)))
-						break
-					else:
-						instruction_end += 1
-				
-			return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, 'highlight', args)
-		elif token_set[0].value == 'if' or token_set[0].value == 'while':
-			assert(token_set[1].value == '(')
-			assert(token_set[token_set.size() - 1].value == ')')
-			
-			var instruction_start = 2
-			var instruction_end = 2
-			
-			var expression
-			
-			while instruction_end < token_set.size():
-				if token_set[instruction_end + 1].value == ')':
-					expression = __parse_token_set(token_set.slice(instruction_start, instruction_end))
-					break
-				else:
-					instruction_end += 1
-					
-			var type
-			if token_set[0].value == 'if': 
-				type = Consts.INSTRUCTION_TYPES.IF
-			else:
-				type = Consts.INSTRUCTION_TYPES.WHILE
-			return Instruction.new().set_if(type, expression)
-			
+		return __handle_keyword(token_set)
 	elif operation_index:
-		return Instruction.new().set_operation(
-			Consts.INSTRUCTION_TYPES.OPERATION,
-			token_set[operation_index].value,
-			__parse_token_set(token_set.slice(0, operation_index - 1)),
-			__parse_token_set(token_set.slice(operation_index + 1, token_set.size() - 1))
-		)
+		return __handle_operation(token_set, operation_index)
 	elif token_set[0].type == Consts.TOKEN_TYPES.SEPARATOR:
-		assert(token_set[0].value == '[')
-		var token_index = 1
-		var results = []
-		while token_set[token_index].value != ']':
-			if token_set[token_index].value != ',':
-				results.push_back(__parse_token_set(token_set.slice(token_index, token_index)))
-			token_index += 1
-		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.ARRAY, results)
+		return __handle_separator(token_set)
 	elif token_set[0].type == Consts.TOKEN_TYPES.IDENTIFIER:
-		if (token_set.size() == 1):
-			return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.VARIABLE, token_set[0].value)
-		else:
-			assert(token_set[1].value == '[')
-			assert(token_set[token_set.size() - 1].value == ']')
-			return Instruction.new().set_index(Consts.INSTRUCTION_TYPES.INDEX, token_set[0].value, __parse_token_set(token_set.slice(2, token_set.size() - 2)))
-			
+		return __handle_identifier(token_set)
 	elif token_set[0].type == Consts.TOKEN_TYPES.NUMBER:
-		assert(token_set.size() == 1)
-		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.NUMBER, int(float(token_set[0].value)))
+		return __handle_number(token_set)
 	elif token_set[0].type == Consts.TOKEN_TYPES.STRING:
-		assert(token_set.size() == 1)
-		var stringValue = token_set[0].value
-		stringValue.erase(0, 1)
-		stringValue.erase(stringValue.length() - 1, 1)
-		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.STRING, stringValue)
+		return __handle_string(token_set)
 	elif token_set[0].type == Consts.TOKEN_TYPES.BOOLEAN:
-		assert(token_set.size() == 1)
-		var value = token_set[0].value == 'true'
-		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.BOOLEAN, value)
-
+		return __handle_boolean(token_set)
 		
 func __get_assignment_operator_index(token_set):
 	for i in range(token_set.size()):
@@ -160,23 +65,142 @@ func __get_assignment_operator_index(token_set):
 			return i
 			
 func __get_mathematical_operator_index(token_set):
-	var i = token_set.size() - 1
-	
-	var operators = Consts.OPERATORS
-	
-	var operator_priority = operators.size()
-	var operator_location = operators.size()
-	
-	while i >= 0:
+	var operator_priority = Consts.OPERATORS.size()
+	var operator_location = Consts.OPERATORS.size()
+
+	for i in range(token_set.size() - 1, 0, -1):
 		if token_set[i].type == Consts.TOKEN_TYPES.OPERATOR:
-			var current_operator_priority = operators.find(token_set[i].value)
+			var current_operator_priority = Consts.OPERATORS.find(token_set[i].value)
 			if current_operator_priority < operator_priority:
 				operator_priority = current_operator_priority
-				operator_location = i
-		i -= 1		
+				operator_location = i	
 		
-	if operator_priority != operators.size():
+	if operator_priority != Consts.OPERATORS.size():
 		return operator_location
+
+func __handle_assignment(token_set, assignment_index):
+	return Instruction.new().set_operation(
+		Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+		'=',
+		__parse_token_set(token_set.slice(0, assignment_index - 1)),
+		__parse_token_set(token_set.slice(assignment_index + 1, token_set.size() - 1))
+	)
+
+func __handle_keyword(token_set):
+	if token_set[0].value == 'var':
+		return __handle_var(token_set)
+	elif token_set[0].value == 'print':		
+		return __handle_print(token_set)
+	elif token_set[0].value == 'highlight':		
+		return __handle_highlight(token_set)
+	elif token_set[0].value == 'if' or token_set[0].value == 'while':
+		return __handle_if_while(token_set)
+
+func __handle_var(token_set):
+	assert(token_set.size() == 2)
+	assert(token_set[1].type == Consts.TOKEN_TYPES.IDENTIFIER)
+	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.DECLARATION, token_set[1].value)	
+
+func __handle_print(token_set):
+	assert(token_set[1].value == '(')
+	assert(token_set[token_set.size() - 1].value == ')')
+	
+	var instruction_range
+	if token_set.size() <= 3:
+		instruction_range = __parse_token_set(token_set.slice(2, 2))
+	else:
+		instruction_range = __parse_token_set(token_set.slice(2, token_set.size() - 2))
+		
+	return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, 'print', [instruction_range])
+
+func __handle_highlight(token_set):
+	assert(token_set[1].value == '(')
+	assert(token_set[token_set.size() - 1].value == ')')
+	
+	var instruction_start = 2
+	var instruction_end = 2
+	
+	var args = []
+	
+	while instruction_end < token_set.size():
+		if token_set[instruction_end + 1].type == Consts.TOKEN_TYPES.SEPARATOR:
+			if token_set[instruction_end + 1].value == ',':
+				args.push_back(__parse_token_set(token_set.slice(instruction_start, instruction_end)))
+				instruction_start = instruction_end + 2
+				instruction_end = instruction_start
+			elif token_set[instruction_end + 1].value == ')':
+				args.push_back(__parse_token_set(token_set.slice(instruction_start, instruction_end)))
+				break
+			else:
+				instruction_end += 1
+		
+	return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, 'highlight', args)
+
+func __handle_if_while(token_set):
+	assert(token_set[1].value == '(')
+	assert(token_set[token_set.size() - 1].value == ')')
+	
+	var instruction_start = 2
+	var instruction_end = 2
+	
+	var expression
+	
+	while instruction_end < token_set.size():
+		if token_set[instruction_end + 1].value == ')':
+			expression = __parse_token_set(token_set.slice(instruction_start, instruction_end))
+			break
+		else:
+			instruction_end += 1
+			
+	var type
+	if token_set[0].value == 'if': 
+		type = Consts.INSTRUCTION_TYPES.IF
+	else:
+		type = Consts.INSTRUCTION_TYPES.WHILE
+	return Instruction.new().set_if(type, expression)
+
+func __handle_operation(token_set, operation_index):
+	return Instruction.new().set_operation(
+		Consts.INSTRUCTION_TYPES.OPERATION,
+		token_set[operation_index].value,
+		__parse_token_set(token_set.slice(0, operation_index - 1)),
+		__parse_token_set(token_set.slice(operation_index + 1, token_set.size() - 1))
+	)
+
+func __handle_separator(token_set):
+	assert(token_set[0].value == '[')
+	var index = 1
+	var results = []
+	while token_set[index].value != ']':
+		if token_set[index].value != ',':
+			results.push_back(__parse_token_set(token_set.slice(index, index)))
+		index += 1
+	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.ARRAY, results)
+
+func __handle_identifier(token_set):
+	if (token_set.size() == 1):
+		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.VARIABLE, token_set[0].value)
+	else:
+		assert(token_set[1].value == '[')
+		assert(token_set[token_set.size() - 1].value == ']')
+		return Instruction.new().set_index(Consts.INSTRUCTION_TYPES.INDEX, token_set[0].value, __parse_token_set(token_set.slice(2, token_set.size() - 2)))
+	
+func __handle_number(token_set):
+	assert(token_set.size() == 1)
+	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.NUMBER, int(float(token_set[0].value)))
+
+func __handle_string(token_set):
+	assert(token_set.size() == 1)
+	var stringValue = token_set[0].value
+	stringValue.erase(0, 1)
+	stringValue.erase(stringValue.length() - 1, 1)
+	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.STRING, stringValue)
+
+
+func __handle_boolean(token_set):
+	assert(token_set.size() == 1)
+	var value = token_set[0].value == 'true'
+	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.BOOLEAN, value)
 		
 
 
