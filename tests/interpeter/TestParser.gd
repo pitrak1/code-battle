@@ -41,261 +41,22 @@ func __assert_instruction(instruction, expected_instruction):
 				else:
 					__assert_instruction(instruction[key], expected_instruction[key])
 			
-			
-# DECLARATION AND ASSIGNMENT
 
-func test_supports_declaration():
-	var tokens_results = lexer.run("var x;")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [
-		{'type': Consts.INSTRUCTION_TYPES.DECLARATION, 'value': 'x'},
-	]
-	assert_instructions(instructions, expected_instructions)
+var test_params = [
 
-func test_supports_number_assignment():
-	var tokens_results = lexer.run("x = 5;")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
-		'operator': '=',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-			'value': 'x'
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': 5
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
+	# DECLARATION AND ASSIGNMENT
 
-func test_supports_single_quote_string_assignment():
-	var tokens_results = lexer.run("x = 'test1';")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
-		'operator': '=',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-			'value': 'x'
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.STRING,
-			'value': "test1"
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
-
-func test_supports_double_quote_string_assignment():
-	var tokens_results = lexer.run("x = \"test1\";")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
-		'operator': '=',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-			'value': 'x'
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.STRING,
-			'value': "test1"
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
-
-func test_supports_boolean_assignment():
-	var tokens_results = lexer.run("x = true;")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
-		'operator': '=',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-			'value': 'x'
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.BOOLEAN,
-			'value': true
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
-
-func test_supports_identifier_assignment():
-	var tokens_results = lexer.run("x = y;")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
-		'operator': '=',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-			'value': 'x'
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-			'value': "y"
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
-
-func test_supports_expression_assignment():
-	var tokens_results = lexer.run("x = y + 5;")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
-		'operator': '=',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-			'value': 'x'
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.OPERATION,
-			'operator': "+",
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-				'value': 'y'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': 5
-			}
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
-
-func test_supports_declaration_assignment():
-	var tokens_results = lexer.run("var x = 5;")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
-		'operator': '=',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
-			'value': 'x'
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': 5
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
-	
-func test_supports_array_assignment():
-	var tokens_results = lexer.run("var x = [1, 2, 3];")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
-		'operator': '=',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
-			'value': 'x'
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.ARRAY,
-			'value': [
-				{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 1}, 
-				{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 2}, 
-				{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 3} 
-			]
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
-	
-# OPERATORS
-
-func test_supports_addition_operator():
-	var tokens_results = lexer.run("x + 6;")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-		'operator': '+',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-			'value': 'x'
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': 6
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
-
-func test_supports_multiplication_operator():
-	var tokens_results = lexer.run("x * 6;")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-		'operator': '*',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-			'value': 'x'
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': 6
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
-
-func test_supports_equality_operator():
-	var tokens_results = lexer.run("x == 6;")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-		'operator': '==',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-			'value': 'x'
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': 6
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
-	
-func test_supports_less_than_operator():
-	var tokens_results = lexer.run("x < 6;")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-		'operator': '<',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-			'value': 'x'
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': 6
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
-	
-func test_supports_greater_than_operator():
-	var tokens_results = lexer.run("x > 6;")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-		'operator': '>',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-			'value': 'x'
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': 6
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
-
-func test_supports_mixed_operators():
-	var tokens_results = lexer.run("x + 5 == 6 * 3;")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-		'operator': '==',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.OPERATION,
-			'operator': '+',
+	{
+		'input': "var x;",
+		'expected': [
+			{'type': Consts.INSTRUCTION_TYPES.DECLARATION, 'value': 'x'},
+		]
+	},
+	{
+		'input': "x = 5;",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'operator': '=',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
 				'value': 'x'
@@ -304,84 +65,297 @@ func test_supports_mixed_operators():
 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
 				'value': 5
 			}
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.OPERATION,
-			'operator': '*',
+		}]
+	},
+	{
+		'input': "x = 'test1';",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'operator': '=',
 			'left': {
-				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': 6
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': 'x'
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.STRING,
+				'value': "test1"
+			}
+		}]
+	},
+	{
+		'input': "x = \"test1\";",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'operator': '=',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': 'x'
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.STRING,
+				'value': "test1"
+			}
+		}]
+	},
+	{
+		'input': "x = true;",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'operator': '=',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': 'x'
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.BOOLEAN,
+				'value': true
+			}
+		}]
+	},
+	{
+		'input': "x = y;",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'operator': '=',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': 'x'
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': "y"
+			}
+		}]
+	},
+	{
+		'input': "x = y + 5;",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'operator': '=',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': 'x'
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.OPERATION,
+				'operator': "+",
+				'left': {
+					'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+					'value': 'y'
+				},
+				'right': {
+					'type': Consts.INSTRUCTION_TYPES.NUMBER,
+					'value': 5
+				}
+			}
+		}]
+	},
+	{
+		'input': "var x = 5;",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'operator': '=',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+				'value': 'x'
 			},
 			'right': {
 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': 3
+				'value': 5
 			}
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
-
-# FUNCTIONS AND SEPARATORS
-
-func test_supports_builtins_and_parenthesis():
-	var tokens_results = lexer.run("print('12345');")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
-		'function': 'print',
-		'args': [{
-			'type': Consts.INSTRUCTION_TYPES.STRING,
-			'value': "12345"
 		}]
-	}]
-	assert_instructions(instructions, expected_instructions)
-	
-func test_supports_multiple_arguments():
-	var tokens_results = lexer.run("highlight(5, 6);")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
-		'function': 'highlight',
-		'args': [{
-			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': 5
-		},{
-			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': 6
+	},
+	{
+		'input':"var x = [1, 2, 3];",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'operator': '=',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+				'value': 'x'
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.ARRAY,
+				'value': [
+					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 1}, 
+					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 2}, 
+					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 3} 
+				]
+			}
 		}]
-	}]
-	assert_instructions(instructions, expected_instructions)
-	
-func test_supports_indexing():
-	var tokens_results = lexer.run("x[5];")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.INDEX, 
-		'value': 'x',
-		'index': {
-			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': 5
-		}
-	}]
-	assert_instructions(instructions, expected_instructions)
-	
-# CONDITIONALS AND LOOPS
+	},
 
-func test_supports_if_statements():
-	var tokens_results = lexer.run("if (true) { print('asdf'); }")
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected_instructions = [{
-		'type': Consts.INSTRUCTION_TYPES.IF, 
-		'expression': {
-			'type': Consts.INSTRUCTION_TYPES.BOOLEAN,
-			'value': true
-		},
-		'instructions': [{
+	# OPERATORS
+
+	{
+		'input': "x + 6;",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+			'operator': '+',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': 'x'
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+				'value': 6
+			}
+		}]
+	},
+	{
+		'input': "x * 6;",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+			'operator': '*',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': 'x'
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+				'value': 6
+			}
+		}]
+	},
+	{
+		'input': "x == 6;",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+			'operator': '==',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': 'x'
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+				'value': 6
+			}
+		}]
+	},
+	{
+		'input': "x < 6;",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+			'operator': '<',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': 'x'
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+				'value': 6
+			}
+		}]
+	},
+	{
+		'input': "x > 6;",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+			'operator': '>',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': 'x'
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+				'value': 6
+			}
+		}]
+	},
+	{
+		'input': "x + 5 == 6 * 3;",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+			'operator': '==',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.OPERATION,
+				'operator': '+',
+				'left': {
+					'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+					'value': 'x'
+				},
+				'right': {
+					'type': Consts.INSTRUCTION_TYPES.NUMBER,
+					'value': 5
+				}
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.OPERATION,
+				'operator': '*',
+				'left': {
+					'type': Consts.INSTRUCTION_TYPES.NUMBER,
+					'value': 6
+				},
+				'right': {
+					'type': Consts.INSTRUCTION_TYPES.NUMBER,
+					'value': 3
+				}
+			}
+		}]
+	},
+
+	# FUNCTIONS AND SEPARATORS
+
+	{
+		'input': "print('12345');",
+		'expected': [{
 			'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
 			'function': 'print',
 			'args': [{
 				'type': Consts.INSTRUCTION_TYPES.STRING,
-				'value': 'asdf'
+				'value': "12345"
 			}]
 		}]
-	}]
-	assert_instructions(instructions, expected_instructions)
+	},
+	{
+		'input': "highlight(5, 6);",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
+			'function': 'highlight',
+			'args': [{
+				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+				'value': 5
+			},{
+				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+				'value': 6
+			}]
+		}]
+	},
+	{
+		'input': "x[5];",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.INDEX, 
+			'value': 'x',
+			'index': {
+				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+				'value': 5
+			}
+		}]
+	},
+
+	# CONDITIONALS AND LOOPS
+
+	{
+		'input': "if (true) { print('asdf'); }",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.IF, 
+			'expression': {
+				'type': Consts.INSTRUCTION_TYPES.BOOLEAN,
+				'value': true
+			},
+			'instructions': [{
+				'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
+				'function': 'print',
+				'args': [{
+					'type': Consts.INSTRUCTION_TYPES.STRING,
+					'value': 'asdf'
+				}]
+			}]
+		}]
+	},
+]
+
+func test_parser(params=use_parameters(test_params)):
+	var tokens_results = lexer.run(params['input'])
+	var instructions = parser.run(tokens_results['tokens'])
+	assert_instructions(instructions, params['expected'])
