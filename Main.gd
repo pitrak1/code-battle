@@ -43,7 +43,7 @@ func _ready():
 	__interpreter.connect("call_highlight", self, "handle_highlight")
 	var scopes = __interpreter.run(instructions)
 	
-	__interpreter.print_scopes(scopes)
+	Utilities.print_interpreter_results(scopes)
 
 	print("DONE")
 	

@@ -10,83 +10,32 @@ func run(instructions):
 		
 	return scopes
 	
-func print_scopes(scopes):	
-	for scope in scopes:
-		for key in scope.keys():
-			print(key + ': ' + str(scope[key]))
-		print()
-		
 func __interpret_instruction(instruction, scopes, left_side = false):
-#	var text = ''
-#
-#	text += Consts.INSTRUCTION_TYPE_STRINGS[instruction.type]
-#	if instruction.value:
-#		text += ': ' + str(instruction.value)
-#
-#	print(text)
-#
 	match (instruction.type):
 		Consts.INSTRUCTION_TYPES.ASSIGNMENT:
-			var value = __interpret_instruction(instruction.right, scopes)
-			var scope_info = __interpret_instruction(instruction.left, scopes, true)
-			scopes[scope_info.index][scope_info.key] = value
+			return __handle_assignment(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.DECLARATION:
-			scopes[scopes.size() - 1][instruction.value] = null
-			return {'index': scopes.size() - 1, 'key': instruction.value}
+			return __handle_declaration(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.NUMBER:
-			return int(float(instruction.value))
+			return __handle_number(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.VARIABLE:
-			if left_side:
-				return {'index': scopes.size() - 1, 'key': instruction.value}
-			else:
-				return __find_variable(instruction.value, scopes)
+			return __handle_variable(instruction, scopes, left_side)
 		Consts.INSTRUCTION_TYPES.STRING:
 			return instruction.value
 		Consts.INSTRUCTION_TYPES.BOOLEAN:
 			return instruction.value
 		Consts.INSTRUCTION_TYPES.OPERATION:
-			var operand_2 = __interpret_instruction(instruction.right, scopes)
-			var operand_1 = __interpret_instruction(instruction.left, scopes)
-			if instruction.operator == '+':
-				return operand_1 + operand_2
-			elif instruction.operator == '*':
-				return operand_1 * operand_2
-			elif instruction.operator == '==':
-				return operand_1 == operand_2
-			elif instruction.operator == '<':
-				return operand_1 < operand_2
-			elif instruction.operator == '>':
-				return operand_1 > operand_2
+			return __handle_operation(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.BUILTIN:
-			var args = []
-			for arg in instruction.args:
-				args.push_back(__interpret_instruction(arg, scopes))
-			var function_name = instruction.function
-			emit_signal("call_" + function_name, args)
+			return __handle_builtin(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.IF:
-			var expression = __interpret_instruction(instruction.expression, scopes)
-			if (expression):
-				scopes.push_back({})
-				for inst in instruction.instructions:
-					__interpret_instruction(inst, scopes)
-				scopes.pop_back()
+			return __handle_if(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.WHILE:
-			var expression = __interpret_instruction(instruction.expression, scopes)
-			scopes.push_back({})
-			while (expression):
-				for inst in instruction.instructions:
-					__interpret_instruction(inst, scopes)
-				expression = __interpret_instruction(instruction.expression, scopes)
-			scopes.pop_back()
+			return __handle_while(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.ARRAY:
-			var results = []
-			for inst in instruction.value:
-				results.push_back(__interpret_instruction(inst, scopes))
-			return results
+			return __handle_array(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.INDEX:
-			var variable = __find_variable(instruction.value, scopes)
-			var index = __interpret_instruction(instruction.index, scopes)
-			return variable[index]
+			return __handle_index(instruction, scopes)
 
 func __find_variable(key, scopes):
 	var i = scopes.size() - 1
@@ -94,3 +43,70 @@ func __find_variable(key, scopes):
 		if scopes[i].has(key):
 			return scopes[i][key]
 		i -= 1
+
+func __handle_assignment(instruction, scopes):
+	var value = __interpret_instruction(instruction.right, scopes)
+	var scope_info = __interpret_instruction(instruction.left, scopes, true)
+	scopes[scope_info.index][scope_info.key] = value
+
+func __handle_declaration(instruction, scopes):
+	scopes[scopes.size() - 1][instruction.value] = null
+	return {'index': scopes.size() - 1, 'key': instruction.value}
+
+func __handle_number(instruction, scopes):
+	return int(float(instruction.value))
+
+func __handle_variable(instruction, scopes, left_side):
+	if left_side:
+		return {'index': scopes.size() - 1, 'key': instruction.value}
+	else:
+		return __find_variable(instruction.value, scopes)
+
+func __handle_operation(instruction, scopes):
+	var operand_2 = __interpret_instruction(instruction.right, scopes)
+	var operand_1 = __interpret_instruction(instruction.left, scopes)
+	if instruction.operator == '+':
+		return operand_1 + operand_2
+	elif instruction.operator == '*':
+		return operand_1 * operand_2
+	elif instruction.operator == '==':
+		return operand_1 == operand_2
+	elif instruction.operator == '<':
+		return operand_1 < operand_2
+	elif instruction.operator == '>':
+		return operand_1 > operand_2
+
+func __handle_builtin(instruction, scopes):
+	var args = []
+	for arg in instruction.args:
+		args.push_back(__interpret_instruction(arg, scopes))
+	var function_name = instruction.function
+	emit_signal("call_" + function_name, args)
+
+func __handle_if(instruction, scopes):
+	var expression = __interpret_instruction(instruction.expression, scopes)
+	if (expression):
+		scopes.push_back({})
+		for inst in instruction.instructions:
+			__interpret_instruction(inst, scopes)
+		scopes.pop_back()
+
+func __handle_while(instruction, scopes):
+	var expression = __interpret_instruction(instruction.expression, scopes)
+	scopes.push_back({})
+	while (expression):
+		for inst in instruction.instructions:
+			__interpret_instruction(inst, scopes)
+		expression = __interpret_instruction(instruction.expression, scopes)
+	scopes.pop_back()
+
+func __handle_array(instruction, scopes):
+	var results = []
+	for inst in instruction.value:
+		results.push_back(__interpret_instruction(inst, scopes))
+	return results
+
+func __handle_index(instruction, scopes):
+	var variable = __find_variable(instruction.value, scopes)
+	var index = __interpret_instruction(instruction.index, scopes)
+	return variable[index]
