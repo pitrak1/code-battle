@@ -27,19 +27,25 @@ func __assert_instruction(instruction, expected_instruction):
 			if key == 'args':
 				for i in range(instruction['args'].size()):
 					__assert_instruction(instruction['args'][i], expected_instruction['args'][i])
-			elif key != 'left' and key != 'right':
-				assert_eq(instruction[key], expected_instruction[key])
+			elif key == 'left' or key == 'right':
+				__assert_instruction(instruction[key], expected_instruction[key])
 			elif key == 'expression':
 				__assert_instruction(instruction['expression'], expected_instruction['expression'])
 			elif key == 'instructions':
 				for i in range(instruction['instructions'].size()):
 					__assert_instruction(instruction['instructions'][i], expected_instruction['instructions'][i])
 			elif key == 'value':
-				if typeof(instruction['value']) == TYPE_ARRAY: 
-					for i in range(instruction['value'].size()):
-						__assert_instruction(instruction['value'][i], expected_instruction['value'][i])
+				if typeof(instruction['value']) == TYPE_ARRAY:
+					assert_eq(instruction['value'].size(), expected_instruction['value'].size())
+					if instruction['type'] == Consts.INSTRUCTION_TYPES.ARRAY:
+						for i in range(instruction['value'].size()):
+							__assert_instruction(instruction['value'][i], expected_instruction['value'][i])
+					elif instruction['type'] == Consts.INSTRUCTION_TYPES.OBJECT:
+						for i in range(instruction['value'].size()):
+							__assert_instruction(instruction['value'][i]['key'], expected_instruction['value'][i]['key'])
+							__assert_instruction(instruction['value'][i]['value'], expected_instruction['value'][i]['value'])
 				else:
-					__assert_instruction(instruction[key], expected_instruction[key])
+					assert_eq(instruction[key], expected_instruction[key])
 			
 
 var test_params = [
@@ -193,7 +199,7 @@ var test_params = [
 				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
 				'value': 'x'
 			},
-			'right': [{
+			'right': {
 				'type': Consts.INSTRUCTION_TYPES.OBJECT, 
 				'value': [
 					{
@@ -217,7 +223,7 @@ var test_params = [
 						}
 					},
 				]
-			}]
+			}
 		}]
 	},
 	{
@@ -229,7 +235,7 @@ var test_params = [
 				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
 				'value': 'x'
 			},
-			'right': [{
+			'right': {
 				'type': Consts.INSTRUCTION_TYPES.OBJECT, 
 				'value': [
 					{
@@ -253,7 +259,7 @@ var test_params = [
 						}
 					},
 				]
-			}]
+			}
 		}]
 	},
 	{
@@ -265,7 +271,7 @@ var test_params = [
 				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
 				'value': 'x'
 			},
-			'right': [{
+			'right': {
 				'type': Consts.INSTRUCTION_TYPES.OBJECT, 
 				'value': [
 					{
@@ -289,7 +295,7 @@ var test_params = [
 						}
 					},
 				]
-			}]
+			}
 		}]
 	},
 
@@ -488,40 +494,40 @@ func test_parser(params=use_parameters(test_params)):
 # 	}]
 # 	assert_instructions(instructions, expected)
 
-# func test_parser_2():
-# 	var tokens_results = lexer.run('var x = {"x": 1234, "y": 2345};')
-# 	var instructions = parser.run(tokens_results['tokens'])
-# 	var expected = [{
-# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-# 		'operator': '=',
-# 		'left': {
-# 			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
-# 			'value': 'x'
-# 		},
-# 		'right': [{
-# 			'type': Consts.INSTRUCTION_TYPES.OBJECT, 
-# 			'value': [
-# 				{
-# 					'key': {
-# 						'type': Consts.INSTRUCTION_TYPES.STRING,
-# 						'value': 'x'
-# 					}, 
-# 					'value': {
-# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
-# 						'value': 1234
-# 					}
-# 				},
-# 				{
-# 					'key': {
-# 						'type': Consts.INSTRUCTION_TYPES.STRING,
-# 						'value': 'y'
-# 					}, 
-# 					'value': {
-# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
-# 						'value': 2345
-# 					}
-# 				},
-# 			]
-# 		}]
-# 	}]
-# 	assert_instructions(instructions, expected)
+func test_parser_2():
+	var tokens_results = lexer.run('var x = {"x": 1234, "y": 2345};')
+	var instructions = parser.run(tokens_results['tokens'])
+	var expected = [{
+		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+		'operator': '=',
+		'left': {			
+			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+			'value': 'x'
+		},
+		'right': {
+			'type': Consts.INSTRUCTION_TYPES.OBJECT, 
+			'value': [
+				{
+					'key': {
+						'type': Consts.INSTRUCTION_TYPES.STRING,
+						'value': 'x'
+					}, 
+					'value': {
+						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+						'value': 1234
+					}
+				},
+				{
+					'key': {
+						'type': Consts.INSTRUCTION_TYPES.STRING,
+						'value': 'y'
+					}, 
+					'value': {
+						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+						'value': 2345
+					}
+				},
+			]
+		}
+	}]
+	assert_instructions(instructions, expected)

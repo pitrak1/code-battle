@@ -213,6 +213,7 @@ func __handle_separator(token_set):
 				results.push_back(KeyValuePair.new().set(key, __parse_token_set(token_set.slice(current_set_start, index - 1))))
 				current_set_start = index + 1
 			index += 1
+		results.push_back(KeyValuePair.new().set(key, __parse_token_set(token_set.slice(current_set_start, index - 1))))
 		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.OBJECT, results)
 
 func __handle_identifier(token_set):

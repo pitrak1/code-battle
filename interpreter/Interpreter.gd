@@ -36,6 +36,8 @@ func __interpret_instruction(instruction, scopes, left_side = false):
 			return __handle_array(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.INDEX:
 			return __handle_index(instruction, scopes)
+		Consts.INSTRUCTION_TYPES.OBJECT:
+			return __handle_object(instruction, scopes)
 
 func __find_variable(key, scopes):
 	var i = scopes.size() - 1
@@ -110,3 +112,11 @@ func __handle_index(instruction, scopes):
 	var variable = __find_variable(instruction.value, scopes)
 	var index = __interpret_instruction(instruction.index, scopes)
 	return variable[index]
+
+func __handle_object(instruction, scopes):
+	var result = {}
+	for pair in instruction.value:
+		var key = __interpret_instruction(pair.key, scopes)
+		var value = __interpret_instruction(pair.value, scopes)
+		result[key] = value
+	return result

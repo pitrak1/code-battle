@@ -9,6 +9,8 @@ var parser
 const interpreterScript = preload("res://interpreter/Interpreter.gd")
 var interpreter
 
+const Utilities = preload("res://interpreter/Utilities.gd")
+
 func before_each():
 	lexer = lexerScript.new()
 	parser = parserScript.new()
@@ -16,8 +18,14 @@ func before_each():
 	
 func assert_scopes(scopes, expected_scopes):
 	for i in range(scopes.size()):
-		for key in scopes[i].keys():
-			assert_eq(scopes[i][key], expected_scopes[i][key])
+		__assert_scopes_recursive(scopes[i], expected_scopes[i])
+
+func __assert_scopes_recursive(scope, expected_scope):
+	for key in scope.keys():
+		if typeof(scope[key]) == TYPE_OBJECT or typeof(scope[key]) == TYPE_DICTIONARY:
+			__assert_scopes_recursive(scope[key], expected_scope[key])
+		else:
+			assert_eq(scope[key], expected_scope[key])
 
 var test_params = [
 	
@@ -119,6 +127,24 @@ var test_params = [
 			{'x': [1, 2, 3], 'y': 3}
 		]
 	},
+	{
+		'input': "var x = {'x': 1234, 'y': 2345}; var y = x['y'];",
+		'expected': [
+			{'x': {'x': 1234, 'y': 2345}, 'y': 2345}
+		]
+	},
+	{
+		'input': "var x = {3: 1234, 5: 2345}; var y = x[3];",
+		'expected': [
+			{'x': {3: 1234, 5: 2345}, 'y': 1234}
+		]
+	},
+	{
+		'input': "var x = {'i': 1234, 'j': 2345}; var y = 'j'; var z = x[y];",
+		'expected': [
+			{'x': {'i': 1234, 'j': 2345}, 'y': 'j', 'z': 2345}
+		]
+	},
 ]
 
 func test_interpreter(params=use_parameters(test_params)):
@@ -144,3 +170,5 @@ func test_supports_if_statements():
 	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	assert_signal_not_emitted(interpreter, 'call_print')
+
+
