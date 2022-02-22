@@ -36,7 +36,7 @@ func _ready():
 	__parser = parser.new()
 	var instructions = __parser.run(results['tokens'])
 
-	__parser.print_ast(instructions)
+	Utilities.print_parser_results(instructions)
 
 	__interpreter = interpreter.new()
 	__interpreter.connect("call_print", self, "handle_print")

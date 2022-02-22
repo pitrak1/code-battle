@@ -179,41 +179,4 @@ func __get_mathematical_operator_index(token_set):
 		return operator_location
 		
 
-var depth
-
-func print_ast(instructions):
-	for inst in instructions:
-		depth = -1
-		__print_ast_recursive(inst)
-
-func __print_ast_recursive(instruction):
-	depth += 1
-	
-	var text = ''
-	for _i in range(0, depth):
-		text += '\t'
-		
-	text += Consts.INSTRUCTION_TYPE_STRINGS[instruction.type]
-	if instruction.value:
-		text += ': ' + str(instruction.value)
-		
-	print(text)
-	
-	if instruction.expression:
-		__print_ast_recursive(instruction.expression)
-		depth -= 1
-	
-	if instruction.left:
-		__print_ast_recursive(instruction.left)
-		depth -= 1
-		
-	if instruction.right:
-		__print_ast_recursive(instruction.right)
-		depth -= 1
-		
-	if instruction.instructions:
-		for inst in instruction.instructions:
-			__print_ast_recursive(inst)
-			depth -= 1
-
 

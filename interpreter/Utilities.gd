@@ -39,3 +39,38 @@ static func __join_collections(collection):
 static func print_lexer_results(results):
 	for token in results['tokens']:
 		print(token.value + ' ' + Consts.TOKEN_TYPE_STRINGS[token.type])
+
+static func print_parser_results(instructions):
+	for inst in instructions:
+		var depth = -1
+		__print_ast_recursive(inst, depth)
+
+static func __print_ast_recursive(instruction, depth):
+	depth += 1
+	
+	var text = ''
+	for _i in range(0, depth):
+		text += '\t'
+		
+	text += Consts.INSTRUCTION_TYPE_STRINGS[instruction.type]
+	if instruction.value:
+		text += ': ' + str(instruction.value)
+		
+	print(text)
+	
+	if instruction.expression:
+		__print_ast_recursive(instruction.expression, depth)
+		depth -= 1
+	
+	if instruction.left:
+		__print_ast_recursive(instruction.left, depth)
+		depth -= 1
+		
+	if instruction.right:
+		__print_ast_recursive(instruction.right, depth)
+		depth -= 1
+		
+	if instruction.instructions:
+		for inst in instruction.instructions:
+			__print_ast_recursive(inst, depth)
+			depth -= 1
