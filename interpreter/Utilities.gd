@@ -75,7 +75,7 @@ static func __print_ast_recursive(instruction, depth):
 			__print_ast_recursive(inst, depth)
 			depth -= 1
 
-func print_interpreter_results(scopes):	
+static func print_interpreter_results(scopes):	
 	for scope in scopes:
 		for key in scope.keys():
 			print(key + ': ' + str(scope[key]))

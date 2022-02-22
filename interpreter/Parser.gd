@@ -1,4 +1,5 @@
 var Instruction = preload("res://interpreter/Instruction.gd")
+var KeyValuePair = preload("res://interpreter/KeyValuePair.gd")
 
 var token_index
 
@@ -23,20 +24,43 @@ func __read_instructions_into_scope(tokens, scopes, scope_index):
 			current_token_set = []
 			token_index += 1
 		elif (token.type == Consts.TOKEN_TYPES.SEPARATOR and token.value == '{'):
-			var parsed_instruction = __parse_token_set(current_token_set)
-			scopes[scope_index].push_back(parsed_instruction)
-			current_token_set = []
-			scopes.push_back(parsed_instruction.instructions)
-			token_index += 1
-			__read_instructions_into_scope(tokens, scopes, scope_index + 1)
+			if __block_contains_semicolon(tokens, token_index):	
+				var parsed_instruction = __parse_token_set(current_token_set)
+				scopes[scope_index].push_back(parsed_instruction)
+				current_token_set = []
+				scopes.push_back(parsed_instruction.instructions)
+				token_index += 1
+				__read_instructions_into_scope(tokens, scopes, scope_index + 1)
+			else:
+				current_token_set.push_back(token)
+				token_index += 1
 		elif (token.type == Consts.TOKEN_TYPES.SEPARATOR and token.value == '}'):
-			current_token_set = []
-			scopes.pop_back()
-			token_index += 1
-			__read_instructions_into_scope(tokens, scopes, scope_index - 1)
+			if __set_contains_semicolon(current_token_set):
+				current_token_set = []
+				scopes.pop_back()
+				token_index += 1
+				__read_instructions_into_scope(tokens, scopes, scope_index - 1)
+			else:
+				current_token_set.push_back(token)
+				token_index += 1
 		else:
 			current_token_set.push_back(token)
 			token_index += 1
+
+func __block_contains_semicolon(tokens, token_index):
+	while token_index < tokens.size():
+		if tokens[token_index].value == '}':
+			return false
+		elif tokens[token_index].value == ';':
+			return true
+		else:
+			token_index += 1
+
+func __set_contains_semicolon(set):
+	for i in range(set.size()):
+		if set[i].type == Consts.TOKEN_TYPES.SEMICOLON:
+			return true
+	return false
 	
 func __parse_token_set(token_set):
 	var assignment_index = __get_assignment_operator_index(token_set)
@@ -168,14 +192,28 @@ func __handle_operation(token_set, operation_index):
 	)
 
 func __handle_separator(token_set):
-	assert(token_set[0].value == '[')
-	var index = 1
-	var results = []
-	while token_set[index].value != ']':
-		if token_set[index].value != ',':
-			results.push_back(__parse_token_set(token_set.slice(index, index)))
-		index += 1
-	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.ARRAY, results)
+	if token_set[0].value == '[':
+		var index = 1
+		var results = []
+		while token_set[index].value != ']':
+			if token_set[index].value != ',':
+				results.push_back(__parse_token_set(token_set.slice(index, index)))
+			index += 1
+		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.ARRAY, results)
+	elif token_set[0].value == '{':
+		var index = 1
+		var results = []
+		var current_set_start = index
+		var key
+		while token_set[index].value != '}':
+			if token_set[index].value == ':':
+				key = __parse_token_set(token_set.slice(current_set_start, index - 1))
+				current_set_start = index + 1
+			elif token_set[index].value == ',':
+				results.push_back(KeyValuePair.new().set(key, __parse_token_set(token_set.slice(current_set_start, index - 1))))
+				current_set_start = index + 1
+			index += 1
+		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.OBJECT, results)
 
 func __handle_identifier(token_set):
 	if (token_set.size() == 1):
