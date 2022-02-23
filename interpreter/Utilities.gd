@@ -55,9 +55,13 @@ static func __print_ast_recursive(instruction, depth):
 	text += Consts.INSTRUCTION_TYPE_STRINGS[instruction.type]
 	if instruction.value:
 		if typeof(instruction.value) == TYPE_ARRAY:
-			for pair in instruction.value:
-				__print_ast_recursive(pair.key, depth)
-				__print_ast_recursive(pair.value, depth)
+			if instruction.type == Consts.INSTRUCTION_TYPES.ARRAY:
+				for entry in instruction.value:
+					__print_ast_recursive(entry, depth)
+			elif instruction.type == Consts.INSTRUCTION_TYPES.OBJECT:
+				for pair in instruction.value:
+					__print_ast_recursive(pair.key, depth)
+					__print_ast_recursive(pair.value, depth)
 		else:
 			text += ': ' + str(instruction.value)
 		

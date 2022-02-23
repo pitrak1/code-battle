@@ -191,6 +191,47 @@ var test_params = [
 		}]
 	},
 	{
+		'input':"var x = [1 + 2, 2 * 3, 3];",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'operator': '=',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+				'value': 'x'
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.ARRAY,
+				'value': [
+					{
+						'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+						'operator': '+', 
+						'left': {
+							'type': Consts.INSTRUCTION_TYPES.NUMBER,
+							'value': 1
+						},
+						'right': {
+							'type': Consts.INSTRUCTION_TYPES.NUMBER,
+							'value': 2		
+						}
+					},
+					{
+						'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+						'operator': '*', 
+						'left': {
+							'type': Consts.INSTRUCTION_TYPES.NUMBER,
+							'value': 2
+						},
+						'right': {
+							'type': Consts.INSTRUCTION_TYPES.NUMBER,
+							'value': 3		
+						}
+					}, 
+					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 3} 
+				]
+			}
+		}]
+	},
+	{
 		'input': 'var x = {"x": 1234, "y": 2345};',
 		'expected': [{
 			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
@@ -474,59 +515,53 @@ func test_parser(params=use_parameters(test_params)):
 	var instructions = parser.run(tokens_results['tokens'])
 	assert_instructions(instructions, params['expected'])
 
-# func test_parser_mine():
-# 	var tokens_results = lexer.run('if (true) { print(\'asdf\'); }')
-# 	var instructions = parser.run(tokens_results['tokens'])
-# 	var expected = [{
-# 		'type': Consts.INSTRUCTION_TYPES.IF, 
-# 		'expression': {
-# 			'type': Consts.INSTRUCTION_TYPES.BOOLEAN,
-# 			'value': true
-# 		},
-# 		'instructions': [{
-# 			'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
-# 			'function': 'print',
-# 			'args': [{
-# 				'type': Consts.INSTRUCTION_TYPES.STRING,
-# 				'value': 'asdf'
-# 			}]
-# 		}]
-# 	}]
-# 	assert_instructions(instructions, expected)
-
-func test_parser_2():
-	var tokens_results = lexer.run('var x = {"x": 1234, "y": 2345};')
+func test_parser_mine():
+	var tokens_results = lexer.run('if (true) { print(\'asdf\'); }')
 	var instructions = parser.run(tokens_results['tokens'])
 	var expected = [{
-		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+		'type': Consts.INSTRUCTION_TYPES.IF, 
+		'expression': {
+			'type': Consts.INSTRUCTION_TYPES.BOOLEAN,
+			'value': true
+		},
+		'instructions': [{
+			'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
+			'function': 'print',
+			'args': [{
+				'type': Consts.INSTRUCTION_TYPES.STRING,
+				'value': 'asdf'
+			}]
+		}]
+	}]
+	assert_instructions(instructions, expected)
+
+func test_parser_2():
+	var tokens_results = lexer.run('var x = [1 + 2, 2, 3];')
+	var instructions = parser.run(tokens_results['tokens'])
+	var expected = [{
+		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
 		'operator': '=',
-		'left': {			
+		'left': {
 			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
 			'value': 'x'
 		},
 		'right': {
-			'type': Consts.INSTRUCTION_TYPES.OBJECT, 
+			'type': Consts.INSTRUCTION_TYPES.ARRAY,
 			'value': [
 				{
-					'key': {
-						'type': Consts.INSTRUCTION_TYPES.STRING,
-						'value': 'x'
-					}, 
-					'value': {
+					'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+					'operator': '+', 
+					'left': {
 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
-						'value': 1234
+						'value': 1
+					},
+					'right': {
+						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+						'value': 2		
 					}
 				},
-				{
-					'key': {
-						'type': Consts.INSTRUCTION_TYPES.STRING,
-						'value': 'y'
-					}, 
-					'value': {
-						'type': Consts.INSTRUCTION_TYPES.NUMBER,
-						'value': 2345
-					}
-				},
+				{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 2}, 
+				{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 3} 
 			]
 		}
 	}]

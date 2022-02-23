@@ -70,10 +70,10 @@ func __parse_token_set(token_set):
 		return __handle_assignment(token_set, assignment_index)
 	elif token_set[0].type == Consts.TOKEN_TYPES.KEYWORD:
 		return __handle_keyword(token_set)
-	elif operation_index:
-		return __handle_operation(token_set, operation_index)
 	elif token_set[0].type == Consts.TOKEN_TYPES.SEPARATOR:
 		return __handle_separator(token_set)
+	elif operation_index:
+		return __handle_operation(token_set, operation_index)
 	elif token_set[0].type == Consts.TOKEN_TYPES.IDENTIFIER:
 		return __handle_identifier(token_set)
 	elif token_set[0].type == Consts.TOKEN_TYPES.NUMBER:
@@ -195,10 +195,13 @@ func __handle_separator(token_set):
 	if token_set[0].value == '[':
 		var index = 1
 		var results = []
+		var current_set_start = 1
 		while token_set[index].value != ']':
-			if token_set[index].value != ',':
-				results.push_back(__parse_token_set(token_set.slice(index, index)))
+			if token_set[index].value == ',':
+				results.push_back(__parse_token_set(token_set.slice(current_set_start, index - 1)))
+				current_set_start = index + 1
 			index += 1
+		results.push_back(__parse_token_set(token_set.slice(current_set_start, index - 1)))
 		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.ARRAY, results)
 	elif token_set[0].value == '{':
 		var index = 1
