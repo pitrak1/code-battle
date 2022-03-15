@@ -91,9 +91,15 @@ func __get_assignment_operator_index(token_set):
 func __get_mathematical_operator_index(token_set):
 	var operator_priority = Consts.OPERATORS.size()
 	var operator_location = Consts.OPERATORS.size()
+	
+	var in_square_brackets = false
 
 	for i in range(token_set.size() - 1, 0, -1):
-		if token_set[i].type == Consts.TOKEN_TYPES.OPERATOR:
+		if token_set[i].value == ']':
+			in_square_brackets = true
+		elif token_set[i].value == '[':
+			in_square_brackets = false
+		elif token_set[i].type == Consts.TOKEN_TYPES.OPERATOR and not in_square_brackets:
 			var current_operator_priority = Consts.OPERATORS.find(token_set[i].value)
 			if current_operator_priority < operator_priority:
 				operator_priority = current_operator_priority

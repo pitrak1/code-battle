@@ -521,6 +521,28 @@ var test_params = [
 			}
 		}]
 	},
+	{
+		'input': "x[5 + 6];",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.INDEX, 
+			'value': 'x',
+			'index': {
+				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+				'value': {
+					'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+						'operator': '+', 
+						'left': {
+							'type': Consts.INSTRUCTION_TYPES.NUMBER,
+							'value': 1
+						},
+						'right': {
+							'type': Consts.INSTRUCTION_TYPES.NUMBER,
+							'value': 2		
+						}
+				}
+			}
+		}]
+	},
 
 	# CONDITIONALS AND LOOPS
 
@@ -550,21 +572,25 @@ func test_parser(params=use_parameters(test_params)):
 	assert_instructions(instructions, params['expected'])
 
 func test_parser_mine():
-	var tokens_results = lexer.run('if (true) { print(\'asdf\'); }')
+	var tokens_results = lexer.run('x[5 + 6];')
 	var instructions = parser.run(tokens_results['tokens'])
 	var expected = [{
-		'type': Consts.INSTRUCTION_TYPES.IF, 
-		'expression': {
-			'type': Consts.INSTRUCTION_TYPES.BOOLEAN,
-			'value': true
-		},
-		'instructions': [{
-			'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
-			'function': 'print',
-			'args': [{
-				'type': Consts.INSTRUCTION_TYPES.STRING,
-				'value': 'asdf'
-			}]
-		}]
+		'type': Consts.INSTRUCTION_TYPES.INDEX, 
+		'value': 'x',
+		'index': {
+			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+			'value': {
+				'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+					'operator': '+', 
+					'left': {
+						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+						'value': 1
+					},
+					'right': {
+						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+						'value': 2		
+					}
+			}
+		}
 	}]
 	assert_instructions(instructions, expected)
