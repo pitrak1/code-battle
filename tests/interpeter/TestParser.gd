@@ -448,6 +448,40 @@ var test_params = [
 			}
 		}]
 	},
+	{
+		'input': 'var x = {"test": 1 + 2};',
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'operator': '=',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+				'value': 'x'
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.OBJECT,
+				'value': [
+					{
+						'key': {
+							'type': Consts.INSTRUCTION_TYPES.STRING,
+							'value': 'test'
+						}, 
+						'value': {
+							'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+								'operator': '+', 
+								'left': {
+									'type': Consts.INSTRUCTION_TYPES.NUMBER,
+									'value': 1
+								},
+								'right': {
+									'type': Consts.INSTRUCTION_TYPES.NUMBER,
+									'value': 2		
+								}
+						}
+					},
+				]
+			}
+		}]
+	},
 
 	# FUNCTIONS AND SEPARATORS
 
@@ -532,37 +566,5 @@ func test_parser_mine():
 				'value': 'asdf'
 			}]
 		}]
-	}]
-	assert_instructions(instructions, expected)
-
-func test_parser_2():
-	var tokens_results = lexer.run('var x = [1 + 2, 2, 3];')
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected = [{
-		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
-		'operator': '=',
-		'left': {
-			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
-			'value': 'x'
-		},
-		'right': {
-			'type': Consts.INSTRUCTION_TYPES.ARRAY,
-			'value': [
-				{
-					'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-					'operator': '+', 
-					'left': {
-						'type': Consts.INSTRUCTION_TYPES.NUMBER,
-						'value': 1
-					},
-					'right': {
-						'type': Consts.INSTRUCTION_TYPES.NUMBER,
-						'value': 2		
-					}
-				},
-				{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 2}, 
-				{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 3} 
-			]
-		}
 	}]
 	assert_instructions(instructions, expected)
