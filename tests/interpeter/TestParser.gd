@@ -339,6 +339,58 @@ var test_params = [
 			}
 		}]
 	},
+	{
+		'input': 'var x = {x: 1234 + 1, y: 2345 * 2};',
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+			'operator': '=',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+				'value': 'x'
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.OBJECT, 
+				'value': [
+					{
+						'key': {
+							'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+							'value': 'x'
+						}, 
+						'value': {
+							'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+							'operator': '+', 
+							'left': {
+								'type': Consts.INSTRUCTION_TYPES.NUMBER,
+								'value': 1234
+							},
+							'right': {
+								'type': Consts.INSTRUCTION_TYPES.NUMBER,
+								'value': 1	
+							}
+						}
+					},
+					{
+						'key': {
+							'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+							'value': 'y'
+						}, 
+						'value': {
+							'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+							'operator': '*', 
+							'left': {
+								'type': Consts.INSTRUCTION_TYPES.NUMBER,
+								'value': 2345
+							},
+							'right': {
+								'type': Consts.INSTRUCTION_TYPES.NUMBER,
+								'value': 2		
+							}
+						}
+					},
+				]
+			}
+		}]
+	},
 
 	# OPERATORS
 
