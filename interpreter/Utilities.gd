@@ -1,14 +1,14 @@
 static func get_characters_in_collection(input_string, index, collection):
 	return __get_characters_in_collection(input_string, index, collection)
-	
+
 static func get_characters_not_in_collection(input_string, index, collection):
 	return __get_characters_in_collection(input_string, index, collection, true)
 
 static func __get_characters_in_collection(input_string, index, collection, invert = false):
 	var result_collection = __join_collections(collection)
-	
+
 	var result_string = ''
-	
+
 	var current_character = input_string[index]
 	if invert:
 		while index < input_string.length() - 1 and not current_character in result_collection:
@@ -42,16 +42,14 @@ static func print_lexer_results(results):
 
 static func print_parser_results(instructions):
 	for inst in instructions:
-		var depth = -1
+		var depth = 0
 		__print_ast_recursive(inst, depth)
 
 static func __print_ast_recursive(instruction, depth):
-	depth += 1
-	
 	var text = ''
 	for _i in range(0, depth):
 		text += '\t'
-		
+
 	text += Consts.INSTRUCTION_TYPE_STRINGS[instruction.type]
 	if instruction.value:
 		if typeof(instruction.value) == TYPE_ARRAY:
@@ -64,27 +62,23 @@ static func __print_ast_recursive(instruction, depth):
 					__print_ast_recursive(pair.value, depth)
 		else:
 			text += ': ' + str(instruction.value)
-		
+
 	print(text)
-	
+
 	if instruction.expression:
-		__print_ast_recursive(instruction.expression, depth)
-		depth -= 1
-	
+		__print_ast_recursive(instruction.expression, depth + 1)
+
 	if instruction.left:
-		__print_ast_recursive(instruction.left, depth)
-		depth -= 1
-		
+		__print_ast_recursive(instruction.left, depth + 1)
+
 	if instruction.right:
-		__print_ast_recursive(instruction.right, depth)
-		depth -= 1
-		
+		__print_ast_recursive(instruction.right, depth + 1)
+
 	if instruction.instructions:
 		for inst in instruction.instructions:
-			__print_ast_recursive(inst, depth)
-			depth -= 1
+			__print_ast_recursive(inst, depth + 1)
 
-static func print_interpreter_results(scopes):	
+static func print_interpreter_results(scopes):
 	for scope in scopes:
 		for key in scope.keys():
 			print(key + ': ' + str(scope[key]))
