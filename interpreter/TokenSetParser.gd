@@ -169,10 +169,27 @@ func __handle_separator(token_set):
 func __handle_identifier(token_set):
 	if (token_set.size() == 1):
 		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.VARIABLE, token_set[0].value)
-	else:
-		assert(token_set[1].value == '[')
+	elif token_set[1].value == '[':
 		assert(token_set[token_set.size() - 1].value == ']')
 		return Instruction.new().set_index(Consts.INSTRUCTION_TYPES.INDEX, token_set[0].value, run(token_set.slice(2, token_set.size() - 2)))
+	elif token_set[1].value == '(':
+		assert(token_set[token_set.size() - 1].value == ')')
+
+		var args = []
+
+		var argument_start = 2
+		var argument_end = 2
+		if token_set[2].value != ')':
+			while argument_end < token_set.size():
+				if token_set[argument_end + 1].value == ',' or token_set[argument_end + 1].value == ')':
+					var instruction = run(token_set.slice(argument_start, argument_end))
+					args.push_back(instruction)
+					argument_start = argument_end + 2
+					argument_end = argument_end + 2
+				else:
+					argument_end += 1
+
+		return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.CALL, token_set[0].value, args)
 
 func __handle_number(token_set):
 	assert(token_set.size() == 1)

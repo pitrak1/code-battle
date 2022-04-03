@@ -40,6 +40,8 @@ func __interpret_instruction(instruction, scopes, left_side = false):
 			return __handle_object(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.FUNCTION:
 			return __handle_function_definition(instruction, scopes)
+		Consts.INSTRUCTION_TYPES.CALL:
+			return __handle_function_call(instruction, scopes)
 
 func __find_variable(key, scopes):
 	var i = scopes.size() - 1
@@ -47,6 +49,22 @@ func __find_variable(key, scopes):
 		if scopes[i].has(key):
 			return scopes[i][key]
 		i -= 1
+
+func __handle_function_call(instruction, scopes):
+	var function_def = __find_variable(instruction.function, scopes)
+	assert(function_def)
+
+	scopes.push_back({})
+	assert(len(function_def.args) == len(instruction.args))
+	var arg_index = 0
+	while arg_index < len(function_def.args):
+		scopes[scopes.size() - 1][function_def.args[arg_index].value] = __interpret_instruction(instruction.args[arg_index], scopes)
+		arg_index += 1
+
+	for inst in function_def.instructions:
+		__interpret_instruction(inst, scopes)
+
+	scopes.pop_back()
 
 func __handle_assignment(instruction, scopes):
 	var value = __interpret_instruction(instruction.right, scopes)

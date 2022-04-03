@@ -617,7 +617,7 @@ var test_params = [
 		}]
 	},
 
-	# FUNCTION DEFINITIONS
+	# FUNCTIONS
 	{
 		'input': "function test_function (asdf, asdf2) { print('asdf'); }",
 		'expected': [{
@@ -640,6 +640,17 @@ var test_params = [
 					'type': Consts.INSTRUCTION_TYPES.STRING,
 					'value': 'asdf'
 				}]
+			}]
+		}]
+	},
+	{
+		'input': "test_function('asdf');",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.CALL,
+			'function': 'test_function',
+			'args': [{
+				'type': Consts.INSTRUCTION_TYPES.STRING,
+				'value': 'asdf'
 			}]
 		}]
 	},
