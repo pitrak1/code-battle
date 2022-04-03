@@ -45,3 +45,4 @@ func set_function(__type, __value, __args):
 	args = __args
 	instructions = []
 	return self
+

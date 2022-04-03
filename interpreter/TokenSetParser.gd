@@ -66,6 +66,8 @@ func __handle_keyword(token_set):
 		return __handle_if_while(token_set)
 	elif token_set[0].value == 'function':
 		return __handle_function(token_set)
+	elif token_set[0].value == 'return':
+		return __handle_return(token_set)
 
 func __handle_var(token_set):
 	assert(token_set.size() == 2)
@@ -230,4 +232,7 @@ func __handle_function(token_set):
 				argument_index += 1
 
 	return Instruction.new().set_function(Consts.INSTRUCTION_TYPES.FUNCTION, token_set[1].value, args)
+
+func __handle_return(token_set):
+	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.RETURN, run(token_set.slice(1, len(token_set) - 1)))
 

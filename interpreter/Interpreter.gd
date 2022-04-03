@@ -42,6 +42,8 @@ func __interpret_instruction(instruction, scopes, left_side = false):
 			return __handle_function_definition(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.CALL:
 			return __handle_function_call(instruction, scopes)
+		Consts.INSTRUCTION_TYPES.RETURN:
+			return __handle_return(instruction, scopes)
 
 func __find_variable(key, scopes):
 	var i = scopes.size() - 1
@@ -64,7 +66,9 @@ func __handle_function_call(instruction, scopes):
 	for inst in function_def.instructions:
 		__interpret_instruction(inst, scopes)
 
+	var return_value = scopes[scopes.size() - 1]['return']
 	scopes.pop_back()
+	return return_value
 
 func __handle_assignment(instruction, scopes):
 	var value = __interpret_instruction(instruction.right, scopes)
@@ -144,3 +148,6 @@ func __handle_object(instruction, scopes):
 		var value = __interpret_instruction(pair.value, scopes)
 		result[key] = value
 	return result
+
+func __handle_return(instruction, scopes):
+	scopes[scopes.size() - 1]['return'] = __interpret_instruction(instruction.value, scopes)
