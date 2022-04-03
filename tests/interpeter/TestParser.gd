@@ -11,7 +11,7 @@ const keys = ['type', 'operator', 'left', 'right', 'value', 'function', 'args']
 func before_each():
 	lexer = lexerScript.new()
 	parser = parserScript.new()
-	
+
 func assert_instructions(instructions, expected_instructions):
 	assert_eq(instructions.size(), expected_instructions.size(), 'Instructions is length ' + str(instructions.size()) + ', expected ' + str(expected_instructions.size()))
 	for i in range(instructions.size()):
@@ -20,7 +20,7 @@ func assert_instructions(instructions, expected_instructions):
 func __assert_instruction(instruction, expected_instruction):
 	assert_true('type' in expected_instruction.keys())
 	assert_eq(instruction['type'], expected_instruction['type'])
-	
+
 	for key in keys:
 		if instruction.get(key):
 			assert_true(key in expected_instruction.keys())
@@ -46,7 +46,7 @@ func __assert_instruction(instruction, expected_instruction):
 							__assert_instruction(instruction['value'][i]['value'], expected_instruction['value'][i]['value'])
 				else:
 					assert_eq(instruction[key], expected_instruction[key])
-			
+
 
 var test_params = [
 
@@ -61,7 +61,7 @@ var test_params = [
 	{
 		'input': "x = 5;",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
 			'operator': '=',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
@@ -76,7 +76,7 @@ var test_params = [
 	{
 		'input': "x = 'test1';",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
 			'operator': '=',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
@@ -91,7 +91,7 @@ var test_params = [
 	{
 		'input': "x = \"test1\";",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
 			'operator': '=',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
@@ -106,7 +106,7 @@ var test_params = [
 	{
 		'input': "x = true;",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
 			'operator': '=',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
@@ -121,7 +121,7 @@ var test_params = [
 	{
 		'input': "x = y;",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
 			'operator': '=',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
@@ -136,7 +136,7 @@ var test_params = [
 	{
 		'input': "x = y + 5;",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
 			'operator': '=',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
@@ -159,7 +159,7 @@ var test_params = [
 	{
 		'input': "var x = 5;",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
 			'operator': '=',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
@@ -174,7 +174,7 @@ var test_params = [
 	{
 		'input':"var x = [1, 2, 3];",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
 			'operator': '=',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
@@ -183,9 +183,9 @@ var test_params = [
 			'right': {
 				'type': Consts.INSTRUCTION_TYPES.ARRAY,
 				'value': [
-					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 1}, 
-					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 2}, 
-					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 3} 
+					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 1},
+					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 2},
+					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 3}
 				]
 			}
 		}]
@@ -193,7 +193,7 @@ var test_params = [
 	{
 		'input':"var x = [1 + 2, 2 * 3, 3];",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
 			'operator': '=',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
@@ -203,30 +203,30 @@ var test_params = [
 				'type': Consts.INSTRUCTION_TYPES.ARRAY,
 				'value': [
 					{
-						'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-						'operator': '+', 
+						'type': Consts.INSTRUCTION_TYPES.OPERATION,
+						'operator': '+',
 						'left': {
 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
 							'value': 1
 						},
 						'right': {
 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 2		
+							'value': 2
 						}
 					},
 					{
-						'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-						'operator': '*', 
+						'type': Consts.INSTRUCTION_TYPES.OPERATION,
+						'operator': '*',
 						'left': {
 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
 							'value': 2
 						},
 						'right': {
 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 3		
+							'value': 3
 						}
-					}, 
-					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 3} 
+					},
+					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 3}
 				]
 			}
 		}]
@@ -241,13 +241,13 @@ var test_params = [
 				'value': 'x'
 			},
 			'right': {
-				'type': Consts.INSTRUCTION_TYPES.OBJECT, 
+				'type': Consts.INSTRUCTION_TYPES.OBJECT,
 				'value': [
 					{
 						'key': {
 							'type': Consts.INSTRUCTION_TYPES.STRING,
 							'value': 'x'
-						}, 
+						},
 						'value': {
 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
 							'value': 1234
@@ -257,7 +257,7 @@ var test_params = [
 						'key': {
 							'type': Consts.INSTRUCTION_TYPES.STRING,
 							'value': 'y'
-						}, 
+						},
 						'value': {
 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
 							'value': 2345
@@ -277,13 +277,13 @@ var test_params = [
 				'value': 'x'
 			},
 			'right': {
-				'type': Consts.INSTRUCTION_TYPES.OBJECT, 
+				'type': Consts.INSTRUCTION_TYPES.OBJECT,
 				'value': [
 					{
 						'key': {
 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
 							'value': 555
-						}, 
+						},
 						'value': {
 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
 							'value': 1234
@@ -293,7 +293,7 @@ var test_params = [
 						'key': {
 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
 							'value': 666
-						}, 
+						},
 						'value': {
 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
 							'value': 2345
@@ -313,13 +313,13 @@ var test_params = [
 				'value': 'x'
 			},
 			'right': {
-				'type': Consts.INSTRUCTION_TYPES.OBJECT, 
+				'type': Consts.INSTRUCTION_TYPES.OBJECT,
 				'value': [
 					{
 						'key': {
 							'type': Consts.INSTRUCTION_TYPES.VARIABLE,
 							'value': 'x'
-						}, 
+						},
 						'value': {
 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
 							'value': 1234
@@ -329,7 +329,7 @@ var test_params = [
 						'key': {
 							'type': Consts.INSTRUCTION_TYPES.VARIABLE,
 							'value': 'y'
-						}, 
+						},
 						'value': {
 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
 							'value': 2345
@@ -349,23 +349,23 @@ var test_params = [
 				'value': 'x'
 			},
 			'right': {
-				'type': Consts.INSTRUCTION_TYPES.OBJECT, 
+				'type': Consts.INSTRUCTION_TYPES.OBJECT,
 				'value': [
 					{
 						'key': {
 							'type': Consts.INSTRUCTION_TYPES.VARIABLE,
 							'value': 'x'
-						}, 
+						},
 						'value': {
-							'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-							'operator': '+', 
+							'type': Consts.INSTRUCTION_TYPES.OPERATION,
+							'operator': '+',
 							'left': {
 								'type': Consts.INSTRUCTION_TYPES.NUMBER,
 								'value': 1234
 							},
 							'right': {
 								'type': Consts.INSTRUCTION_TYPES.NUMBER,
-								'value': 1	
+								'value': 1
 							}
 						}
 					},
@@ -373,17 +373,17 @@ var test_params = [
 						'key': {
 							'type': Consts.INSTRUCTION_TYPES.VARIABLE,
 							'value': 'y'
-						}, 
+						},
 						'value': {
-							'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-							'operator': '*', 
+							'type': Consts.INSTRUCTION_TYPES.OPERATION,
+							'operator': '*',
 							'left': {
 								'type': Consts.INSTRUCTION_TYPES.NUMBER,
 								'value': 2345
 							},
 							'right': {
 								'type': Consts.INSTRUCTION_TYPES.NUMBER,
-								'value': 2		
+								'value': 2
 							}
 						}
 					},
@@ -397,7 +397,7 @@ var test_params = [
 	{
 		'input': "x + 6;",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+			'type': Consts.INSTRUCTION_TYPES.OPERATION,
 			'operator': '+',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
@@ -412,7 +412,7 @@ var test_params = [
 	{
 		'input': "x * 6;",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+			'type': Consts.INSTRUCTION_TYPES.OPERATION,
 			'operator': '*',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
@@ -427,7 +427,7 @@ var test_params = [
 	{
 		'input': "x == 6;",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+			'type': Consts.INSTRUCTION_TYPES.OPERATION,
 			'operator': '==',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
@@ -442,7 +442,7 @@ var test_params = [
 	{
 		'input': "x < 6;",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+			'type': Consts.INSTRUCTION_TYPES.OPERATION,
 			'operator': '<',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
@@ -457,7 +457,7 @@ var test_params = [
 	{
 		'input': "x > 6;",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+			'type': Consts.INSTRUCTION_TYPES.OPERATION,
 			'operator': '>',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
@@ -472,7 +472,7 @@ var test_params = [
 	{
 		'input': "x + 5 == 6 * 3;",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.OPERATION, 
+			'type': Consts.INSTRUCTION_TYPES.OPERATION,
 			'operator': '==',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.OPERATION,
@@ -503,7 +503,7 @@ var test_params = [
 	{
 		'input': 'var x = {"test": 1 + 2};',
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT, 
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
 			'operator': '=',
 			'left': {
 				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
@@ -516,17 +516,17 @@ var test_params = [
 						'key': {
 							'type': Consts.INSTRUCTION_TYPES.STRING,
 							'value': 'test'
-						}, 
+						},
 						'value': {
-							'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-								'operator': '+', 
+							'type': Consts.INSTRUCTION_TYPES.OPERATION,
+								'operator': '+',
 								'left': {
 									'type': Consts.INSTRUCTION_TYPES.NUMBER,
 									'value': 1
 								},
 								'right': {
 									'type': Consts.INSTRUCTION_TYPES.NUMBER,
-									'value': 2		
+									'value': 2
 								}
 						}
 					},
@@ -540,7 +540,7 @@ var test_params = [
 	{
 		'input': "print('12345');",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
+			'type': Consts.INSTRUCTION_TYPES.BUILTIN,
 			'function': 'print',
 			'args': [{
 				'type': Consts.INSTRUCTION_TYPES.STRING,
@@ -551,7 +551,7 @@ var test_params = [
 	{
 		'input': "highlight(5, 6);",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
+			'type': Consts.INSTRUCTION_TYPES.BUILTIN,
 			'function': 'highlight',
 			'args': [{
 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
@@ -565,7 +565,7 @@ var test_params = [
 	{
 		'input': "x[5];",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.INDEX, 
+			'type': Consts.INSTRUCTION_TYPES.INDEX,
 			'value': 'x',
 			'index': {
 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
@@ -576,20 +576,20 @@ var test_params = [
 	{
 		'input': "x[5 + 6];",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.INDEX, 
+			'type': Consts.INSTRUCTION_TYPES.INDEX,
 			'value': 'x',
 			'index': {
 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
 				'value': {
-					'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-						'operator': '+', 
+					'type': Consts.INSTRUCTION_TYPES.OPERATION,
+						'operator': '+',
 						'left': {
 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
 							'value': 1
 						},
 						'right': {
 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 2		
+							'value': 2
 						}
 				}
 			}
@@ -601,13 +601,40 @@ var test_params = [
 	{
 		'input': "if (true) { print('asdf'); }",
 		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.IF, 
+			'type': Consts.INSTRUCTION_TYPES.IF,
 			'expression': {
 				'type': Consts.INSTRUCTION_TYPES.BOOLEAN,
 				'value': true
 			},
 			'instructions': [{
-				'type': Consts.INSTRUCTION_TYPES.BUILTIN, 
+				'type': Consts.INSTRUCTION_TYPES.BUILTIN,
+				'function': 'print',
+				'args': [{
+					'type': Consts.INSTRUCTION_TYPES.STRING,
+					'value': 'asdf'
+				}]
+			}]
+		}]
+	},
+
+	# FUNCTION DEFINITIONS
+	{
+		'input': "function test_function (asdf, asdf2) { print('asdf'); }",
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.FUNCTION,
+			'value': 'test_function',
+			'args': [
+				{
+					'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+					'value': 'asdf'
+				},
+				{
+					'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+					'value': 'asdf2'
+				}
+			],
+			'instructions': [{
+				'type': Consts.INSTRUCTION_TYPES.BUILTIN,
 				'function': 'print',
 				'args': [{
 					'type': Consts.INSTRUCTION_TYPES.STRING,
@@ -627,20 +654,20 @@ func test_parser_mine():
 	var tokens_results = lexer.run('x[5 + 6];')
 	var instructions = parser.run(tokens_results['tokens'])
 	var expected = [{
-		'type': Consts.INSTRUCTION_TYPES.INDEX, 
+		'type': Consts.INSTRUCTION_TYPES.INDEX,
 		'value': 'x',
 		'index': {
 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
 			'value': {
-				'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-					'operator': '+', 
+				'type': Consts.INSTRUCTION_TYPES.OPERATION,
+					'operator': '+',
 					'left': {
 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
 						'value': 1
 					},
 					'right': {
 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
-						'value': 2		
+						'value': 2
 					}
 			}
 		}

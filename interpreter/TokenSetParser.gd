@@ -64,6 +64,8 @@ func __handle_keyword(token_set):
 		return __handle_highlight(token_set)
 	elif token_set[0].value == 'if' or token_set[0].value == 'while':
 		return __handle_if_while(token_set)
+	elif token_set[0].value == 'function':
+		return __handle_function(token_set)
 
 func __handle_var(token_set):
 	assert(token_set.size() == 2)
@@ -189,5 +191,26 @@ func __handle_boolean(token_set):
 	var value = token_set[0].value == 'true'
 	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.BOOLEAN, value)
 
+func __handle_function(token_set):
+	assert(token_set[1].type == Consts.INSTRUCTION_TYPES.VARIABLE)
+	assert(token_set[2].value == '(')
+	assert(token_set[token_set.size() - 1].value == ')')
 
+	var args = []
+
+	var argument_index = 3
+	if token_set[3].value != ')':
+		while argument_index < token_set.size():
+			if token_set[argument_index + 1].value == ',':
+				var instruction = Instruction.new().set_value(Consts.INSTRUCTION_TYPES.VARIABLE, token_set[argument_index].value)
+				args.push_back(instruction)
+				argument_index = argument_index + 2
+			elif token_set[argument_index + 1].value == ')':
+				var instruction = Instruction.new().set_value(Consts.INSTRUCTION_TYPES.VARIABLE, token_set[argument_index].value)
+				args.push_back(instruction)
+				break
+			else:
+				argument_index += 1
+
+	return Instruction.new().set_function(Consts.INSTRUCTION_TYPES.FUNCTION, token_set[1].value, args)
 
