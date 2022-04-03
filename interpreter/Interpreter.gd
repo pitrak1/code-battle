@@ -4,12 +4,12 @@ signal call_highlight
 func run(instructions):
 	var scopes = []
 	scopes.push_back({})
-	
+
 	for instruction in instructions:
 		__interpret_instruction(instruction, scopes)
-		
+
 	return scopes
-	
+
 func __interpret_instruction(instruction, scopes, left_side = false):
 	match (instruction.type):
 		Consts.INSTRUCTION_TYPES.ASSIGNMENT:
@@ -38,6 +38,8 @@ func __interpret_instruction(instruction, scopes, left_side = false):
 			return __handle_index(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.OBJECT:
 			return __handle_object(instruction, scopes)
+		Consts.INSTRUCTION_TYPES.FUNCTION:
+			return __handle_function_definition(instruction, scopes)
 
 func __find_variable(key, scopes):
 	var i = scopes.size() - 1
@@ -53,6 +55,10 @@ func __handle_assignment(instruction, scopes):
 
 func __handle_declaration(instruction, scopes):
 	scopes[scopes.size() - 1][instruction.value] = null
+	return {'index': scopes.size() - 1, 'key': instruction.value}
+
+func __handle_function_definition(instruction, scopes):
+	scopes[scopes.size() - 1][instruction.value] = instruction
 	return {'index': scopes.size() - 1, 'key': instruction.value}
 
 func __handle_number(instruction, scopes):
