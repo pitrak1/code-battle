@@ -125,6 +125,8 @@ func __handle_keyword(token_set):
 		return __handle_highlight(token_set)
 	elif token_set[0].value == 'if' or token_set[0].value == 'while':
 		return __handle_if_while(token_set)
+	elif token_set[0].value == 'import':
+		return __handle_import(token_set)
 
 func __handle_var(token_set):
 	assert(token_set.size() == 2)
@@ -188,6 +190,16 @@ func __handle_if_while(token_set):
 	else:
 		type = Consts.INSTRUCTION_TYPES.WHILE
 	return Instruction.new().set_if(type, expression)
+
+func __handle_import(token_set):
+	assert(token_set[1].type == Consts.TOKEN_TYPES.STRING)
+	assert(token_set.size() == 2)
+
+	var stringValue = token_set[1].value
+	stringValue.erase(0, 1)
+	stringValue.erase(stringValue.length() - 1, 1)
+
+	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.IMPORT, stringValue)
 
 func __handle_operation(token_set, operation_index):
 	return Instruction.new().set_operation(

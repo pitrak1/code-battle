@@ -1,15 +1,23 @@
 signal call_print
 signal call_highlight
 
-func run(instructions):
+var lexer = preload("res://interpreter/Lexer.gd")
+var parser = preload("res://interpreter/Parser.gd")
+
+var instructions = []
+
+func run(__instructions):
 	var scopes = []
 	scopes.push_back({})
-	
-	for instruction in instructions:
+
+	self.instructions = __instructions
+
+	while len(self.instructions):
+		var instruction = instructions.pop_front()
 		__interpret_instruction(instruction, scopes)
 		
 	return scopes
-	
+
 func __interpret_instruction(instruction, scopes, left_side = false):
 	match (instruction.type):
 		Consts.INSTRUCTION_TYPES.ASSIGNMENT:
@@ -38,6 +46,8 @@ func __interpret_instruction(instruction, scopes, left_side = false):
 			return __handle_index(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.OBJECT:
 			return __handle_object(instruction, scopes)
+		Consts.INSTRUCTION_TYPES.IMPORT:
+			return __handle_import(instruction, scopes)
 
 func __find_variable(key, scopes):
 	var i = scopes.size() - 1
@@ -120,3 +130,20 @@ func __handle_object(instruction, scopes):
 		var value = __interpret_instruction(pair.value, scopes)
 		result[key] = value
 	return result
+
+func __handle_import(instruction, scopes):
+	var file = File.new()
+	file.open(instruction.value, File.READ)
+	var contents = file.get_as_text()
+	file.close()
+
+	var __lexer = lexer.new()
+	var results = __lexer.run(contents)
+	if results['status'] != 'success':
+		print("ERROR")
+
+	var __parser = parser.new()
+	var __instructions = __parser.run(results['tokens'])
+	__instructions.append_array(self.instructions)
+
+	self.instructions = __instructions

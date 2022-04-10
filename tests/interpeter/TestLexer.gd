@@ -198,6 +198,14 @@ var test_params = [
 			{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
 		]
 	},
+	{
+		'input': "import 'test.btl';",
+		'expected': [
+			{'type': Consts.TOKEN_TYPES.KEYWORD, 'value': 'import'},
+			{'type': Consts.TOKEN_TYPES.STRING, 'value': "'test.btl'"},
+			{'type': Consts.TOKEN_TYPES.SEMICOLON, 'value': ';'},
+		]
+	},
 ]
 
 func test_lexer(params=use_parameters(test_params)):

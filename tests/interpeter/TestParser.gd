@@ -624,25 +624,10 @@ func test_parser(params=use_parameters(test_params)):
 	assert_instructions(instructions, params['expected'])
 
 func test_parser_mine():
-	var tokens_results = lexer.run('x[5 + 6];')
+	var tokens_results = lexer.run('import "test2.btl";')
 	var instructions = parser.run(tokens_results['tokens'])
 	var expected = [{
-		'type': Consts.INSTRUCTION_TYPES.INDEX, 
-		'value': 'x',
-		'index': {
-			'type': Consts.INSTRUCTION_TYPES.NUMBER,
-			'value': {
-				'type': Consts.INSTRUCTION_TYPES.OPERATION, 
-					'operator': '+', 
-					'left': {
-						'type': Consts.INSTRUCTION_TYPES.NUMBER,
-						'value': 1
-					},
-					'right': {
-						'type': Consts.INSTRUCTION_TYPES.NUMBER,
-						'value': 2		
-					}
-			}
-		}
+		'type': Consts.INSTRUCTION_TYPES.IMPORT, 
+		'value': 'test2.btl',
 	}]
 	assert_instructions(instructions, expected)
