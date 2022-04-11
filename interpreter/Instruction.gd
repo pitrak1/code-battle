@@ -3,6 +3,7 @@ var operator
 var left
 var right
 var value
+var exported
 var expression
 var instructions
 var function
@@ -16,9 +17,10 @@ func set_operation(__type, __operator, __left, __right):
 	right = __right
 	return self
 
-func set_value(__type, __value):
+func set_value(__type, __value, __exported = null):
 	type = __type
 	value = __value
+	exported = __exported
 	return self
 
 func set_call(__type, __function, __args):

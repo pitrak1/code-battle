@@ -58,6 +58,8 @@ func __handle_assignment(token_set, assignment_index):
 func __handle_keyword(token_set):
 	if token_set[0].value == 'var':
 		return __handle_var(token_set)
+	elif token_set[0].value == 'export':
+		return __handle_export(token_set)
 	elif token_set[0].value == 'print':
 		return __handle_print(token_set)
 	elif token_set[0].value == 'highlight':
@@ -73,6 +75,13 @@ func __handle_var(token_set):
 	assert(token_set.size() == 2)
 	assert(token_set[1].type == Consts.TOKEN_TYPES.IDENTIFIER)
 	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.DECLARATION, token_set[1].value)
+
+func __handle_export(token_set):
+	assert(token_set.size() == 3)
+	assert(token_set[1].type == Consts.TOKEN_TYPES.KEYWORD)
+	assert(token_set[1].value == 'var')
+	assert(token_set[2].type == Consts.TOKEN_TYPES.IDENTIFIER)
+	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.DECLARATION, token_set[2].value, true)
 
 func __handle_print(token_set):
 	assert(token_set[1].value == '(')
