@@ -165,7 +165,7 @@ func __handle_import(instruction, scopes):
 
 	var __scopes = self.run(__instructions)
 
-	scopes.import_scope(__scopes.get_scope(0))
+	scopes.import_scope(__scopes)
 
 func __handle_return(instruction, scopes):
 	scopes.add_local_variable('return', __interpret_instruction(instruction.value, scopes))

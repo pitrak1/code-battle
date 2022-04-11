@@ -29,15 +29,13 @@ func add_variable(__exported, __key, __value):
 func destroy_scope():
 	scopes.pop_back()
 
-func import_scope(__scope):
+func import_scope(__scopes):
+	var __scope = __scopes.get_scope(0)
 	for __key in __scope.exported.keys():
 		add_local_variable(__key, __scope.exported[__key])
 
 func get_export():
 	return scopes[scopes.size() - 1].exported
-
-func size():
-	return scopes.size()
 
 func get_scope(__index):
 	return scopes[__index]
@@ -46,8 +44,8 @@ func print_scopes():
 	for __scope in scopes:
 		print('local')
 		for key in __scope.local.keys():
-			print(key + ': ' + str(__scope.local[key]))
+			print('\t' + key + ': ' + str(__scope.local[key]))
 		print('exported')
 		for key in __scope.exported.keys():
-			print(key + ': ' + str(__scope.exported[key]))
+			print('\t' + key + ': ' + str(__scope.exported[key]))
 		print()
