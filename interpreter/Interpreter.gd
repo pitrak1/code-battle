@@ -79,9 +79,7 @@ func __handle_declaration(instruction, scopes):
 	return {'key': instruction.value, 'exported': instruction.exported}
 
 func __handle_function_definition(instruction, scopes):
-	# TODO
-	scopes[scopes.size() - 1][instruction.value] = instruction
-	return {'key': instruction.value}
+	return instruction
 
 func __handle_number(instruction, scopes):
 	return int(float(instruction.value))
