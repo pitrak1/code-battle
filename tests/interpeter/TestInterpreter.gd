@@ -15,7 +15,7 @@ func before_each():
 	lexer = lexerScript.new()
 	parser = parserScript.new()
 	interpreter = interpreterScript.new()
-	
+
 func assert_scopes(scopes, expected_scopes):
 	for i in range(scopes.size()):
 		__assert_scopes_recursive(scopes[i], expected_scopes[i])
@@ -28,7 +28,7 @@ func __assert_scopes_recursive(scope, expected_scope):
 			assert_eq(scope[key], expected_scope[key])
 
 var test_params = [
-	
+
 	# DECLARATION AND ASSIGNMENT
 
 	{
@@ -161,7 +161,7 @@ func test_supports_builtins_and_parenthesis():
 	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
 	assert_signal_emitted_with_parameters(interpreter, 'call_print', [['12345']])
-	
+
 # CONDITIONALS AND LOOPS
 
 func test_supports_if_statements():

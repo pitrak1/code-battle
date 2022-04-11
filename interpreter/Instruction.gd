@@ -15,26 +15,34 @@ func set_operation(__type, __operator, __left, __right):
 	left = __left
 	right = __right
 	return self
-	
+
 func set_value(__type, __value):
 	type = __type
 	value = __value
 	return self
-	
+
 func set_call(__type, __function, __args):
 	type = __type
 	function = __function
 	args = __args
 	return self
-	
+
 func set_if(__type, __expression):
 	type = __type
 	expression = __expression
 	instructions = []
 	return self
-	
+
 func set_index(__type, __value, __index):
 	type = __type
 	value = __value
 	index = __index
 	return self
+
+func set_function(__type, __value, __args):
+	type = __type
+	value = __value
+	args = __args
+	instructions = []
+	return self
+

@@ -15,7 +15,7 @@ func run(__instructions):
 	while len(self.instructions):
 		var instruction = instructions.pop_front()
 		__interpret_instruction(instruction, scopes)
-		
+
 	return scopes
 
 func __interpret_instruction(instruction, scopes, left_side = false):
@@ -48,6 +48,12 @@ func __interpret_instruction(instruction, scopes, left_side = false):
 			return __handle_object(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.IMPORT:
 			return __handle_import(instruction, scopes)
+		Consts.INSTRUCTION_TYPES.FUNCTION:
+			return __handle_function_definition(instruction, scopes)
+		Consts.INSTRUCTION_TYPES.CALL:
+			return __handle_function_call(instruction, scopes)
+		Consts.INSTRUCTION_TYPES.RETURN:
+			return __handle_return(instruction, scopes)
 
 func __find_variable(key, scopes):
 	var i = scopes.size() - 1
@@ -56,6 +62,24 @@ func __find_variable(key, scopes):
 			return scopes[i][key]
 		i -= 1
 
+func __handle_function_call(instruction, scopes):
+	var function_def = __find_variable(instruction.function, scopes)
+	assert(function_def)
+
+	scopes.push_back({})
+	assert(len(function_def.args) == len(instruction.args))
+	var arg_index = 0
+	while arg_index < len(function_def.args):
+		scopes[scopes.size() - 1][function_def.args[arg_index].value] = __interpret_instruction(instruction.args[arg_index], scopes)
+		arg_index += 1
+
+	for inst in function_def.instructions:
+		__interpret_instruction(inst, scopes)
+
+	var return_value = scopes[scopes.size() - 1]['return']
+	scopes.pop_back()
+	return return_value
+
 func __handle_assignment(instruction, scopes):
 	var value = __interpret_instruction(instruction.right, scopes)
 	var scope_info = __interpret_instruction(instruction.left, scopes, true)
@@ -63,6 +87,10 @@ func __handle_assignment(instruction, scopes):
 
 func __handle_declaration(instruction, scopes):
 	scopes[scopes.size() - 1][instruction.value] = null
+	return {'index': scopes.size() - 1, 'key': instruction.value}
+
+func __handle_function_definition(instruction, scopes):
+	scopes[scopes.size() - 1][instruction.value] = instruction
 	return {'index': scopes.size() - 1, 'key': instruction.value}
 
 func __handle_number(instruction, scopes):
@@ -147,3 +175,6 @@ func __handle_import(instruction, scopes):
 	__instructions.append_array(self.instructions)
 
 	self.instructions = __instructions
+
+func __handle_return(instruction, scopes):
+	scopes[scopes.size() - 1]['return'] = __interpret_instruction(instruction.value, scopes)

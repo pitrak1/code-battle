@@ -6,7 +6,7 @@ const TILE_SPRITE_OFFSETS = [
 	-30,
 	0,
 	-10,
-	0, 
+	0,
 	0,
 	0,
 ]
@@ -56,7 +56,7 @@ const QUOTES = ['\'', '"']
 const WHITESPACE = ['\t', '\n', ' ']
 const DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 const LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-const KEYWORDS = ['var', 'print', 'highlight', 'if', 'while', 'import']
+const KEYWORDS = ['var', 'print', 'highlight', 'if', 'while', 'function', 'return', 'import']
 const SEPARATORS = ['(', ')', '{', '}', ',', '[', ']', ':']
 const OPERATORS = ['==', '<', '>', '+', '*']
 
@@ -67,8 +67,8 @@ enum TOKEN_TYPES {
 	KEYWORD,
 	IDENTIFIER,
 	ASSIGNMENT,
-	SEPARATOR, 
-	OPERATOR, 
+	SEPARATOR,
+	OPERATOR,
 	SEMICOLON,
 	WHITESPACE,
 	COMMENT,
@@ -104,7 +104,10 @@ enum INSTRUCTION_TYPES {
 	ARRAY,
 	INDEX,
 	OBJECT,
-	IMPORT
+	IMPORT,
+	FUNCTION,
+	CALL,
+	RETURN
 }
 
 const INSTRUCTION_TYPE_STRINGS = [
@@ -114,12 +117,15 @@ const INSTRUCTION_TYPE_STRINGS = [
 	'OPERATION',
 	'VARIABLE',
 	'NUMBER',
-	'STRING', 
+	'STRING',
 	'BOOLEAN',
 	'IF',
 	'WHILE',
 	'ARRAY',
 	'INDEX',
 	'OBJECT',
-	'IMPORT'
+	'IMPORT',
+	'FUNCTION',
+	'CALL',
+	'RETURN'
 ]
