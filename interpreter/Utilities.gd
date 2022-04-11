@@ -80,6 +80,10 @@ static func __print_ast_recursive(instruction, depth):
 
 static func print_interpreter_results(scopes):
 	for scope in scopes:
-		for key in scope.keys():
-			print(key + ': ' + str(scope[key]))
+		print('local')
+		for key in scope['local'].keys():
+			print(key + ': ' + str(scope['local'][key]))
+		print('export')
+		for key in scope['export'].keys():
+			print(key + ': ' + str(scope['export'][key]))
 		print()

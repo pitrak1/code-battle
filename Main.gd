@@ -21,7 +21,7 @@ func _ready():
 	$UI.setup(self)
 
 	var file = File.new()
-	file.open("/Users/nickpitrak/Desktop/test.btl", File.READ)
+	file.open("C://Users/pitra/Desktop/test.btl", File.READ)
 	var contents = file.get_as_text()
 	file.close()
 

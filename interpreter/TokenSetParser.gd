@@ -70,6 +70,8 @@ func __handle_keyword(token_set):
 		return __handle_function(token_set)
 	elif token_set[0].value == 'return':
 		return __handle_return(token_set)
+	elif token_set[0].value == 'import':
+		return __handle_import(token_set)
 
 func __handle_var(token_set):
 	assert(token_set.size() == 2)
@@ -245,3 +247,8 @@ func __handle_function(token_set):
 func __handle_return(token_set):
 	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.RETURN, run(token_set.slice(1, len(token_set) - 1)))
 
+func __handle_import(token_set):
+	var stringValue = token_set[1].value
+	stringValue.erase(0, 1)
+	stringValue.erase(stringValue.length() - 1, 1)
+	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.IMPORT, stringValue)

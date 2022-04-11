@@ -534,6 +534,22 @@ var test_params = [
 			}
 		}]
 	},
+	{
+		'input': 'export var x = 5;',
+		'expected': [{
+			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+			'operator': '=',
+			'left': {
+				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+				'value': 'x',
+				'exported': true
+			},
+			'right': {
+				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+				'value': 5
+			}
+		}]
+	},
 
 	# FUNCTIONS AND SEPARATORS
 
@@ -661,11 +677,3 @@ func test_parser(params=use_parameters(test_params)):
 	var instructions = parser.run(tokens_results['tokens'])
 	assert_instructions(instructions, params['expected'])
 
-func test_parser_mine():
-	var tokens_results = lexer.run('import "test2.btl";')
-	var instructions = parser.run(tokens_results['tokens'])
-	var expected = [{
-		'type': Consts.INSTRUCTION_TYPES.IMPORT, 
-		'value': 'test2.btl',
-	}]
-	assert_instructions(instructions, expected)
