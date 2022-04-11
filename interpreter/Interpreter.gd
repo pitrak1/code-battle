@@ -3,11 +3,10 @@ signal call_highlight
 
 var lexer = preload("res://interpreter/Lexer.gd")
 var parser = preload("res://interpreter/Parser.gd")
+var ScopeStack = preload("res://interpreter/ScopeStack.gd")
 
 func run(__instructions):
-	var scopes = []
-	scopes.push_back({'local': {}, 'export': {}})
-
+	var scopes = ScopeStack.new()
 
 	while len(__instructions):
 		var instruction = __instructions.pop_front()
@@ -52,59 +51,46 @@ func __interpret_instruction(instruction, scopes, left_side = false):
 		Consts.INSTRUCTION_TYPES.RETURN:
 			return __handle_return(instruction, scopes)
 
-func __find_variable(key, scopes):
-	var i = scopes.size() - 1
-	while i >= 0:
-		if scopes[i]['local'].has(key):
-			return scopes[i]['local'][key]
-		elif scopes[i]['export'].has(key):
-			return scopes[i]['export'][key]
-		else:
-			i -= 1
-
 func __handle_function_call(instruction, scopes):
-	var function_def = __find_variable(instruction.function, scopes)
+	var function_def = scopes.find_variable(instruction.function)
 	assert(function_def)
 
-	scopes.push_back({'local': {}, 'export': {}})
+	scopes.create_new_scope()
 	assert(len(function_def.args) == len(instruction.args))
 	var arg_index = 0
 	while arg_index < len(function_def.args):
-		scopes[scopes.size() - 1]['local'][function_def.args[arg_index].value] = __interpret_instruction(instruction.args[arg_index], scopes)
+		scopes.add_local_variable(function_def.args[arg_index].value, __interpret_instruction(instruction.args[arg_index], scopes))
 		arg_index += 1
 
 	for inst in function_def.instructions:
 		__interpret_instruction(inst, scopes)
 
-	var return_value = scopes[scopes.size() - 1]['local']['return']
-	scopes.pop_back()
+	var return_value = scopes.find_variable('return')
+	scopes.destroy_scope()
 	return return_value
 
 func __handle_assignment(instruction, scopes):
 	var value = __interpret_instruction(instruction.right, scopes)
 	var scope_info = __interpret_instruction(instruction.left, scopes, true)
-	scopes[scope_info.index][scope_info['export']][scope_info.key] = value
+	scopes.add_variable(scope_info['exported'], scope_info.key, value)
 
 func __handle_declaration(instruction, scopes):
-	var exported_value = 'local'
-	if instruction.exported:
-		exported_value = 'export'
-
-	scopes[scopes.size() - 1][exported_value][instruction.value] = null
-	return {'index': scopes.size() - 1, 'key': instruction.value, 'export': exported_value}
+	scopes.add_variable(instruction.exported, instruction.value, null)
+	return {'key': instruction.value, 'exported': instruction.exported}
 
 func __handle_function_definition(instruction, scopes):
+	# TODO
 	scopes[scopes.size() - 1][instruction.value] = instruction
-	return {'index': scopes.size() - 1, 'key': instruction.value}
+	return {'key': instruction.value}
 
 func __handle_number(instruction, scopes):
 	return int(float(instruction.value))
 
 func __handle_variable(instruction, scopes, left_side):
 	if left_side:
-		return {'index': scopes.size() - 1, 'key': instruction.value}
+		return {'key': instruction.value, 'exported': false}
 	else:
-		return __find_variable(instruction.value, scopes)
+		return scopes.find_variable(instruction.value)
 
 func __handle_operation(instruction, scopes):
 	var operand_2 = __interpret_instruction(instruction.right, scopes)
@@ -130,19 +116,19 @@ func __handle_builtin(instruction, scopes):
 func __handle_if(instruction, scopes):
 	var expression = __interpret_instruction(instruction.expression, scopes)
 	if (expression):
-		scopes.push_back({})
+		scopes.create_new_scope()
 		for inst in instruction.instructions:
 			__interpret_instruction(inst, scopes)
-		scopes.pop_back()
+		scopes.destroy_scope()
 
 func __handle_while(instruction, scopes):
 	var expression = __interpret_instruction(instruction.expression, scopes)
-	scopes.push_back({'local': {}, 'export': {}})
+	scopes.create_new_scope()
 	while (expression):
 		for inst in instruction.instructions:
 			__interpret_instruction(inst, scopes)
 		expression = __interpret_instruction(instruction.expression, scopes)
-	scopes.pop_back()
+	scopes.destroy_scope()
 
 func __handle_array(instruction, scopes):
 	var results = []
@@ -151,7 +137,7 @@ func __handle_array(instruction, scopes):
 	return results
 
 func __handle_index(instruction, scopes):
-	var variable = __find_variable(instruction.value, scopes)
+	var variable = scopes.find_variable(instruction.value)
 	var index = __interpret_instruction(instruction.index, scopes)
 	return variable[index]
 
@@ -179,8 +165,7 @@ func __handle_import(instruction, scopes):
 
 	var __scopes = self.run(__instructions)
 
-	for key in __scopes[0]['export'].keys():
-		scopes[scopes.size() - 1]['local'][key] = __scopes[0]['export'][key]
+	scopes.import_scope(__scopes.get_scope(0))
 
 func __handle_return(instruction, scopes):
-	scopes[scopes.size() - 1]['local']['return'] = __interpret_instruction(instruction.value, scopes)
+	scopes.add_local_variable('return', __interpret_instruction(instruction.value, scopes))
