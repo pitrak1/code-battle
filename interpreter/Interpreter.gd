@@ -50,6 +50,8 @@ func __interpret_instruction(instruction, scopes, left_side = false):
 			return __handle_function_call(instruction, scopes)
 		Consts.INSTRUCTION_TYPES.RETURN:
 			return __handle_return(instruction, scopes)
+		Consts.INSTRUCTION_TYPES.CLASS:
+			return __handle_class(instruction, scopes)
 
 func __handle_function_call(instruction, scopes):
 	var function_def = scopes.find_variable(instruction.function)
@@ -167,3 +169,11 @@ func __handle_import(instruction, scopes):
 
 func __handle_return(instruction, scopes):
 	scopes.add_local_variable('return', __interpret_instruction(instruction.value, scopes))
+
+func __handle_class(instruction, scopes):
+	scopes.create_new_scope()
+	for inst in instruction.instructions:
+		__interpret_instruction(inst, scopes)
+	var class_scope = scopes.get_current_scope()
+	scopes.destroy_scope()
+	return class_scope

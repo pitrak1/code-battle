@@ -39,13 +39,10 @@ func get_export():
 
 func get_scope(__index):
 	return scopes[__index]
+
+func get_current_scope():
+	return scopes[scopes.size() - 1]
 	
 func print_scopes():
 	for __scope in scopes:
-		print('local')
-		for key in __scope.local.keys():
-			print('\t' + key + ': ' + str(__scope.local[key]))
-		print('exported')
-		for key in __scope.exported.keys():
-			print('\t' + key + ': ' + str(__scope.exported[key]))
-		print()
+		__scope.print_scope()

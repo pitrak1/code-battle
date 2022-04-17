@@ -72,6 +72,8 @@ func __handle_keyword(token_set):
 		return __handle_return(token_set)
 	elif token_set[0].value == 'import':
 		return __handle_import(token_set)
+	elif token_set[0].value == 'class':
+		return __handle_class(token_set)
 
 func __handle_var(token_set):
 	assert(token_set.size() == 2)
@@ -251,3 +253,6 @@ func __handle_import(token_set):
 	stringValue.erase(0, 1)
 	stringValue.erase(stringValue.length() - 1, 1)
 	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.IMPORT, stringValue)
+
+func __handle_class(token_set):
+	return Instruction.new().set_class(Consts.INSTRUCTION_TYPES.CLASS)

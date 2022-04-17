@@ -47,3 +47,7 @@ func set_function(__type, __args):
 	instructions = []
 	return self
 
+func set_class(__type):
+	type = __type
+	instructions = []
+	return self
