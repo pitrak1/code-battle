@@ -59,6 +59,7 @@ const LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm'
 const KEYWORDS = ['var', 'print', 'highlight', 'if', 'while', 'function', 'return', 'import', 'export', 'class']
 const SEPARATORS = ['(', ')', '{', '}', ',', '[', ']', ':']
 const OPERATORS = ['==', '<', '>', '+', '*']
+const BOOLEANS = ['true', 'false']
 
 enum TOKEN_TYPES {
 	NUMBER,

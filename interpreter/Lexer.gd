@@ -66,7 +66,7 @@ func __get_next_two_characters(input_string, index):
 	return characters
 
 func __handle_number(input_string, index):
-	var number = Utilities.get_characters_in_collection(input_string, index, Consts.DIGITS)
+	var number = Utilities.get_characters_in_collection(input_string, index, [Consts.DIGITS, ['.']])
 	return {'type': Consts.TOKEN_TYPES.NUMBER, 'value': number}
 
 func __handle_string(input_string, index):
@@ -82,7 +82,7 @@ func __handle_word(input_string, index):
 
 	if identifier in Consts.KEYWORDS:
 		return {'type': Consts.TOKEN_TYPES.KEYWORD, 'value': identifier}
-	elif identifier == 'true' or identifier == 'false':
+	elif identifier in Consts.BOOLEANS:
 		return {'type': Consts.TOKEN_TYPES.BOOLEAN, 'value': identifier}
 	else:
 		return {'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': identifier}

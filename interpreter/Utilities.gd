@@ -11,16 +11,21 @@ static func __get_characters_in_collection(input_string, index, collection, inve
 
 	var current_character = input_string[index]
 	if invert:
-		while index < input_string.length() - 1 and not current_character in result_collection:
-			result_string += current_character
-			index += 1
+		while index < input_string.length() and not current_character in result_collection:
 			current_character = input_string[index]
+			if not current_character in result_collection:
+				result_string += current_character
+				index += 1
+			else:
+				break
 	else:
-		while index < input_string.length() - 1 and current_character in result_collection:
-			result_string += current_character
-			index += 1
+		while index < input_string.length():
 			current_character = input_string[index]
-
+			if current_character in result_collection:
+				result_string += current_character
+				index += 1
+			else:
+				break
 	return result_string
 
 static func __join_collections(collection):
