@@ -44,7 +44,7 @@ func __read_token_set_into_scope():
 
 func __handle_block():
 	var instruction = __read_token_set_into_scope()
-	scopes.push_back(instruction.right.instructions)
+	scopes.push_back(instruction.instructions)
 	scope_index += 1
 
 func __handle_end_block():

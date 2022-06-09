@@ -6,615 +6,597 @@ var lexer
 const parserScript = preload("res://interpreter/Parser.gd")
 var parser
 
-const keys = ['type', 'operator', 'left', 'right', 'value', 'function', 'args']
+var Utilities = preload("res://interpreter/Utilities.gd")
+
+const keys = ['operator', 'left', 'right', 'value', 'function', 'args']
 
 func before_each():
 	lexer = lexerScript.new()
 	parser = parserScript.new()
 
-func assert_instructions(instructions, expected_instructions):
-	assert_eq(instructions.size(), expected_instructions.size(), 'Instructions is length ' + str(instructions.size()) + ', expected ' + str(expected_instructions.size()))
+func assert_instructions(instructions, expected_instructions, identifier):
+	assert_eq(instructions.size(), expected_instructions.size(), identifier + ': Instructions is length ' + str(instructions.size()) + ', expected ' + str(expected_instructions.size()))
 	for i in range(instructions.size()):
-		__assert_instruction(instructions[i], expected_instructions[i])
+		__assert_instruction(instructions[i], expected_instructions[i], identifier)
 
-func __assert_instruction(instruction, expected_instruction):
+func __assert_instruction(instruction, expected_instruction, identifier):
 	assert_true('type' in expected_instruction.keys())
-	assert_eq(instruction['type'], expected_instruction['type'])
+	assert_eq(instruction['type'], expected_instruction['type'], identifier + ': key type does not match, expected: ' + Consts.INSTRUCTION_TYPE_STRINGS[expected_instruction['type']] + ', actual: ' + Consts.INSTRUCTION_TYPE_STRINGS[instruction['type']])
 
 	for key in keys:
 		if instruction.get(key):
-			assert_true(key in expected_instruction.keys())
+			assert_true(key in expected_instruction.keys(), identifier + ': unexpected key ' + key)
 			if key == 'args':
 				for i in range(instruction['args'].size()):
-					__assert_instruction(instruction['args'][i], expected_instruction['args'][i])
+					__assert_instruction(instruction['args'][i], expected_instruction['args'][i], identifier)
 			elif key == 'left' or key == 'right':
-				__assert_instruction(instruction[key], expected_instruction[key])
+				__assert_instruction(instruction[key], expected_instruction[key], identifier)
 			elif key == 'expression':
-				__assert_instruction(instruction['expression'], expected_instruction['expression'])
+				__assert_instruction(instruction['expression'], expected_instruction['expression'], identifier)
 			elif key == 'instructions':
 				for i in range(instruction['instructions'].size()):
-					__assert_instruction(instruction['instructions'][i], expected_instruction['instructions'][i])
+					__assert_instruction(instruction['instructions'][i], expected_instruction['instructions'][i], identifier)
 			elif key == 'value':
 				if typeof(instruction['value']) == TYPE_ARRAY:
-					assert_eq(instruction['value'].size(), expected_instruction['value'].size())
+					assert_eq(instruction['value'].size(), expected_instruction['value'].size(), identifier + ': array sizes do not match, expected: ' + str(expected_instruction['value'].size()) + ', actual: ' + str(instruction['value'].size()))
 					if instruction['type'] == Consts.INSTRUCTION_TYPES.ARRAY:
 						for i in range(instruction['value'].size()):
-							__assert_instruction(instruction['value'][i], expected_instruction['value'][i])
+							__assert_instruction(instruction['value'][i], expected_instruction['value'][i], identifier)
 					elif instruction['type'] == Consts.INSTRUCTION_TYPES.OBJECT:
 						for i in range(instruction['value'].size()):
-							__assert_instruction(instruction['value'][i]['key'], expected_instruction['value'][i]['key'])
-							__assert_instruction(instruction['value'][i]['value'], expected_instruction['value'][i]['value'])
+							__assert_instruction(instruction['value'][i]['key'], expected_instruction['value'][i]['key'], identifier)
+							__assert_instruction(instruction['value'][i]['value'], expected_instruction['value'][i]['value'], identifier)
 				else:
-					assert_eq(instruction[key], expected_instruction[key])
+					assert_eq(instruction[key], expected_instruction[key], identifier + ': values do not match, expected: ' + str(expected_instruction[key]) + ', actual: ' + str(instruction[key]))
 
 
 var test_params = [
-
-	# DECLARATION AND ASSIGNMENT
-
+	# {
+	# 	'identifier': 'declaration',
+	# 	'input': "var x;",
+	# 	'expected': [
+	# 		{'type': Consts.INSTRUCTION_TYPES.DECLARATION, 'value': 'x'},
+	# 	]
+	# },
+	# {
+	# 	'identifier': 'number assignment',
+	# 	'input': "x = 5;",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+	# 		'operator': '=',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 			'value': 5
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'single quote string assignment',
+	# 	'input': "x = 'test1';",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+	# 		'operator': '=',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.STRING,
+	# 			'value': "test1"
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'double quote string assignment',
+	# 	'input': "x = \"test1\";",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+	# 		'operator': '=',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.STRING,
+	# 			'value': "test1"
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'boolean assignment',
+	# 	'input': "x = true;",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+	# 		'operator': '=',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.BOOLEAN,
+	# 			'value': true
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'variable assignment',
+	# 	'input': "x = y;",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+	# 		'operator': '=',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 			'value': "y"
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'expression assignment',
+	# 	'input': "x = y + 5;",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+	# 		'operator': '=',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.OPERATION,
+	# 			'operator': "+",
+	# 			'left': {
+	# 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 				'value': 'y'
+	# 			},
+	# 			'right': {
+	# 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 				'value': 5
+	# 			}
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'declaration with assignment',
+	# 	'input': "var x = 5;",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+	# 		'operator': '=',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 			'value': 5
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'array declaration with assignment',
+	# 	'input':"var x = [1, 2, 3];",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+	# 		'operator': '=',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.ARRAY,
+	# 			'value': [
+	# 				{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 1},
+	# 				{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 2},
+	# 				{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 3}
+	# 			]
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'array declaration with assignment and expressions',
+	# 	'input':"var x = [1 + 2, 2 * 3, 3];",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+	# 		'operator': '=',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.ARRAY,
+	# 			'value': [
+	# 				{
+	# 					'type': Consts.INSTRUCTION_TYPES.OPERATION,
+	# 					'operator': '+',
+	# 					'left': {
+	# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 						'value': 1
+	# 					},
+	# 					'right': {
+	# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 						'value': 2
+	# 					}
+	# 				},
+	# 				{
+	# 					'type': Consts.INSTRUCTION_TYPES.OPERATION,
+	# 					'operator': '*',
+	# 					'left': {
+	# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 						'value': 2
+	# 					},
+	# 					'right': {
+	# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 						'value': 3
+	# 					}
+	# 				},
+	# 				{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 3}
+	# 			]
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'object declaration with assignment with string keys',
+	# 	'input': 'var x = {"x": 1234, "y": 2345};',
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+	# 		'operator': '=',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.OBJECT,
+	# 			'value': [
+	# 				{
+	# 					'key': {
+	# 						'type': Consts.INSTRUCTION_TYPES.STRING,
+	# 						'value': 'x'
+	# 					},
+	# 					'value': {
+	# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 						'value': 1234
+	# 					}
+	# 				},
+	# 				{
+	# 					'key': {
+	# 						'type': Consts.INSTRUCTION_TYPES.STRING,
+	# 						'value': 'y'
+	# 					},
+	# 					'value': {
+	# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 						'value': 2345
+	# 					}
+	# 				},
+	# 			]
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'object declaration with assignment with number keys',
+	# 	'input': 'var x = {555: 1234, 666: 2345};',
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+	# 		'operator': '=',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.OBJECT,
+	# 			'value': [
+	# 				{
+	# 					'key': {
+	# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 						'value': 555
+	# 					},
+	# 					'value': {
+	# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 						'value': 1234
+	# 					}
+	# 				},
+	# 				{
+	# 					'key': {
+	# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 						'value': 666
+	# 					},
+	# 					'value': {
+	# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 						'value': 2345
+	# 					}
+	# 				},
+	# 			]
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'object declaration with assignment with variable keys',
+	# 	'input': 'var x = {x: 1234, y: 2345};',
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+	# 		'operator': '=',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.OBJECT,
+	# 			'value': [
+	# 				{
+	# 					'key': {
+	# 						'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 						'value': 'x'
+	# 					},
+	# 					'value': {
+	# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 						'value': 1234
+	# 					}
+	# 				},
+	# 				{
+	# 					'key': {
+	# 						'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 						'value': 'y'
+	# 					},
+	# 					'value': {
+	# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 						'value': 2345
+	# 					}
+	# 				},
+	# 			]
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'object declaration with assignment with expression values',
+	# 	'input': 'var x = {x: 1234 + 1, y: 2345 * 2};',
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+	# 		'operator': '=',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.OBJECT,
+	# 			'value': [
+	# 				{
+	# 					'key': {
+	# 						'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 						'value': 'x'
+	# 					},
+	# 					'value': {
+	# 						'type': Consts.INSTRUCTION_TYPES.OPERATION,
+	# 						'operator': '+',
+	# 						'left': {
+	# 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 							'value': 1234
+	# 						},
+	# 						'right': {
+	# 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 							'value': 1
+	# 						}
+	# 					}
+	# 				},
+	# 				{
+	# 					'key': {
+	# 						'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 						'value': 'y'
+	# 					},
+	# 					'value': {
+	# 						'type': Consts.INSTRUCTION_TYPES.OPERATION,
+	# 						'operator': '*',
+	# 						'left': {
+	# 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 							'value': 2345
+	# 						},
+	# 						'right': {
+	# 							'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 							'value': 2
+	# 						}
+	# 					}
+	# 				},
+	# 			]
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'addition',
+	# 	'input': "x + 6;",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.OPERATION,
+	# 		'operator': '+',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 			'value': 6
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'multiplication',
+	# 	'input': "x * 6;",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.OPERATION,
+	# 		'operator': '*',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 			'value': 6
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'equality',
+	# 	'input': "x == 6;",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.OPERATION,
+	# 		'operator': '==',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 			'value': 6
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'less than',
+	# 	'input': "x < 6;",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.OPERATION,
+	# 		'operator': '<',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 			'value': 6
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'greater than',
+	# 	'input': "x > 6;",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.OPERATION,
+	# 		'operator': '>',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 			'value': 'x'
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 			'value': 6
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'equality with expressions',
+	# 	'input': "x + 5 == 6 * 3;",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.OPERATION,
+	# 		'operator': '==',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.OPERATION,
+	# 			'operator': '+',
+	# 			'left': {
+	# 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 				'value': 'x'
+	# 			},
+	# 			'right': {
+	# 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 				'value': 5
+	# 			}
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.OPERATION,
+	# 			'operator': '*',
+	# 			'left': {
+	# 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 				'value': 6
+	# 			},
+	# 			'right': {
+	# 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 				'value': 3
+	# 			}
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'export with declaration and assignment',
+	# 	'input': 'export var x = 5;',
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
+	# 		'operator': '=',
+	# 		'left': {
+	# 			'type': Consts.INSTRUCTION_TYPES.DECLARATION,
+	# 			'value': 'x',
+	# 			'exported': true
+	# 		},
+	# 		'right': {
+	# 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 			'value': 5
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'built in with single argument',
+	# 	'input': "print('12345');",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.BUILTIN,
+	# 		'function': 'print',
+	# 		'args': [{
+	# 			'type': Consts.INSTRUCTION_TYPES.STRING,
+	# 			'value': "12345"
+	# 		}]
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'built in with multiple arguments',
+	# 	'input': "highlight(5, 6);",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.BUILTIN,
+	# 		'function': 'highlight',
+	# 		'args': [{
+	# 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 			'value': 5
+	# 		},{
+	# 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 			'value': 6
+	# 		}]
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'array index',
+	# 	'input': "x[5];",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.INDEX,
+	# 		'value': 'x',
+	# 		'index': {
+	# 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 			'value': 5
+	# 		}
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'array index with expression',
+	# 	'input': "x[5 + 6];",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.INDEX,
+	# 		'value': 'x',
+	# 		'index': {
+	# 			'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 			'value': {
+	# 				'type': Consts.INSTRUCTION_TYPES.OPERATION,
+	# 					'operator': '+',
+	# 					'left': {
+	# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 						'value': 1
+	# 					},
+	# 					'right': {
+	# 						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+	# 						'value': 2
+	# 					}
+	# 			}
+	# 		}
+	# 	}]
+	# },
 	{
-		'input': "var x;",
-		'expected': [
-			{'type': Consts.INSTRUCTION_TYPES.DECLARATION, 'value': 'x'},
-		]
-	},
-	{
-		'input': "x = 5;",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': 5
-			}
-		}]
-	},
-	{
-		'input': "x = 'test1';",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.STRING,
-				'value': "test1"
-			}
-		}]
-	},
-	{
-		'input': "x = \"test1\";",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.STRING,
-				'value': "test1"
-			}
-		}]
-	},
-	{
-		'input': "x = true;",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.BOOLEAN,
-				'value': true
-			}
-		}]
-	},
-	{
-		'input': "x = y;",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-				'value': "y"
-			}
-		}]
-	},
-	{
-		'input': "x = y + 5;",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.OPERATION,
-				'operator': "+",
-				'left': {
-					'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-					'value': 'y'
-				},
-				'right': {
-					'type': Consts.INSTRUCTION_TYPES.NUMBER,
-					'value': 5
-				}
-			}
-		}]
-	},
-	{
-		'input': "var x = 5;",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': 5
-			}
-		}]
-	},
-	{
-		'input':"var x = [1, 2, 3];",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.ARRAY,
-				'value': [
-					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 1},
-					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 2},
-					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 3}
-				]
-			}
-		}]
-	},
-	{
-		'input':"var x = [1 + 2, 2 * 3, 3];",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.ARRAY,
-				'value': [
-					{
-						'type': Consts.INSTRUCTION_TYPES.OPERATION,
-						'operator': '+',
-						'left': {
-							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 1
-						},
-						'right': {
-							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 2
-						}
-					},
-					{
-						'type': Consts.INSTRUCTION_TYPES.OPERATION,
-						'operator': '*',
-						'left': {
-							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 2
-						},
-						'right': {
-							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 3
-						}
-					},
-					{'type': Consts.INSTRUCTION_TYPES.NUMBER, 'value': 3}
-				]
-			}
-		}]
-	},
-	{
-		'input': 'var x = {"x": 1234, "y": 2345};',
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.OBJECT,
-				'value': [
-					{
-						'key': {
-							'type': Consts.INSTRUCTION_TYPES.STRING,
-							'value': 'x'
-						},
-						'value': {
-							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 1234
-						}
-					},
-					{
-						'key': {
-							'type': Consts.INSTRUCTION_TYPES.STRING,
-							'value': 'y'
-						},
-						'value': {
-							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 2345
-						}
-					},
-				]
-			}
-		}]
-	},
-	{
-		'input': 'var x = {555: 1234, 666: 2345};',
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.OBJECT,
-				'value': [
-					{
-						'key': {
-							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 555
-						},
-						'value': {
-							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 1234
-						}
-					},
-					{
-						'key': {
-							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 666
-						},
-						'value': {
-							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 2345
-						}
-					},
-				]
-			}
-		}]
-	},
-	{
-		'input': 'var x = {x: 1234, y: 2345};',
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.OBJECT,
-				'value': [
-					{
-						'key': {
-							'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-							'value': 'x'
-						},
-						'value': {
-							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 1234
-						}
-					},
-					{
-						'key': {
-							'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-							'value': 'y'
-						},
-						'value': {
-							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 2345
-						}
-					},
-				]
-			}
-		}]
-	},
-	{
-		'input': 'var x = {x: 1234 + 1, y: 2345 * 2};',
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.OBJECT,
-				'value': [
-					{
-						'key': {
-							'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-							'value': 'x'
-						},
-						'value': {
-							'type': Consts.INSTRUCTION_TYPES.OPERATION,
-							'operator': '+',
-							'left': {
-								'type': Consts.INSTRUCTION_TYPES.NUMBER,
-								'value': 1234
-							},
-							'right': {
-								'type': Consts.INSTRUCTION_TYPES.NUMBER,
-								'value': 1
-							}
-						}
-					},
-					{
-						'key': {
-							'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-							'value': 'y'
-						},
-						'value': {
-							'type': Consts.INSTRUCTION_TYPES.OPERATION,
-							'operator': '*',
-							'left': {
-								'type': Consts.INSTRUCTION_TYPES.NUMBER,
-								'value': 2345
-							},
-							'right': {
-								'type': Consts.INSTRUCTION_TYPES.NUMBER,
-								'value': 2
-							}
-						}
-					},
-				]
-			}
-		}]
-	},
-
-	# OPERATORS
-
-	{
-		'input': "x + 6;",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.OPERATION,
-			'operator': '+',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': 6
-			}
-		}]
-	},
-	{
-		'input': "x * 6;",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.OPERATION,
-			'operator': '*',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': 6
-			}
-		}]
-	},
-	{
-		'input': "x == 6;",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.OPERATION,
-			'operator': '==',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': 6
-			}
-		}]
-	},
-	{
-		'input': "x < 6;",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.OPERATION,
-			'operator': '<',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': 6
-			}
-		}]
-	},
-	{
-		'input': "x > 6;",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.OPERATION,
-			'operator': '>',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': 6
-			}
-		}]
-	},
-	{
-		'input': "x + 5 == 6 * 3;",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.OPERATION,
-			'operator': '==',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.OPERATION,
-				'operator': '+',
-				'left': {
-					'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-					'value': 'x'
-				},
-				'right': {
-					'type': Consts.INSTRUCTION_TYPES.NUMBER,
-					'value': 5
-				}
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.OPERATION,
-				'operator': '*',
-				'left': {
-					'type': Consts.INSTRUCTION_TYPES.NUMBER,
-					'value': 6
-				},
-				'right': {
-					'type': Consts.INSTRUCTION_TYPES.NUMBER,
-					'value': 3
-				}
-			}
-		}]
-	},
-	{
-		'input': 'var x = {"test": 1 + 2};',
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
-				'value': 'x'
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.OBJECT,
-				'value': [
-					{
-						'key': {
-							'type': Consts.INSTRUCTION_TYPES.STRING,
-							'value': 'test'
-						},
-						'value': {
-							'type': Consts.INSTRUCTION_TYPES.OPERATION,
-								'operator': '+',
-								'left': {
-									'type': Consts.INSTRUCTION_TYPES.NUMBER,
-									'value': 1
-								},
-								'right': {
-									'type': Consts.INSTRUCTION_TYPES.NUMBER,
-									'value': 2
-								}
-						}
-					},
-				]
-			}
-		}]
-	},
-	{
-		'input': 'export var x = 5;',
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.ASSIGNMENT,
-			'operator': '=',
-			'left': {
-				'type': Consts.INSTRUCTION_TYPES.DECLARATION,
-				'value': 'x',
-				'exported': true
-			},
-			'right': {
-				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': 5
-			}
-		}]
-	},
-
-	# FUNCTIONS AND SEPARATORS
-
-	{
-		'input': "print('12345');",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.BUILTIN,
-			'function': 'print',
-			'args': [{
-				'type': Consts.INSTRUCTION_TYPES.STRING,
-				'value': "12345"
-			}]
-		}]
-	},
-	{
-		'input': "highlight(5, 6);",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.BUILTIN,
-			'function': 'highlight',
-			'args': [{
-				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': 5
-			},{
-				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': 6
-			}]
-		}]
-	},
-	{
-		'input': "x[5];",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.INDEX,
-			'value': 'x',
-			'index': {
-				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': 5
-			}
-		}]
-	},
-	{
-		'input': "x[5 + 6];",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.INDEX,
-			'value': 'x',
-			'index': {
-				'type': Consts.INSTRUCTION_TYPES.NUMBER,
-				'value': {
-					'type': Consts.INSTRUCTION_TYPES.OPERATION,
-						'operator': '+',
-						'left': {
-							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 1
-						},
-						'right': {
-							'type': Consts.INSTRUCTION_TYPES.NUMBER,
-							'value': 2
-						}
-				}
-			}
-		}]
-	},
-
-	# CONDITIONALS AND LOOPS
-
-	{
+		'identifier': 'if with boolean',
 		'input': "if (true) { print('asdf'); }",
 		'expected': [{
 			'type': Consts.INSTRUCTION_TYPES.IF,
@@ -632,48 +614,49 @@ var test_params = [
 			}]
 		}]
 	},
-
-	# FUNCTIONS
-	{
-		'input': "function test_function (asdf, asdf2) { print('asdf'); }",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.FUNCTION,
-			'value': 'test_function',
-			'args': [
-				{
-					'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-					'value': 'asdf'
-				},
-				{
-					'type': Consts.INSTRUCTION_TYPES.VARIABLE,
-					'value': 'asdf2'
-				}
-			],
-			'instructions': [{
-				'type': Consts.INSTRUCTION_TYPES.BUILTIN,
-				'function': 'print',
-				'args': [{
-					'type': Consts.INSTRUCTION_TYPES.STRING,
-					'value': 'asdf'
-				}]
-			}]
-		}]
-	},
-	{
-		'input': "test_function('asdf');",
-		'expected': [{
-			'type': Consts.INSTRUCTION_TYPES.CALL,
-			'function': 'test_function',
-			'args': [{
-				'type': Consts.INSTRUCTION_TYPES.STRING,
-				'value': 'asdf'
-			}]
-		}]
-	},
+	# {
+	# 	'identifier': 'function definition with arguments',
+	# 	'input': "function test_function (asdf, asdf2) { print('asdf'); }",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.FUNCTION,
+	# 		'value': 'test_function',
+	# 		'args': [
+	# 			{
+	# 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 				'value': 'asdf'
+	# 			},
+	# 			{
+	# 				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+	# 				'value': 'asdf2'
+	# 			}
+	# 		],
+	# 		'instructions': [{
+	# 			'type': Consts.INSTRUCTION_TYPES.BUILTIN,
+	# 			'function': 'print',
+	# 			'args': [{
+	# 				'type': Consts.INSTRUCTION_TYPES.STRING,
+	# 				'value': 'asdf'
+	# 			}]
+	# 		}]
+	# 	}]
+	# },
+	# {
+	# 	'identifier': 'function call with argument',
+	# 	'input': "test_function('asdf');",
+	# 	'expected': [{
+	# 		'type': Consts.INSTRUCTION_TYPES.CALL,
+	# 		'function': 'test_function',
+	# 		'args': [{
+	# 			'type': Consts.INSTRUCTION_TYPES.STRING,
+	# 			'value': 'asdf'
+	# 		}]
+	# 	}]
+	# },
 ]
 
 func test_parser(params=use_parameters(test_params)):
 	var tokens_results = lexer.run(params['input'])
+	Utilities.print_lexer_results(tokens_results)
 	var instructions = parser.run(tokens_results['tokens'])
-	assert_instructions(instructions, params['expected'])
+	assert_instructions(instructions, params['expected'], params['identifier'])
 
