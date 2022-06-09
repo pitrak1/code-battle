@@ -224,7 +224,7 @@ func __handle_boolean(token_set):
 	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.BOOLEAN, value)
 
 func __handle_function(token_set):
-	assert(token_set[1].value == '(')
+	assert(token_set[2].value == '(')
 	assert(token_set[token_set.size() - 1].value == ')')
 
 	var args = []
