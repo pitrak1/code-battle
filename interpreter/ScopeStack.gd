@@ -46,3 +46,6 @@ func get_current_scope():
 func print_scopes():
 	for __scope in scopes:
 		__scope.print_scope()
+
+func size():
+	return scopes.size()

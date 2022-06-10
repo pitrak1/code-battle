@@ -19,6 +19,12 @@ func find_variable(__key):
 	if exported.has(__key):
 		return exported[__key]
 
+func size():
+	return local.keys().size() + exported.keys().size()
+
+func get_variable_names():
+	return local.keys() + exported.keys()
+
 func print_scope():
 	print('local')
 	__print_scope_subset(local)

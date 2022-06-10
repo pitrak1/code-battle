@@ -16,130 +16,147 @@ func before_each():
 	parser = parserScript.new()
 	interpreter = interpreterScript.new()
 
-func assert_scopes(scopes, expected_scopes):
+func assert_scopes(scopes, expected_scopes, identifier):
 	for i in range(scopes.size()):
-		__assert_scopes_recursive(scopes[i], expected_scopes[i])
+		__assert_scopes_recursive(scopes.get_scope(i), expected_scopes[i], identifier)
 
-func __assert_scopes_recursive(scope, expected_scope):
-	for key in scope.keys():
-		if typeof(scope[key]) == TYPE_OBJECT or typeof(scope[key]) == TYPE_DICTIONARY:
-			__assert_scopes_recursive(scope[key], expected_scope[key])
-		else:
-			assert_eq(scope[key], expected_scope[key])
+func __assert_scopes_recursive(scope, expected_scope, identifier):
+	if typeof(scope) == TYPE_OBJECT:
+		for key in scope.get_variable_names():
+			if typeof(scope.find_variable(key)) == TYPE_OBJECT or typeof(scope.find_variable(key)) == TYPE_DICTIONARY:
+				__assert_scopes_recursive(scope.find_variable(key), expected_scope[key], identifier)
+			else:
+				assert_eq(scope.find_variable(key), expected_scope[key], identifier + ': key does not match, expected ' + str(key) + ': ' + str(expected_scope[key]) + ', got ' + str(key) + ': ' + str(scope.find_variable(key)))
+	else:
+		for key in scope.keys():
+			if typeof(scope[key]) == TYPE_OBJECT or typeof(scope[key]) == TYPE_DICTIONARY:
+				__assert_scopes_recursive(scope[key], expected_scope[key], identifier)
+			else:
+				assert_eq(scope[key], expected_scope[key], identifier + ': key does not match, expected ' + str(key) + ': ' + str(expected_scope[key]) + ', got ' + str(key) + ': ' + str(scope[key]))
+
 
 var test_params = [
-
-	# DECLARATION AND ASSIGNMENT
-
 	{
+		'identifier': 'declaration',
 		'input': "var x;",
 		'expected': [
 			{'x': null},
 		]
 	},
 	{
+		'identifier': 'number assignment',
 		'input': "var x = 5;",
 		'expected': [
 			{'x': 5},
 		]
 	},
 	{
+		'identifier': 'single quote string assignment',
 		'input': "var x = 'test1';",
 		'expected': [
 			{'x': "test1"},
 		]
 	},
 	{
+		'identifier': 'double quote string assignment',
 		'input': "var x = \"test1\";",
 		'expected': [
 			{'x': "test1"},
 		]
 	},
 	{
+		'identifier': 'boolean assignment',
 		'input': "var x = true;",
 		'expected': [
 			{'x': true},
 		]
 	},
 	{
+		'identifier': 'variable assignment',
 		'input': "var x = 5; var y = x;",
 		'expected': [
 			{'x': 5, 'y': 5}
 		]
 	},
 	{
+		'identifier': 'expression assignment',
 		'input': "var x = 5; var y = x + 6;",
 		'expected': [
 			{'x': 5, 'y': 11}
 		]
 	},
 	{
+		'identifier': 'array assignment',
 		'input': "var x = [1, 2, 3]; var y = [x, 'asdf', 6];",
 		'expected': [
 			{'x': [1, 2, 3], 'y': [[1, 2, 3], 'asdf', 6]}
 		]
 	},
-
-	# OPERATORS
-
 	{
+		'identifier': 'addition',
 		'input': "var x = 5 + 6;",
 		'expected': [
 			{'x': 11}
 		]
 	},
 	{
+		'identifier': 'multiplication',
 		'input':"var x = 5 * 6;",
 		'expected': [
 			{'x': 30}
 		]
 	},
 	{
+		'identifier': 'equality',
 		'input':"var x = 4 == 6;",
 		'expected': [
 			{'x': false}
 		]
 	},
 	{
+		'identifier': 'less than',
 		'input': "var x = 4 < 6;",
 		'expected': [
 			{'x': true}
 		]
 	},
 	{
+		'identifier': 'greater than',
 		'input': "var x = 4 > 6;",
 		'expected': [
 			{'x': false}
 		]
 	},
 	{
+		'identifier': 'equality with expressions',
 		'input': "var x = 7 + 5 == 6 * 2;",
 		'expected': [
 			{'x': true}
 		]
 	},
-
-	# FUNCTIONS AND SEPARATORS
-
 	{
+		'identifier': 'indexing arrays',
 		'input': "var x = [1, 2, 3]; var y = x[2];",
 		'expected': [
 			{'x': [1, 2, 3], 'y': 3}
 		]
 	},
 	{
+		'identifier': 'indexing string keyed object',
 		'input': "var x = {'x': 1234, 'y': 2345}; var y = x['y'];",
 		'expected': [
 			{'x': {'x': 1234, 'y': 2345}, 'y': 2345}
 		]
 	},
 	{
+		'identifier': 'indexing number keyed object',
 		'input': "var x = {3: 1234, 5: 2345}; var y = x[3];",
 		'expected': [
 			{'x': {3: 1234, 5: 2345}, 'y': 1234}
 		]
 	},
 	{
+		'identifier': 'indexing object using variable',
 		'input': "var x = {'i': 1234, 'j': 2345}; var y = 'j'; var z = x[y];",
 		'expected': [
 			{'x': {'i': 1234, 'j': 2345}, 'y': 'j', 'z': 2345}
@@ -151,7 +168,7 @@ func test_interpreter(params=use_parameters(test_params)):
 	var lexer_results = lexer.run(params['input'])
 	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
-	assert_scopes(scopes, params['expected'])
+	assert_scopes(scopes, params['expected'], params['identifier'])
 
 # FUNCTIONS AND SEPARATORS
 
