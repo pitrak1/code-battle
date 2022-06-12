@@ -1,5 +1,8 @@
 extends "res://addons/gut/test.gd"
 
+const helpersScript = preload("res://Helpers.gd")
+var helpers
+
 const lexerScript = preload("res://interpreter/Lexer.gd")
 var lexer
 
@@ -9,31 +12,16 @@ var parser
 const interpreterScript = preload("res://interpreter/Interpreter.gd")
 var interpreter
 
-const Utilities = preload("res://interpreter/Utilities.gd")
-
 func before_each():
 	lexer = lexerScript.new()
 	parser = parserScript.new()
 	interpreter = interpreterScript.new()
 
-func assert_scopes(scopes, expected_scopes, identifier):
-	for i in range(scopes.size()):
-		__assert_scopes_recursive(scopes.get_scope(i), expected_scopes[i], identifier)
+func before_all():
+	helpers = helpersScript.new()
 
-func __assert_scopes_recursive(scope, expected_scope, identifier):
-	if typeof(scope) == TYPE_OBJECT:
-		for key in scope.get_variable_names():
-			if typeof(scope.find_variable(key)) == TYPE_OBJECT or typeof(scope.find_variable(key)) == TYPE_DICTIONARY:
-				__assert_scopes_recursive(scope.find_variable(key), expected_scope[key], identifier)
-			else:
-				assert_eq(scope.find_variable(key), expected_scope[key], identifier + ': key does not match, expected ' + str(key) + ': ' + str(expected_scope[key]) + ', got ' + str(key) + ': ' + str(scope.find_variable(key)))
-	else:
-		for key in scope.keys():
-			if typeof(scope[key]) == TYPE_OBJECT or typeof(scope[key]) == TYPE_DICTIONARY:
-				__assert_scopes_recursive(scope[key], expected_scope[key], identifier)
-			else:
-				assert_eq(scope[key], expected_scope[key], identifier + ': key does not match, expected ' + str(key) + ': ' + str(expected_scope[key]) + ', got ' + str(key) + ': ' + str(scope[key]))
-
+func after_all():
+	helpers.free()
 
 var test_params = [
 	{
@@ -168,7 +156,7 @@ func test_interpreter(params=use_parameters(test_params)):
 	var lexer_results = lexer.run(params['input'])
 	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
-	assert_scopes(scopes, params['expected'], params['identifier'])
+	helpers.assert_scopes(scopes, params['expected'], params['identifier'])
 
 # FUNCTIONS AND SEPARATORS
 

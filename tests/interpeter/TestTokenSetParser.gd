@@ -1,49 +1,23 @@
 extends "res://addons/gut/test.gd"
 
+const helpersScript = preload("res://Helpers.gd")
+var helpers
+
 const lexerScript = preload("res://interpreter/Lexer.gd")
 var lexer
 
 const tokenSetParserScript = preload("res://interpreter/TokenSetParser.gd")
 var tokenSetParser
 
-var Utilities = preload("res://interpreter/Utilities.gd")
+func before_all():
+	helpers = helpersScript.new()
 
-const keys = ['operator', 'left', 'right', 'value', 'function', 'args']
+func after_all():
+	helpers.free()
 
 func before_each():
 	lexer = lexerScript.new()
 	tokenSetParser = tokenSetParserScript.new()
-
-func assert_instruction(instruction, expected_instruction, identifier):
-	assert_true('type' in expected_instruction.keys())
-	assert_eq(instruction['type'], expected_instruction['type'], identifier + ': key type does not match, expected: ' + Consts.INSTRUCTION_TYPE_STRINGS[expected_instruction['type']] + ', actual: ' + Consts.INSTRUCTION_TYPE_STRINGS[instruction['type']])
-
-	for key in keys:
-		if instruction.get(key):
-			assert_true(key in expected_instruction.keys(), identifier + ': unexpected key ' + key)
-			if key == 'args':
-				for i in range(instruction['args'].size()):
-					assert_instruction(instruction['args'][i], expected_instruction['args'][i], identifier)
-			elif key == 'left' or key == 'right':
-				assert_instruction(instruction[key], expected_instruction[key], identifier)
-			elif key == 'expression':
-				assert_instruction(instruction['expression'], expected_instruction['expression'], identifier)
-			elif key == 'instructions':
-				for i in range(instruction['instructions'].size()):
-					assert_instruction(instruction['instructions'][i], expected_instruction['instructions'][i], identifier)
-			elif key == 'value':
-				if typeof(instruction['value']) == TYPE_ARRAY:
-					assert_eq(instruction['value'].size(), expected_instruction['value'].size(), identifier + ': array sizes do not match, expected: ' + str(expected_instruction['value'].size()) + ', actual: ' + str(instruction['value'].size()))
-					if instruction['type'] == Consts.INSTRUCTION_TYPES.ARRAY:
-						for i in range(instruction['value'].size()):
-							assert_instruction(instruction['value'][i], expected_instruction['value'][i], identifier)
-					elif instruction['type'] == Consts.INSTRUCTION_TYPES.OBJECT:
-						for i in range(instruction['value'].size()):
-							assert_instruction(instruction['value'][i]['key'], expected_instruction['value'][i]['key'], identifier)
-							assert_instruction(instruction['value'][i]['value'], expected_instruction['value'][i]['value'], identifier)
-				else:
-					assert_eq(instruction[key], expected_instruction[key], identifier + ': values do not match, expected: ' + str(expected_instruction[key]) + ', actual: ' + str(instruction[key]))
-
 
 var test_params = [
 	{
@@ -604,7 +578,6 @@ var test_params = [
 
 func test_token_set_parser(params=use_parameters(test_params)):
 	var tokens_results = lexer.run(params['input'])
-	Utilities.print_lexer_results(tokens_results)
 	var instruction = tokenSetParser.run(tokens_results['tokens'])
-	assert_instruction(instruction, params['expected'], params['identifier'])
+	helpers.assert_instruction(instruction, params['expected'], params['identifier'])
 
