@@ -81,7 +81,7 @@ func __handle_declaration(instruction, scopes):
 	return {'key': instruction.value, 'exported': instruction.exported}
 
 func __handle_function_definition(instruction, scopes):
-	return instruction
+	scopes.add_variable(false, instruction.value, instruction)
 
 func __handle_number(instruction, scopes):
 	return int(float(instruction.value))

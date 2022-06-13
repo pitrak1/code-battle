@@ -243,7 +243,7 @@ func __handle_function(token_set):
 			else:
 				argument_index += 1
 
-	return Instruction.new().set_function(Consts.INSTRUCTION_TYPES.FUNCTION, args)
+	return Instruction.new().set_function(Consts.INSTRUCTION_TYPES.FUNCTION, token_set[1].value, args)
 
 func __handle_return(token_set):
 	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.RETURN, run(token_set.slice(1, len(token_set) - 1)))
