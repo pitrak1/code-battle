@@ -37,6 +37,6 @@ func __print_scope_subset(__subset):
 		if __subset[key] and typeof(__subset[key]) == TYPE_DICTIONARY:
 			print('\t' + key + ': ')
 			for __key in local[key].keys():
-				print('\t\t' + __key + ': ' + str(local[key][__key]))
+				print('\t\t' + str(__key) + ': ' + str(local[key][__key]))
 		else:
 			print('\t' + key + ': ' + str(local[key]))

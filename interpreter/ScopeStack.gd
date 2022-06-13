@@ -9,7 +9,7 @@ func find_variable(__key):
 	var __index = scopes.size() - 1
 	while __index >= 0:
 		var __value = scopes[__index].find_variable(__key)
-		if __value:
+		if __value != null:
 			return __value
 		else:
 			__index -= 1
