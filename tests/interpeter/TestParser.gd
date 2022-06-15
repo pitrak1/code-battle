@@ -97,10 +97,9 @@ var test_params = [
 	},
 	{
 		'identifier': 'function definition with arguments',
-		'input': "function test_function (asdf, asdf2) { print('asdf'); }",
+		'input': "function (asdf, asdf2) { print('asdf'); }",
 		'expected': [{
 			'type': Consts.INSTRUCTION_TYPES.FUNCTION,
-			'value': 'test_function',
 			'args': [
 				{
 					'type': Consts.INSTRUCTION_TYPES.VARIABLE,

@@ -39,4 +39,4 @@ func __print_scope_subset(__subset):
 			for __key in local[key].keys():
 				print('\t\t' + str(__key) + ': ' + str(local[key][__key]))
 		else:
-			print('\t' + key + ': ' + str(local[key]))
+			print('\t' + str(key) + ': ' + str(local[key]))

@@ -41,9 +41,8 @@ func set_index(__type, __value, __index):
 	index = __index
 	return self
 
-func set_function(__type, __value, __args):
+func set_function(__type, __args):
 	type = __type
-	value = __value
 	args = __args
 	instructions = []
 	return self
