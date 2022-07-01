@@ -39,4 +39,7 @@ func set_actor(actor):
 	
 func highlight():
 	$HighlightSprite.show()
+
+func get_tile_info():
+	return __tile_type
 			

@@ -115,6 +115,13 @@ func __handle_builtin(instruction, scopes):
 	var function_name = instruction.function
 	print('emit signal ' + function_name)
 
+	if (function_name == 'get_tile_info'):
+		assert(len(args), 2)
+		return Consts.TILE_STRINGS[world.get_tile_info(Vector2(args[0], args[1]))]
+	elif (function_name == 'print'):
+		assert(len(args), 1)
+		print(args[0])
+
 func __handle_if(instruction, scopes):
 	var expression = __interpret_instruction(instruction.expression, scopes)
 	if (expression):

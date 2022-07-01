@@ -5,6 +5,8 @@ func run(token_set):
 	var assignment_index = __get_assignment_operator_index(token_set)
 	var operation_index = __get_mathematical_operator_index(token_set)
 
+	print(token_set)
+
 	if assignment_index:
 		return __handle_assignment(token_set, assignment_index)
 	elif token_set[0].type == Consts.TOKEN_TYPES.KEYWORD:
@@ -64,6 +66,8 @@ func __handle_keyword(token_set):
 		return __handle_print(token_set)
 	elif token_set[0].value == 'highlight':
 		return __handle_highlight(token_set)
+	elif token_set[0].value == 'get_tile_info':
+		return __handle_get_tile_info(token_set)
 	elif token_set[0].value == 'if' or token_set[0].value == 'while':
 		return __handle_if_while(token_set)
 	elif token_set[0].value == 'function':
@@ -121,6 +125,30 @@ func __handle_highlight(token_set):
 				instruction_end += 1
 
 	return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, 'highlight', args)
+
+func __handle_get_tile_info(token_set):
+	assert(token_set[1].value == '(')
+	assert(token_set[token_set.size() - 1].value == ')')
+
+	var instruction_start = 2
+	var instruction_end = 2
+
+	var args = []
+
+	while instruction_end < token_set.size():
+		if token_set[instruction_end + 1].type == Consts.TOKEN_TYPES.SEPARATOR:
+			if token_set[instruction_end + 1].value == ',':
+				args.push_back(run(token_set.slice(instruction_start, instruction_end)))
+				instruction_start = instruction_end + 2
+				instruction_end = instruction_start
+			elif token_set[instruction_end + 1].value == ')':
+				args.push_back(run(token_set.slice(instruction_start, instruction_end)))
+				break
+			else:
+				instruction_end += 1
+
+	return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, 'get_tile_info', args)
+
 
 func __handle_if_while(token_set):
 	assert(token_set[1].value == '(')

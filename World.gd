@@ -55,3 +55,6 @@ func move_actor(actor_name, grid_position):
 	
 func highlight(grid_position):
 	tiles[grid_position.x][grid_position.y].highlight()
+
+func get_tile_info(grid_position):
+	return tiles[grid_position.x][grid_position.y].get_tile_info()

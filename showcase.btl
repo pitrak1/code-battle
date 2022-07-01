@@ -93,3 +93,4 @@
 
 // var y = import "C://Users/pitra/Documents/Github/code-battle/showcase.btl";
 
+print(get_tile_info(5, 5));
