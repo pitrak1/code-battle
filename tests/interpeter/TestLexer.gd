@@ -1,16 +1,13 @@
 extends "res://addons/gut/test.gd"
 
-const helpersScript = preload("res://Helpers.gd")
-var helpers
-
 const lexerScript = preload("res://interpreter/Lexer.gd")
 var lexer
 
-func before_all():
-	helpers = helpersScript.new()
-
-func after_all():
-	helpers.free()
+func assert_tokens(tokens, expected_tokens, identifier):
+	assert_eq(tokens.size(), expected_tokens.size(), identifier + ': Tokens is length ' + str(tokens.size()) + ', expected ' + str(expected_tokens.size()))
+	for i in range(tokens.size()):
+		assert_eq(tokens[i].type, expected_tokens[i]['type'], identifier + ': Token ' + str(i) + ' is of type ' + Consts.TOKEN_TYPE_STRINGS[tokens[i].type] + ', expected ' + Consts.TOKEN_TYPE_STRINGS[expected_tokens[i]['type']])
+		assert_eq(tokens[i].value, expected_tokens[i]['value'], identifier + ': Token ' + str(i) + ' has value ' + tokens[i].value + ', expected ' + expected_tokens[i]['value'])
 
 func before_each():
 	lexer = lexerScript.new()
@@ -82,7 +79,7 @@ var test_params = [
 
 func test_lexer(params=use_parameters(test_params)):
 	var results = lexer.run(params['input'])
-	helpers.assert_tokens(results['tokens'], params['expected'], params['identifier'])
+	assert_tokens(results['tokens'], params['expected'], params['identifier'])
 
 var test_params_collection = [
 	{	
@@ -117,9 +114,29 @@ var test_params_collection = [
 	},
 ]
 
+func shuffle_collection(collection):
+	var result = collection.duplicate()
+	result.shuffle()
+	return result
+
+func generate_collection_input(collection):
+	var result = ''
+
+	for i in range(collection.size()):
+		result += collection[i] + ' '
+
+	return result
+
+
+func assert_collection(tokens, collection, type, identifier):
+	assert_eq(tokens.size(), collection.size(), identifier + ': Tokens is length ' + str(tokens.size()) + ', expected ' + str(collection.size()))
+	for i in range(tokens.size()):
+		assert_eq(tokens[i].type, type, identifier + ': Token ' + str(i) + ' is of type ' + Consts.TOKEN_TYPE_STRINGS[tokens[i].type] + ', expected ' + Consts.TOKEN_TYPE_STRINGS[type])
+		assert_eq(tokens[i].value, collection[i], identifier + ': Token ' + str(i) + ' has value ' + tokens[i].value + ', expected ' + collection[i])
+
 func test_lexer_collection(params=use_parameters(test_params_collection)):
-	var collection = helpers.shuffle_collection(params['collection'])
-	var input = helpers.generate_collection_input(collection)
+	var collection = shuffle_collection(params['collection'])
+	var input = generate_collection_input(collection)
 	var results = lexer.run(input)
-	helpers.assert_collection(results['tokens'], collection, params['type'], params['identifier'])
+	assert_collection(results['tokens'], collection, params['type'], params['identifier'])
 	

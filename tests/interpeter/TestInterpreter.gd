@@ -1,8 +1,5 @@
 extends "res://addons/gut/test.gd"
 
-const helpersScript = preload("res://Helpers.gd")
-var helpers
-
 const lexerScript = preload("res://interpreter/Lexer.gd")
 var lexer
 
@@ -12,16 +9,13 @@ var parser
 const interpreterScript = preload("res://interpreter/Interpreter.gd")
 var interpreter
 
+var world
+
 func before_each():
+	world = double("res://World.gd").new()
 	lexer = lexerScript.new()
 	parser = parserScript.new()
-	interpreter = interpreterScript.new()
-
-func before_all():
-	helpers = helpersScript.new()
-
-func after_all():
-	helpers.free()
+	interpreter = interpreterScript.new(world)
 
 var test_params = [
 	{
@@ -152,28 +146,45 @@ var test_params = [
 	},
 ]
 
+func assert_scopes(scopes, expected_scopes, identifier):
+	for i in range(scopes.size()):
+		__assert_scopes_recursive(scopes.get_scope(i), expected_scopes[i], identifier)
+
+func __assert_scopes_recursive(scope, expected_scope, identifier):
+	if typeof(scope) == TYPE_OBJECT:
+		for key in scope.get_variable_names():
+			if typeof(scope.find_variable(key)) == TYPE_OBJECT or typeof(scope.find_variable(key)) == TYPE_DICTIONARY:
+				__assert_scopes_recursive(scope.find_variable(key), expected_scope[key], identifier)
+			else:
+				assert_eq(scope.find_variable(key), expected_scope[key], identifier + ': key does not match, expected ' + str(key) + ': ' + str(expected_scope[key]) + ', got ' + str(key) + ': ' + str(scope.find_variable(key)))
+	else:
+		for key in scope.keys():
+			if typeof(scope[key]) == TYPE_OBJECT or typeof(scope[key]) == TYPE_DICTIONARY:
+				__assert_scopes_recursive(scope[key], expected_scope[key], identifier)
+			else:
+				assert_eq(scope[key], expected_scope[key], identifier + ': key does not match, expected ' + str(key) + ': ' + str(expected_scope[key]) + ', got ' + str(key) + ': ' + str(scope[key]))
+
+
 func test_interpreter(params=use_parameters(test_params)):
 	var lexer_results = lexer.run(params['input'])
 	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
-	helpers.assert_scopes(scopes, params['expected'], params['identifier'])
+	assert_scopes(scopes, params['expected'], params['identifier'])
 
 # FUNCTIONS AND SEPARATORS
 
 func test_supports_builtins_and_parenthesis():
-	watch_signals(interpreter)
-	var lexer_results = lexer.run("print('12345');")
+	var lexer_results = lexer.run("highlight(5, 5);")
 	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
-	assert_signal_emitted_with_parameters(interpreter, 'call_print', [['12345']])
+	assert_called(world, 'highlight', [Vector2(5, 5)])
 
 # CONDITIONALS AND LOOPS
 
 func test_supports_if_statements():
-	watch_signals(interpreter)
-	var lexer_results = lexer.run("if (false) { print('12345'); }")
+	var lexer_results = lexer.run("if (false) { highlight(1, 2); }")
 	var instructions = parser.run(lexer_results['tokens'])
 	var scopes = interpreter.run(instructions)
-	assert_signal_not_emitted(interpreter, 'call_print')
+	assert_not_called(world, 'highlight')
 
 
