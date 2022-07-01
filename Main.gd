@@ -1,14 +1,7 @@
 extends Node2D
 
 var worldScene = preload("res://World.tscn")
-var lexer = preload("res://interpreter/Lexer.gd")
-var parser = preload("res://interpreter/Parser.gd")
-var interpreter = preload("res://interpreter/Interpreter.gd")
-var Utilities = preload("res://interpreter/Utilities.gd")
-
-var __lexer
-var __parser
-var __interpreter
+var runner = preload("res://interpreter/Runner.gd")
 
 func _ready():
 	var world = worldScene.instance()
@@ -20,34 +13,8 @@ func _ready():
 
 	$UI.setup(self)
 
-	var file = File.new()
-	file.open("C://Users/pitra/Documents/Github/code-battle/showcase.btl", File.READ)
-	var contents = file.get_as_text()
-	file.close()
-
-	__lexer = lexer.new()
-	var results = __lexer.run(contents)
-
-	if results['status'] != 'success':
-		print("ERROR")
-
-	# Utilities.print_lexer_results(results)
-
-	__parser = parser.new()
-	var instructions = __parser.run(results['tokens'])
-
-	Utilities.print_parser_results(instructions)
-
-	__interpreter = interpreter.new()
-	__interpreter.connect("call_print", self, "handle_print")
-	__interpreter.connect("call_highlight", self, "handle_highlight")
-	var scopes = __interpreter.run(instructions)
-	
-	scopes.print_scopes()
-
-#	Utilities.print_interpreter_results(scopes)
-
-	print("DONE")
+	var __runner = runner.new(world)
+	__runner.run("C://Users/pitra/Documents/Github/code-battle/showcase.btl")
 
 func _on_restart():
 	print('restart')
@@ -57,10 +24,4 @@ func _on_next():
 
 func _on_select_file(path):
 	$UI.set_file(path)
-
-func handle_print(args):
-	print(args[0])
-
-func handle_highlight(args):
-	print('got here ' + str(args[0]) + str(args[1]))
 

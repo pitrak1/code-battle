@@ -1,9 +1,11 @@
-signal call_print
-signal call_highlight
-
 var lexer = preload("res://interpreter/Lexer.gd")
 var parser = preload("res://interpreter/Parser.gd")
 var ScopeStack = preload("res://interpreter/ScopeStack.gd")
+
+var world
+
+func _init(__world):
+	world = __world
 
 func run(__instructions):
 	var scopes = ScopeStack.new()
@@ -111,7 +113,7 @@ func __handle_builtin(instruction, scopes):
 	for arg in instruction.args:
 		args.push_back(__interpret_instruction(arg, scopes))
 	var function_name = instruction.function
-	emit_signal("call_" + function_name, args)
+	print('emit signal ' + function_name)
 
 func __handle_if(instruction, scopes):
 	var expression = __interpret_instruction(instruction.expression, scopes)
@@ -163,9 +165,11 @@ func __handle_import(instruction, scopes):
 	var __parser = parser.new()
 	var __instructions = __parser.run(results['tokens'])
 
-	var __scopes = self.run(__instructions)
+	var interpreter = load("res://interpreter/Intrepreter.gd")
+	var __intrepreter = interpreter.new()
+	var __scopes = __intrepreter.run(__instructions)
 
-	scopes.import_scope(__scopes)
+	return __scopes.get_scope(0)
 
 func __handle_return(instruction, scopes):
 	scopes.add_local_variable('return', __interpret_instruction(instruction.value, scopes))
