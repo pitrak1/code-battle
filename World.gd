@@ -1,10 +1,13 @@
 extends Node2D
 
 var __tileScene = preload("res://Tile.tscn")
-var __actorScene = preload("res://Actor.tscn")
+var __actorCollection = preload("res://ActorCollection.gd")
 
 var tiles = []
-var actors = []
+var actors
+
+func _ready():
+	actors = __actorCollection.new()
 
 func setup(level):
 	var window_dimensions = self.get_viewport_rect().size
@@ -35,18 +38,12 @@ func setup(level):
 		)
 		
 func create_and_place_actor(actor_name, character_type, grid_position):
-	var __actor = __actorScene.instance()
-	__actor.setup(actor_name, character_type, grid_position)
-	actors.push_back(__actor)
+	var __actor = actors.create_actor(actor_name, character_type, grid_position)
 	tiles[grid_position.x][grid_position.y].set_actor(__actor)
 
 func move_actor(actor_name, grid_position):
-	var __actor
-	for actor in actors:
-		if actor.actor_name == actor_name:
-			__actor = actor
-			break
-			
+	var __actor = actors.get_actor_by_name(actor_name)
+	
 	if __actor:
 		var __current_position = __actor.grid_position
 		tiles[__current_position.x][__current_position.y].set_actor(null)
@@ -58,3 +55,9 @@ func highlight(grid_position):
 
 func get_tile_info(grid_position):
 	return tiles[grid_position.x][grid_position.y].get_tile_info()
+
+func get_actor_by_grid_position(grid_position):
+	return tiles[grid_position.x][grid_position.y].get_actor().actor_name
+
+func get_actor_by_name(actor_name):
+	return actors.get_actor_by_name(actor_name).actor_name

@@ -123,6 +123,12 @@ func __handle_builtin(instruction, scopes):
 	elif (function_name == 'highlight'):
 		assert(len(args), 2)
 		world.highlight(Vector2(args[0], args[1]))
+	elif (function_name == 'get_actor_by_name'):
+		assert(len(args), 1)
+		return world.get_actor_by_name(args[0])
+	elif (function_name == 'get_actor_by_grid_position'):
+		assert(len(args), 2)
+		return world.get_actor_by_grid_position(Vector2(args[0], args[1]))
 
 func __handle_if(instruction, scopes):
 	var expression = __interpret_instruction(instruction.expression, scopes)

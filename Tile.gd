@@ -36,6 +36,9 @@ func set_actor(actor):
 		actor.position = Vector2(0, Consts.TILE_SPRITE_OFFSETS[__tile_type])
 		
 	__actor = actor
+
+func get_actor():
+	return __actor;
 	
 func highlight():
 	$HighlightSprite.show()

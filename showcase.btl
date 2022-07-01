@@ -93,6 +93,8 @@
 
 // var y = import "C://Users/pitra/Documents/Github/code-battle/showcase.btl";
 
-print('asdf');
-var x = get_tile_info(4, 4);
+var x = get_actor_by_name("Paladin Boy");
+print(x);
+
+x = get_actor_by_grid_position(5, 8);
 print(x);
