@@ -93,4 +93,6 @@
 
 // var y = import "C://Users/pitra/Documents/Github/code-battle/showcase.btl";
 
-print(get_tile_info(5, 5));
+print('asdf');
+var x = get_tile_info(4, 4);
+print(x);

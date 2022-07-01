@@ -62,12 +62,6 @@ func __handle_keyword(token_set):
 		return __handle_var(token_set)
 	elif token_set[0].value == 'export':
 		return __handle_export(token_set)
-	elif token_set[0].value == 'print':
-		return __handle_print(token_set)
-	elif token_set[0].value == 'highlight':
-		return __handle_highlight(token_set)
-	elif token_set[0].value == 'get_tile_info':
-		return __handle_get_tile_info(token_set)
 	elif token_set[0].value == 'if' or token_set[0].value == 'while':
 		return __handle_if_while(token_set)
 	elif token_set[0].value == 'function':
@@ -78,6 +72,8 @@ func __handle_keyword(token_set):
 		return __handle_import(token_set)
 	elif token_set[0].value == 'class':
 		return __handle_class(token_set)
+	else:
+		return __handle_builtin(token_set)
 
 func __handle_var(token_set):
 	assert(token_set.size() == 2)
@@ -91,19 +87,7 @@ func __handle_export(token_set):
 	assert(token_set[2].type == Consts.TOKEN_TYPES.IDENTIFIER)
 	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.DECLARATION, token_set[2].value, true)
 
-func __handle_print(token_set):
-	assert(token_set[1].value == '(')
-	assert(token_set[token_set.size() - 1].value == ')')
-
-	var instruction_range
-	if token_set.size() <= 3:
-		instruction_range = run(token_set.slice(2, 2))
-	else:
-		instruction_range = run(token_set.slice(2, token_set.size() - 2))
-
-	return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, 'print', [instruction_range])
-
-func __handle_highlight(token_set):
+func __handle_builtin(token_set):
 	assert(token_set[1].value == '(')
 	assert(token_set[token_set.size() - 1].value == ')')
 
@@ -124,31 +108,7 @@ func __handle_highlight(token_set):
 			else:
 				instruction_end += 1
 
-	return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, 'highlight', args)
-
-func __handle_get_tile_info(token_set):
-	assert(token_set[1].value == '(')
-	assert(token_set[token_set.size() - 1].value == ')')
-
-	var instruction_start = 2
-	var instruction_end = 2
-
-	var args = []
-
-	while instruction_end < token_set.size():
-		if token_set[instruction_end + 1].type == Consts.TOKEN_TYPES.SEPARATOR:
-			if token_set[instruction_end + 1].value == ',':
-				args.push_back(run(token_set.slice(instruction_start, instruction_end)))
-				instruction_start = instruction_end + 2
-				instruction_end = instruction_start
-			elif token_set[instruction_end + 1].value == ')':
-				args.push_back(run(token_set.slice(instruction_start, instruction_end)))
-				break
-			else:
-				instruction_end += 1
-
-	return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, 'get_tile_info', args)
-
+	return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, token_set[0].value, args)
 
 func __handle_if_while(token_set):
 	assert(token_set[1].value == '(')

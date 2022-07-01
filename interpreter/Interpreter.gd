@@ -113,7 +113,6 @@ func __handle_builtin(instruction, scopes):
 	for arg in instruction.args:
 		args.push_back(__interpret_instruction(arg, scopes))
 	var function_name = instruction.function
-	print('emit signal ' + function_name)
 
 	if (function_name == 'get_tile_info'):
 		assert(len(args), 2)
