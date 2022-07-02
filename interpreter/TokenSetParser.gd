@@ -96,17 +96,18 @@ func __handle_builtin(token_set):
 
 	var args = []
 
-	while instruction_end < token_set.size():
-		if token_set[instruction_end + 1].type == Consts.TOKEN_TYPES.SEPARATOR:
-			if token_set[instruction_end + 1].value == ',':
-				args.push_back(run(token_set.slice(instruction_start, instruction_end)))
-				instruction_start = instruction_end + 2
-				instruction_end = instruction_start
-			elif token_set[instruction_end + 1].value == ')':
-				args.push_back(run(token_set.slice(instruction_start, instruction_end)))
-				break
-			else:
-				instruction_end += 1
+	if len(token_set) > 3:
+		while instruction_end < token_set.size():
+			if token_set[instruction_end + 1].type == Consts.TOKEN_TYPES.SEPARATOR:
+				if token_set[instruction_end + 1].value == ',':
+					args.push_back(run(token_set.slice(instruction_start, instruction_end)))
+					instruction_start = instruction_end + 2
+					instruction_end = instruction_start
+				elif token_set[instruction_end + 1].value == ')':
+					args.push_back(run(token_set.slice(instruction_start, instruction_end)))
+					break
+				else:
+					instruction_end += 1
 
 	return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, token_set[0].value, args)
 

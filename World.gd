@@ -61,3 +61,6 @@ func get_actor_by_grid_position(grid_position):
 
 func get_actor_by_name(actor_name):
 	return actors.get_actor_by_name(actor_name).actor_name
+
+func get_actors():
+	return actors.get_actors()

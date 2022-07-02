@@ -129,6 +129,8 @@ func __handle_builtin(instruction, scopes):
 	elif (function_name == 'get_actor_by_grid_position'):
 		assert(len(args), 2)
 		return world.get_actor_by_grid_position(Vector2(args[0], args[1]))
+	elif (function_name == 'get_actors'):
+		return world.get_actors()
 
 func __handle_if(instruction, scopes):
 	var expression = __interpret_instruction(instruction.expression, scopes)

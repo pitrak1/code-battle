@@ -12,3 +12,10 @@ func get_actor_by_name(actor_name):
 	for actor in actors:
 		if actor.actor_name == actor_name:
 			return actor
+
+func get_actors():
+	var names = []
+	for actor in actors:
+		names.push_back(actor.actor_name)
+
+	return names
