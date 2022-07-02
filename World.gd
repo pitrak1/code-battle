@@ -37,8 +37,8 @@ func setup(level):
 			start_position.y + Consts.TILE_ROW_HEIGHT * (i + 1)
 		)
 		
-func create_and_place_actor(actor_name, character_type, grid_position):
-	var __actor = actors.create_actor(actor_name, character_type, grid_position)
+func create_and_place_actor(actor_name, character_type, grid_position, is_enemy):
+	var __actor = actors.create_actor(actor_name, character_type, grid_position, is_enemy)
 	tiles[grid_position.x][grid_position.y].set_actor(__actor)
 
 func move_actor(actor_name, grid_position):
@@ -57,10 +57,16 @@ func get_tile_info(grid_position):
 	return tiles[grid_position.x][grid_position.y].get_tile_info()
 
 func get_actor_by_grid_position(grid_position):
-	return tiles[grid_position.x][grid_position.y].get_actor().actor_name
+	return tiles[grid_position.x][grid_position.y].get_actor()
 
 func get_actor_by_name(actor_name):
-	return actors.get_actor_by_name(actor_name).actor_name
+	return actors.get_actor_by_name(actor_name)
 
 func get_actors():
 	return actors.get_actors()
+
+func get_player_actors():
+	return actors.get_player_actors()
+
+func get_enemy_actors():
+	return actors.get_enemy_actors()

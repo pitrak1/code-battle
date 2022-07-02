@@ -7,9 +7,10 @@ func _ready():
 	var world = worldScene.instance()
 	add_child(world)
 	world.setup(Consts.LEVEL_1)
-	world.create_and_place_actor("Paladin Boy", Consts.CHARACTERS.PALADIN, Vector2(3, 4))
-	world.move_actor("Paladin Boy", Vector2(5, 8))
-	world.highlight(Vector2(5, 8))
+	world.create_and_place_actor("Paladin Boy", Consts.CHARACTERS.PALADIN, Vector2(6, 2), false)
+	world.create_and_place_actor("Warrior Girl", Consts.CHARACTERS.WARRIOR, Vector2(2, 6), true)
+	# world.move_actor("Paladin Boy", Vector2(5, 8))
+	# world.highlight(Vector2(5, 8))
 
 	$UI.setup(self)
 

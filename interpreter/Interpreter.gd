@@ -131,6 +131,10 @@ func __handle_builtin(instruction, scopes):
 		return world.get_actor_by_grid_position(Vector2(args[0], args[1]))
 	elif (function_name == 'get_actors'):
 		return world.get_actors()
+	elif (function_name == 'get_player_actors'):
+		return world.get_player_actors()
+	elif (function_name == 'get_enemy_actors'):
+		return world.get_enemy_actors()
 
 func __handle_if(instruction, scopes):
 	var expression = __interpret_instruction(instruction.expression, scopes)

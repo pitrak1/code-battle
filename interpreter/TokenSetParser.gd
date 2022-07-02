@@ -5,8 +5,6 @@ func run(token_set):
 	var assignment_index = __get_assignment_operator_index(token_set)
 	var operation_index = __get_mathematical_operator_index(token_set)
 
-	print(token_set)
-
 	if assignment_index:
 		return __handle_assignment(token_set, assignment_index)
 	elif token_set[0].type == Consts.TOKEN_TYPES.KEYWORD:

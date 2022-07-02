@@ -23,13 +23,13 @@ func run(filename):
 	var results = __lexer.run(contents)
 	if results['status'] != 'success':
 		print("ERROR")
-	Utilities.print_lexer_results(results)
+	# Utilities.print_lexer_results(results)
 
 	var instructions = __parser.run(results['tokens'])
-	Utilities.print_parser_results(instructions)
+	# Utilities.print_parser_results(instructions)
 
 
 	var scopes = __interpreter.run(instructions)	
-	scopes.print_scopes()
+	# scopes.print_scopes()
 
 	print('DONE')

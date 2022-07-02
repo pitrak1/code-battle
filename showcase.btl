@@ -96,8 +96,13 @@
 var x = get_actor_by_name("Paladin Boy");
 print(x);
 
-x = get_actor_by_grid_position(5, 8);
-print(x);
+var y = get_player_actors();
+var z = y[0];
+var a = z['grid_position'];
+print(a);
 
-x = get_actors();
-print(x);
+// x = get_actor_by_grid_position(5, 8);
+// print(x);
+
+// x = get_actors();
+// print(x);
