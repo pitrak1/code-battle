@@ -9,6 +9,8 @@ func run(token_set):
 		return __handle_assignment(token_set, assignment_index)
 	elif token_set[0].type == Consts.TOKEN_TYPES.KEYWORD:
 		return __handle_keyword(token_set)
+	elif token_set[0].type == Consts.TOKEN_TYPES.BUILTIN:
+		return __handle_builtin(token_set)
 	elif token_set[0].type == Consts.TOKEN_TYPES.SEPARATOR:
 		return __handle_separator(token_set)
 	elif operation_index:
@@ -70,8 +72,6 @@ func __handle_keyword(token_set):
 		return __handle_import(token_set)
 	elif token_set[0].value == 'class':
 		return __handle_class(token_set)
-	else:
-		return __handle_builtin(token_set)
 
 func __handle_var(token_set):
 	assert(token_set.size() == 2)

@@ -65,7 +65,8 @@ const QUOTES = ['\'', '"']
 const WHITESPACE = ['\t', '\n', ' ']
 const DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 const LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-const KEYWORDS = ['var', 'print', 'highlight', 'if', 'while', 'function', 'return', 'import', 'export', 'class', 'get_tile_info', 'get_actor_by_name', 'get_actor_by_grid_position', 'get_actors', 'get_player_actors', 'get_enemy_actors']
+const KEYWORDS = ['var', 'if', 'while', 'function', 'return', 'import', 'export', 'class']
+const BUILTINS = ['print', 'highlight', 'get_tile_info', 'get_actor_by_name', 'get_actor_by_grid_position', 'get_actors', 'get_player_actors', 'get_enemy_actors']
 const SEPARATORS = ['(', ')', '{', '}', ',', '[', ']', ':']
 const OPERATORS = ['==', '<', '>', '+', '*']
 const BOOLEANS = ['true', 'false']
@@ -75,6 +76,7 @@ enum TOKEN_TYPES {
 	STRING,
 	BOOLEAN,
 	KEYWORD,
+	BUILTIN,
 	IDENTIFIER,
 	ASSIGNMENT,
 	SEPARATOR,
@@ -90,6 +92,7 @@ const TOKEN_TYPE_STRINGS = [
 	'STRING',
 	'BOOLEAN',
 	'KEYWORD',
+	'BUILTIN',
 	'IDENTIFIER',
 	'ASSIGNMENT',
 	'SEPARATOR',

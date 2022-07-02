@@ -84,6 +84,8 @@ func __handle_word(input_string, index):
 		return {'type': Consts.TOKEN_TYPES.KEYWORD, 'value': identifier}
 	elif identifier in Consts.BOOLEANS:
 		return {'type': Consts.TOKEN_TYPES.BOOLEAN, 'value': identifier}
+	elif identifier in Consts.BUILTINS:
+		return {'type': Consts.TOKEN_TYPES.BUILTIN, 'value': identifier}
 	else:
 		return {'type': Consts.TOKEN_TYPES.IDENTIFIER, 'value': identifier}
 		
