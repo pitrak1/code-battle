@@ -14,15 +14,8 @@ func _ready():
 	world.create_and_place_actor("Warrior Girl", Consts.CHARACTERS.WARRIOR, Vector2(2, 6), true)
 	# world.move_actor("Paladin Boy", Vector2(5, 8))
 	# world.highlight(Vector2(5, 8))
-
+	
 	$UI.setup(self)
-
-	# var __runner = runner.new(world)
-	# __runner.run("C://Users/pitra/Documents/Github/code-battle/showcase.btl")
-
-	# var __pathfinder = pathfinder.new()
-	# var results = __pathfinder.run(world, Vector2(6, 2), Vector2(2, 6))
-	# print(results)
 
 func _on_restart():
 	print('restart')

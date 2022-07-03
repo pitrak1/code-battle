@@ -93,18 +93,18 @@
 
 // var y = import "C://Users/pitra/Documents/Github/code-battle/showcase.btl";
 
-var x = get_actor_by_name("Paladin Boy");
-print(x);
-
-var y = get_player_actors();
-var z = y[0];
-var a = z['grid_position'];
-print(a);
-
-var b = get_shortest_path(6, 2, 2, 6);
-print(b);
-var c = b[2];
-print(c);
+var paladin_boy = get_actor_by_name("Paladin Boy");
+var paladin_boy_grid_position = paladin_boy['grid_position'];
+print(paladin_boy_grid_position);
+var warrior_girl = get_actor_by_name("Warrior Girl");
+var warrior_girl_grid_position = warrior_girl['grid_position'];
+print(warrior_girl_grid_position);
+// var path = get_shortest_path(paladin_boy_grid_position[0], paladin_boy_grid_position[1], warrior_girl_grid_position[0], warrior_girl_grid_position[1]);
+// print(path);
+// var destination = path[0];
+// print(destination[0]);
+// print(destination[1]);
+// move_actor_to_adjacent_tile("Paladin Boy", destination[0], destination[1]);
 
 // x = get_actor_by_grid_position(5, 8);
 // print(x);

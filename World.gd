@@ -3,6 +3,7 @@ extends Node2D
 var __tileScene = preload("res://Tile.tscn")
 var __actorCollection = preload("res://ActorCollection.gd")
 var __pathfinder = preload("res://Pathfinder.gd")
+var Utilities = preload("res://Utilities.gd")
 
 var tiles = []
 var actors
@@ -80,3 +81,16 @@ func is_passable(grid_position):
 func get_shortest_path(start, end):
 	var pathfinder = __pathfinder.new()
 	return pathfinder.run(self, start, end)
+	
+func move_actor_to_adjacent_tile(actor_name, grid_position):
+	var __actor = actors.get_actor_by_name(actor_name)
+	
+	if __actor and is_adjacent(__actor.grid_position, grid_position):
+		var __current_position = __actor.grid_position
+		tiles[__current_position.x][__current_position.y].set_actor(null)
+		__actor.grid_position = grid_position
+		tiles[grid_position.x][grid_position.y].set_actor(__actor)
+		
+func is_adjacent(start, end):
+	return Utilities.get_absolute_distance(start, end) == 1
+
