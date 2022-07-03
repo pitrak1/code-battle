@@ -2,6 +2,7 @@ extends Node2D
 
 var __tileScene = preload("res://Tile.tscn")
 var __actorCollection = preload("res://ActorCollection.gd")
+var __pathfinder = preload("res://Pathfinder.gd")
 
 var tiles = []
 var actors
@@ -75,3 +76,7 @@ func is_passable(grid_position):
 	if not tiles[grid_position.x][grid_position.y]:
 		return false
 	return tiles[grid_position.x][grid_position.y].is_passable()
+
+func get_shortest_path(start, end):
+	var pathfinder = __pathfinder.new()
+	return pathfinder.run(self, start, end)

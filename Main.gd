@@ -4,9 +4,10 @@ var worldScene = preload("res://World.tscn")
 var runner = preload("res://interpreter/Runner.gd")
 
 var pathfinder = preload("res://Pathfinder.gd")
+var world
 
 func _ready():
-	var world = worldScene.instance()
+	world = worldScene.instance()
 	add_child(world)
 	world.setup(Consts.LEVEL_1)
 	world.create_and_place_actor("Paladin Boy", Consts.CHARACTERS.PALADIN, Vector2(6, 2), false)
@@ -16,18 +17,19 @@ func _ready():
 
 	$UI.setup(self)
 
-	var __runner = runner.new(world)
-	__runner.run("C://Users/pitra/Documents/Github/code-battle/showcase.btl")
+	# var __runner = runner.new(world)
+	# __runner.run("C://Users/pitra/Documents/Github/code-battle/showcase.btl")
 
-	var __pathfinder = pathfinder.new()
-	var results = __pathfinder.run(world, Vector2(6, 2), Vector2(2, 6))
-	print(results)
+	# var __pathfinder = pathfinder.new()
+	# var results = __pathfinder.run(world, Vector2(6, 2), Vector2(2, 6))
+	# print(results)
 
 func _on_restart():
 	print('restart')
 
 func _on_next():
-	print('next')
+	var __runner = runner.new(world)
+	__runner.run("C://Users/pitra/Documents/Github/code-battle/showcase.btl")
 
 func _on_select_file(path):
 	$UI.set_file(path)

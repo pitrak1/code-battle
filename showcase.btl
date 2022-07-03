@@ -101,6 +101,11 @@ var z = y[0];
 var a = z['grid_position'];
 print(a);
 
+var b = get_shortest_path(6, 2, 2, 6);
+print(b);
+var c = b[2];
+print(c);
+
 // x = get_actor_by_grid_position(5, 8);
 // print(x);
 

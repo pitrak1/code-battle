@@ -33,8 +33,13 @@ func run(world, start, end):
 		current_low = current_low.parent
 		
 	results.invert()
-	return results
+	return __serialize_results(results)
 
+func __serialize_results(results):
+	var serialized = []
+	for result in results:
+		serialized.push_back([result.x, result.y])
+	return serialized
 
 func __add_child_to_open_list(open, closed, child):
 	for __open in open:

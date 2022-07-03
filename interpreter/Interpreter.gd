@@ -135,6 +135,8 @@ func __handle_builtin(instruction, scopes):
 		return world.get_player_actors()
 	elif (function_name == 'get_enemy_actors'):
 		return world.get_enemy_actors()
+	elif (function_name == 'get_shortest_path'):
+		return world.get_shortest_path(Vector2(args[0], args[1]), Vector2(args[2], args[3]))
 
 func __handle_if(instruction, scopes):
 	var expression = __interpret_instruction(instruction.expression, scopes)
