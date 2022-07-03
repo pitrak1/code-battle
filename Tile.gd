@@ -22,10 +22,11 @@ func _ready():
 		Consts.WATER: __water_sprite,
 	}
 
-func setup(tile_type):
+func setup(tile_type, grid_position):
 	__tile_type = tile_type
 	$Sprite.texture = __tile_sprites[tile_type]
 	$HighlightSprite.position = Vector2(0, Consts.TILE_HIGHLIGHT_OFFSET + Consts.TILE_SPRITE_OFFSETS[tile_type])
+	$PositionLabel.text = str(grid_position.x) + ' ' + str(grid_position.y)
 	
 func set_actor(actor):
 	if __actor:
@@ -45,4 +46,7 @@ func highlight():
 
 func get_tile_info():
 	return __tile_type
+
+func is_passable():
+	return __tile_type == Consts.LOW
 			

@@ -26,7 +26,7 @@ func setup(level):
 			if tile != null:
 				var obj = __tileScene.instance()
 				self.add_child(obj)
-				obj.setup(tile)
+				obj.setup(tile, Vector2(i, j))
 				obj.position = currentPosition
 				tiles[i].push_back(obj)
 			else:
@@ -70,3 +70,8 @@ func get_player_actors():
 
 func get_enemy_actors():
 	return actors.get_enemy_actors()
+
+func is_passable(grid_position):
+	if not tiles[grid_position.x][grid_position.y]:
+		return false
+	return tiles[grid_position.x][grid_position.y].is_passable()

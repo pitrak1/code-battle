@@ -3,6 +3,8 @@ extends Node2D
 var worldScene = preload("res://World.tscn")
 var runner = preload("res://interpreter/Runner.gd")
 
+var pathfinder = preload("res://Pathfinder.gd")
+
 func _ready():
 	var world = worldScene.instance()
 	add_child(world)
@@ -16,6 +18,10 @@ func _ready():
 
 	var __runner = runner.new(world)
 	__runner.run("C://Users/pitra/Documents/Github/code-battle/showcase.btl")
+
+	var __pathfinder = pathfinder.new()
+	var results = __pathfinder.run(world, Vector2(6, 2), Vector2(2, 6))
+	print(results)
 
 func _on_restart():
 	print('restart')
