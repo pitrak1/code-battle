@@ -3,8 +3,8 @@ var KeyValuePair = preload("res://interpreter/KeyValuePair.gd")
 var Utilities = preload("res://Utilities.gd")
 
 func run(token_set):
-	var assignment_index = __get_assignment_operator_index(token_set)
-	var operation_index = __get_mathematical_operator_index(token_set)
+	var assignment_index = Utilities.get_assignment_operator_index(token_set)
+	var operation_index = Utilities.get_mathematical_operator_index(token_set)
 
 	if assignment_index:
 		return __handle_assignment(token_set, assignment_index)
@@ -24,33 +24,6 @@ func run(token_set):
 		return __handle_string(token_set)
 	elif token_set[0].type == Consts.TOKEN_TYPES.BOOLEAN:
 		return __handle_boolean(token_set)
-
-func __get_assignment_operator_index(token_set):
-	for i in range(token_set.size()):
-		if token_set[i].type == Consts.TOKEN_TYPES.ASSIGNMENT:
-			return i
-
-func __get_mathematical_operator_index(token_set):
-	var operator_priority = Consts.OPERATORS.size()
-	var operator_location = Consts.OPERATORS.size()
-
-	var args = []
-
-	var separators = []
-
-	for i in range(token_set.size() - 1, 0, -1):
-		if token_set[i].value in Consts.CLOSING_SEPARATORS:
-				separators.push_back(token_set[i].value)
-		elif len(separators) and token_set[i].value == Consts.MATCHING_SEPARATORS[separators.back()]:
-			separators.pop_back()
-		elif token_set[i].type == Consts.TOKEN_TYPES.OPERATOR and len(separators) == 0:
-			var current_operator_priority = Consts.OPERATORS.find(token_set[i].value)
-			if current_operator_priority < operator_priority:
-				operator_priority = current_operator_priority
-				operator_location = i
-
-	if operator_priority != Consts.OPERATORS.size():
-		return operator_location
 
 func __handle_assignment(token_set, assignment_index):
 	return Instruction.new().set_operation(
@@ -92,13 +65,8 @@ func __handle_builtin(token_set):
 	assert(token_set[1].value == '(')
 	assert(token_set[token_set.size() - 1].value == ')')
 
-	var arg_token_sets = Utilities.parse_arguments(token_set.slice(2, token_set.size() - 1))
-
-	var args = []
-	for arg_token_set in arg_token_sets:
-		args.push_back(run(arg_token_set))
-
-	return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, token_set[0].value, args)
+	var args = Utilities.parse_arguments(token_set.slice(2, token_set.size() - 1))
+	return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, token_set[0].value, __run_array(args))
 
 func __handle_if_while(token_set):
 	assert(token_set[1].value == '(')
@@ -168,13 +136,8 @@ func __handle_identifier(token_set):
 	elif token_set[1].value == '(':
 		assert(token_set[token_set.size() - 1].value == ')')
 
-		var arg_token_sets = Utilities.parse_arguments(token_set.slice(2, token_set.size() - 1))
-
-		var args = []
-		for arg_token_set in arg_token_sets:
-			args.push_back(run(arg_token_set))
-
-		return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.CALL, token_set[0].value, args)
+		var args = Utilities.parse_arguments(token_set.slice(2, token_set.size() - 1))
+		return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.CALL, token_set[0].value, __run_array(args))
 
 func __handle_number(token_set):
 	assert(token_set.size() == 1)
@@ -197,13 +160,8 @@ func __handle_function(token_set):
 	assert(token_set[1].value == '(')
 	assert(token_set[token_set.size() - 1].value == ')')
 
-	var arg_token_sets = Utilities.parse_arguments(token_set.slice(2, token_set.size() - 1))
-
-	var args = []
-	for arg_token_set in arg_token_sets:
-		args.push_back(run(arg_token_set))
-
-	return Instruction.new().set_function(Consts.INSTRUCTION_TYPES.FUNCTION, args)
+	var args = Utilities.parse_arguments(token_set.slice(2, token_set.size() - 1))
+	return Instruction.new().set_function(Consts.INSTRUCTION_TYPES.FUNCTION, __run_array(args))
 
 func __handle_return(token_set):
 	return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.RETURN, run(token_set.slice(1, len(token_set) - 1)))
@@ -216,3 +174,9 @@ func __handle_import(token_set):
 
 func __handle_class(token_set):
 	return Instruction.new().set_class(Consts.INSTRUCTION_TYPES.CLASS)
+
+func __run_array(array):
+	var args = []
+	for arg in array:
+		args.push_back(run(arg))
+	return args

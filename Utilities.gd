@@ -7,6 +7,35 @@ static func get_absolute_distance(start, end):
 	else:
 		return abs(diff_x) + abs(diff_y)
 
+static func get_assignment_operator_index(token_set):
+	for i in range(token_set.size()):
+		if token_set[i].type == Consts.TOKEN_TYPES.ASSIGNMENT:
+			return i
+
+
+static func get_mathematical_operator_index(token_set):
+	var operator_priority = Consts.OPERATORS.size()
+	var operator_location = Consts.OPERATORS.size()
+
+	var args = []
+
+	var separators = []
+
+	for i in range(token_set.size() - 1, 0, -1):
+		if token_set[i].value in Consts.CLOSING_SEPARATORS:
+				separators.push_back(token_set[i].value)
+		elif len(separators) and token_set[i].value == Consts.MATCHING_SEPARATORS[separators.back()]:
+			separators.pop_back()
+		elif token_set[i].type == Consts.TOKEN_TYPES.OPERATOR and len(separators) == 0:
+			var current_operator_priority = Consts.OPERATORS.find(token_set[i].value)
+			if current_operator_priority < operator_priority:
+				operator_priority = current_operator_priority
+				operator_location = i
+
+	if operator_priority != Consts.OPERATORS.size():
+		return operator_location
+
+
 static func parse_arguments(token_set):
 	var args = []
 	var current_index = 0
