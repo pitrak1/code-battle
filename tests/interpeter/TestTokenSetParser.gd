@@ -610,4 +610,3 @@ func test_token_set_parser(params=use_parameters(test_params)):
 	var tokens_results = lexer.run(params['input'])
 	var instruction = tokenSetParser.run(tokens_results['tokens'])
 	assert_instruction(instruction, params['expected'], params['identifier'])
-

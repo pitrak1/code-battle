@@ -1,5 +1,6 @@
 var Instruction = preload("res://interpreter/Instruction.gd")
 var KeyValuePair = preload("res://interpreter/KeyValuePair.gd")
+var Utilities = preload("res://Utilities.gd")
 
 func run(token_set):
 	var assignment_index = __get_assignment_operator_index(token_set)
@@ -33,14 +34,19 @@ func __get_mathematical_operator_index(token_set):
 	var operator_priority = Consts.OPERATORS.size()
 	var operator_location = Consts.OPERATORS.size()
 
-	var in_square_brackets = false
+	var args = []
+
+	var separators = []
 
 	for i in range(token_set.size() - 1, 0, -1):
-		if token_set[i].value == ']':
-			in_square_brackets = true
-		elif token_set[i].value == '[':
-			in_square_brackets = false
-		elif token_set[i].type == Consts.TOKEN_TYPES.OPERATOR and not in_square_brackets:
+		if token_set[i].type == Consts.TOKEN_TYPES.SEPARATOR:
+			if token_set[i].value == ',':
+				continue
+			elif token_set[i].value in Consts.CLOSING_SEPARATORS:
+				separators.push_back(token_set[i].value)
+			elif len(separators) and token_set[i].value == Consts.MATCHING_SEPARATORS[separators.back()]:
+				separators.pop_back()
+		elif token_set[i].type == Consts.TOKEN_TYPES.OPERATOR and len(separators) == 0:
 			var current_operator_priority = Consts.OPERATORS.find(token_set[i].value)
 			if current_operator_priority < operator_priority:
 				operator_priority = current_operator_priority
@@ -89,23 +95,11 @@ func __handle_builtin(token_set):
 	assert(token_set[1].value == '(')
 	assert(token_set[token_set.size() - 1].value == ')')
 
-	var instruction_start = 2
-	var instruction_end = 2
+	var arg_token_sets = Utilities.parse_arguments(token_set.slice(2, token_set.size() - 1))
 
 	var args = []
-
-	if len(token_set) > 3:
-		while instruction_end < token_set.size():
-			if token_set[instruction_end + 1].type == Consts.TOKEN_TYPES.SEPARATOR:
-				if token_set[instruction_end + 1].value == ',':
-					args.push_back(run(token_set.slice(instruction_start, instruction_end)))
-					instruction_start = instruction_end + 2
-					instruction_end = instruction_start
-				elif token_set[instruction_end + 1].value == ')':
-					args.push_back(run(token_set.slice(instruction_start, instruction_end)))
-					break
-				else:
-					instruction_end += 1
+	for arg_token_set in arg_token_sets:
+		args.push_back(run(arg_token_set))
 
 	return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.BUILTIN, token_set[0].value, args)
 

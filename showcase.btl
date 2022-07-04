@@ -93,12 +93,16 @@
 
 // var y = import "C://Users/pitra/Documents/Github/code-battle/showcase.btl";
 
-var paladin_boy = get_actor_by_name("Paladin Boy");
-var paladin_boy_grid_position = paladin_boy['grid_position'];
-print(paladin_boy_grid_position);
-var warrior_girl = get_actor_by_name("Warrior Girl");
-var warrior_girl_grid_position = warrior_girl['grid_position'];
-print(warrior_girl_grid_position);
+print(get_tile_info(4 + 2, 2));
+print(get_actor_by_name("Paladin Boy"));
+print()
+
+// var paladin_boy = get_actor_by_name("Paladin Boy");
+// var paladin_boy_grid_position = paladin_boy['grid_position'];
+// print(paladin_boy['grid_position']);
+// var warrior_girl = get_actor_by_name("Warrior Girl");
+// var warrior_girl_grid_position = warrior_girl['grid_position'];
+// print(warrior_girl_grid_position);
 // var path = get_shortest_path(paladin_boy_grid_position[0], paladin_boy_grid_position[1], warrior_girl_grid_position[0], warrior_girl_grid_position[1]);
 // print(path);
 // var destination = path[0];
@@ -111,3 +115,6 @@ print(warrior_girl_grid_position);
 
 // x = get_actors();
 // print(x);
+
+// var x = [5, 6];
+// var y = x[0 + 1];

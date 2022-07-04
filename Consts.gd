@@ -71,6 +71,18 @@ const SEPARATORS = ['(', ')', '{', '}', ',', '[', ']', ':']
 const OPERATORS = ['==', '<', '>', '+', '*']
 const BOOLEANS = ['true', 'false']
 
+const OPENING_SEPARATORS = ['(', '{', '[']
+const CLOSING_SEPARATORS = [')', '}', ']']
+const MATCHING_SEPARATORS = {
+	'(': ')',
+	'{': '}',
+	'[': ']',
+	')': '(',
+	'}': '{',
+	']': '['
+}
+const MATCHED_SEPARATORS = ['(', ')', '{', '}', '[', ']']
+
 enum TOKEN_TYPES {
 	NUMBER,
 	STRING,
