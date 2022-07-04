@@ -94,6 +94,8 @@
 // var y = import "C://Users/pitra/Documents/Github/code-battle/showcase.btl";
 
 
+// var x = {'asdf': 1, 'sdfg': 2};
+
 // var paladin_boy = get_actor_by_name("Paladin Boy");
 // var paladin_boy_grid_position = paladin_boy['grid_position'];
 // print(paladin_boy['grid_position']);

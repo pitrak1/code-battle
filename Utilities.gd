@@ -12,13 +12,11 @@ static func get_assignment_operator_index(token_set):
 		if token_set[i].type == Consts.TOKEN_TYPES.ASSIGNMENT:
 			return i
 
-
 static func get_mathematical_operator_index(token_set):
 	var operator_priority = Consts.OPERATORS.size()
 	var operator_location = Consts.OPERATORS.size()
 
 	var args = []
-
 	var separators = []
 
 	for i in range(token_set.size() - 1, 0, -1):
@@ -35,6 +33,39 @@ static func get_mathematical_operator_index(token_set):
 	if operator_priority != Consts.OPERATORS.size():
 		return operator_location
 
+static func parse_object_definition(token_set):
+	var values = []
+	var current_index = 1
+
+	var current_value = parse_until_matching_separator(token_set, current_index, '{', ',')
+	while current_value:
+		current_index += len(current_value) + 1
+		values.push_back(current_value)
+		current_value = parse_until_matching_separator(token_set, current_index, '{', ',')
+
+	var pairs = []
+	for i in range(values.size()):
+		var entry = values[i]
+		for j in range(entry.size()):
+			if entry[j].value == ':':
+				pairs.push_back([entry.slice(0, j - 1), entry.slice(j + 1, entry.size() - 1)])
+				
+	return pairs
+
+static func parse_array_definition(token_set):
+	var values = []
+	var current_index = 1
+
+	var current_value = parse_until_matching_separator(token_set, current_index, '[', ',')
+	while current_value:
+		current_index += len(current_value) + 1
+		values.push_back(current_value)
+		current_value = parse_until_matching_separator(token_set, current_index, '[', ',')
+
+	return values
+
+static func parse_expression(token_set):
+	return parse_until_matching_separator(token_set, 2, '(', [])
 
 static func parse_arguments(token_set):
 	var args = []

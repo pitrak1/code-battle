@@ -72,24 +72,14 @@ func __handle_if_while(token_set):
 	assert(token_set[1].value == '(')
 	assert(token_set[token_set.size() - 1].value == ')')
 
-	var instruction_start = 2
-	var instruction_end = 2
-
-	var expression
-
-	while instruction_end < token_set.size():
-		if token_set[instruction_end + 1].value == ')':
-			expression = run(token_set.slice(instruction_start, instruction_end))
-			break
-		else:
-			instruction_end += 1
+	var expression = Utilities.parse_expression(token_set)
 
 	var type
 	if token_set[0].value == 'if':
 		type = Consts.INSTRUCTION_TYPES.IF
 	else:
 		type = Consts.INSTRUCTION_TYPES.WHILE
-	return Instruction.new().set_if(type, expression)
+	return Instruction.new().set_if(type, run(expression))
 
 func __handle_operation(token_set, operation_index):
 	return Instruction.new().set_operation(
@@ -101,31 +91,11 @@ func __handle_operation(token_set, operation_index):
 
 func __handle_separator(token_set):
 	if token_set[0].value == '[':
-		var index = 1
-		var results = []
-		var current_set_start = 1
-		while token_set[index].value != ']':
-			if token_set[index].value == ',':
-				results.push_back(run(token_set.slice(current_set_start, index - 1)))
-				current_set_start = index + 1
-			index += 1
-		results.push_back(run(token_set.slice(current_set_start, index - 1)))
-		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.ARRAY, results)
+		var results = Utilities.parse_array_definition(token_set)
+		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.ARRAY, __run_array(results))
 	elif token_set[0].value == '{':
-		var index = 1
-		var results = []
-		var current_set_start = index
-		var key
-		while token_set[index].value != '}':
-			if token_set[index].value == ':':
-				key = run(token_set.slice(current_set_start, index - 1))
-				current_set_start = index + 1
-			elif token_set[index].value == ',':
-				results.push_back(KeyValuePair.new().set(key, run(token_set.slice(current_set_start, index - 1))))
-				current_set_start = index + 1
-			index += 1
-		results.push_back(KeyValuePair.new().set(key, run(token_set.slice(current_set_start, index - 1))))
-		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.OBJECT, results)
+		var result_pairs = Utilities.parse_object_definition(token_set)
+		return Instruction.new().set_value(Consts.INSTRUCTION_TYPES.OBJECT, __run_pairs(result_pairs))
 
 func __handle_identifier(token_set):
 	if (token_set.size() == 1):
@@ -180,3 +150,9 @@ func __run_array(array):
 	for arg in array:
 		args.push_back(run(arg))
 	return args
+
+func __run_pairs(pairs):
+	var results = []
+	for pair in pairs:
+		results.push_back(KeyValuePair.new().set(run(pair[0]), run(pair[1])))
+	return results
