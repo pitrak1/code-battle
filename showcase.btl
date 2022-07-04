@@ -93,9 +93,6 @@
 
 // var y = import "C://Users/pitra/Documents/Github/code-battle/showcase.btl";
 
-print(get_tile_info(4 + 2, 2));
-print(get_actor_by_name("Paladin Boy"));
-print()
 
 // var paladin_boy = get_actor_by_name("Paladin Boy");
 // var paladin_boy_grid_position = paladin_boy['grid_position'];

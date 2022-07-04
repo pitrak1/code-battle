@@ -39,13 +39,10 @@ func __get_mathematical_operator_index(token_set):
 	var separators = []
 
 	for i in range(token_set.size() - 1, 0, -1):
-		if token_set[i].type == Consts.TOKEN_TYPES.SEPARATOR:
-			if token_set[i].value == ',':
-				continue
-			elif token_set[i].value in Consts.CLOSING_SEPARATORS:
+		if token_set[i].value in Consts.CLOSING_SEPARATORS:
 				separators.push_back(token_set[i].value)
-			elif len(separators) and token_set[i].value == Consts.MATCHING_SEPARATORS[separators.back()]:
-				separators.pop_back()
+		elif len(separators) and token_set[i].value == Consts.MATCHING_SEPARATORS[separators.back()]:
+			separators.pop_back()
 		elif token_set[i].type == Consts.TOKEN_TYPES.OPERATOR and len(separators) == 0:
 			var current_operator_priority = Consts.OPERATORS.find(token_set[i].value)
 			if current_operator_priority < operator_priority:
@@ -171,19 +168,11 @@ func __handle_identifier(token_set):
 	elif token_set[1].value == '(':
 		assert(token_set[token_set.size() - 1].value == ')')
 
-		var args = []
+		var arg_token_sets = Utilities.parse_arguments(token_set.slice(2, token_set.size() - 1))
 
-		var argument_start = 2
-		var argument_end = 2
-		if token_set[2].value != ')':
-			while argument_end < token_set.size():
-				if token_set[argument_end + 1].value == ',' or token_set[argument_end + 1].value == ')':
-					var instruction = run(token_set.slice(argument_start, argument_end))
-					args.push_back(instruction)
-					argument_start = argument_end + 2
-					argument_end = argument_end + 2
-				else:
-					argument_end += 1
+		var args = []
+		for arg_token_set in arg_token_sets:
+			args.push_back(run(arg_token_set))
 
 		return Instruction.new().set_call(Consts.INSTRUCTION_TYPES.CALL, token_set[0].value, args)
 
@@ -208,21 +197,11 @@ func __handle_function(token_set):
 	assert(token_set[1].value == '(')
 	assert(token_set[token_set.size() - 1].value == ')')
 
-	var args = []
+	var arg_token_sets = Utilities.parse_arguments(token_set.slice(2, token_set.size() - 1))
 
-	var argument_index = 2
-	if token_set[2].value != ')':
-		while argument_index < token_set.size():
-			if token_set[argument_index + 1].value == ',':
-				var instruction = Instruction.new().set_value(Consts.INSTRUCTION_TYPES.VARIABLE, token_set[argument_index].value)
-				args.push_back(instruction)
-				argument_index = argument_index + 2
-			elif token_set[argument_index + 1].value == ')':
-				var instruction = Instruction.new().set_value(Consts.INSTRUCTION_TYPES.VARIABLE, token_set[argument_index].value)
-				args.push_back(instruction)
-				break
-			else:
-				argument_index += 1
+	var args = []
+	for arg_token_set in arg_token_sets:
+		args.push_back(run(arg_token_set))
 
 	return Instruction.new().set_function(Consts.INSTRUCTION_TYPES.FUNCTION, args)
 
