@@ -149,6 +149,8 @@ func assert_instruction(instruction, expected_instruction, identifier):
 						for i in range(instruction['value'].size()):
 							assert_instruction(instruction['value'][i]['key'], expected_instruction['value'][i]['key'], identifier)
 							assert_instruction(instruction['value'][i]['value'], expected_instruction['value'][i]['value'], identifier)
+				elif typeof(instruction['value']) == TYPE_OBJECT:
+					assert_instruction(instruction['value'], expected_instruction['value'], identifier)
 				else:
 					assert_eq(instruction[key], expected_instruction[key], identifier + ': values do not match, expected: ' + str(expected_instruction[key]) + ', actual: ' + str(instruction[key]))
 

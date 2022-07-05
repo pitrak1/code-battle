@@ -34,67 +34,37 @@ static func get_mathematical_operator_index(token_set):
 		return operator_location
 
 static func parse_object_definition(token_set):
-	var values = []
-	var current_index = 1
-
-	var current_value = parse_until_matching_separator(token_set, current_index, '{', ',')
-	while current_value:
-		current_index += len(current_value) + 1
-		values.push_back(current_value)
-		current_value = parse_until_matching_separator(token_set, current_index, '{', ',')
+	var values = parse_end_until_matching_separator(token_set, [','])
+	var entries = values['entries']
 
 	var pairs = []
-	for i in range(values.size()):
-		var entry = values[i]
+	for i in range(entries.size()):
+		var entry = entries[i]
 		for j in range(entry.size()):
 			if entry[j].value == ':':
 				pairs.push_back([entry.slice(0, j - 1), entry.slice(j + 1, entry.size() - 1)])
-				
+
 	return pairs
 
-static func parse_array_definition(token_set):
-	var values = []
-	var current_index = 1
+static func parse_end_until_matching_separator(token_set, additional_values):
+	var separators = [token_set.back().value]
+	var entries = []
+	var start_index = token_set.size() - 2
+	var end_index = token_set.size() - 2
 
-	var current_value = parse_until_matching_separator(token_set, current_index, '[', ',')
-	while current_value:
-		current_index += len(current_value) + 1
-		values.push_back(current_value)
-		current_value = parse_until_matching_separator(token_set, current_index, '[', ',')
+	while start_index >= 0 and len(separators) > 0:
+		var value = token_set[start_index].value
+		if value in Consts.CLOSING_SEPARATORS:
+			separators.push_back(value)
+		elif value == Consts.MATCHING_SEPARATORS[separators.back()]:
+			separators.pop_back()
+		elif len(separators) == 1 and value in additional_values:
+			entries.push_back(token_set.slice(start_index + 1, end_index))
+			end_index = start_index - 1
+		start_index -= 1
+	
+	entries.push_back(token_set.slice(start_index + 2, end_index))
+	entries.invert()
 
-	return values
-
-static func parse_expression(token_set):
-	return parse_until_matching_separator(token_set, 2, '(', [])
-
-static func parse_arguments(token_set):
-	var args = []
-	var current_index = 0
-
-	var current_arg = parse_until_matching_separator(token_set, current_index, '(', ',')
-	while current_arg:
-		current_index += len(current_arg) + 1
-		args.push_back(current_arg)
-		current_arg = parse_until_matching_separator(token_set, current_index, '(', ',')
-
-	return args
-
-static func parse_until_matching_separator(token_set, starting_index, matching_separator, additional_values):
-	var separators = []
-	var end_index = starting_index
-
-	while end_index < token_set.size():
-		var value = token_set[end_index].value
-		if value in Consts.MATCHED_SEPARATORS:
-			if not len(separators) and value == Consts.MATCHING_SEPARATORS[matching_separator]:
-				return token_set.slice(starting_index, end_index - 1)
-			elif len(separators) and value == Consts.MATCHING_SEPARATORS[separators.back()]:
-				separators.pop_back()
-				end_index += 1
-			else:
-				separators.push_back(value)
-				end_index += 1
-		elif not len(separators) and value in additional_values:
-			return token_set.slice(starting_index, end_index - 1)
-		else:
-			end_index += 1
+	var length = token_set.size() - 1 - (start_index + 1)
+	return {'entries': entries, 'length': length }

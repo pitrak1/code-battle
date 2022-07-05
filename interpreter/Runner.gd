@@ -26,7 +26,7 @@ func run(filename):
 	# Utilities.print_lexer_results(results)
 
 	var instructions = __parser.run(results['tokens'])
-	# Utilities.print_parser_results(instructions)
+	Utilities.print_parser_results(instructions)
 
 
 	var scopes = __interpreter.run(instructions)	

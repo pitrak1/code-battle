@@ -96,6 +96,12 @@
 
 // var x = {'asdf': 1, 'sdfg': 2};
 
+// var paladin_boy = get_actor_by_name("Paladin Boy")['grid_position'];
+// print(paladin_boy);
+
+var x = [1 + 2, 3 * 6];
+// print(x);
+
 // var paladin_boy = get_actor_by_name("Paladin Boy");
 // var paladin_boy_grid_position = paladin_boy['grid_position'];
 // print(paladin_boy['grid_position']);
@@ -117,3 +123,11 @@
 
 // var x = [5, 6];
 // var y = x[0 + 1];
+
+
+
+x['asdf']()
+
+x()()
+
+x()['asdf']

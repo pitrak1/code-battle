@@ -495,8 +495,11 @@ var test_params = [
 		'identifier': 'built in with single argument',
 		'input': "print('12345')",
 		'expected': {
-			'type': Consts.INSTRUCTION_TYPES.BUILTIN,
-			'function': 'print',
+			'type': Consts.INSTRUCTION_TYPES.CALL,
+			'function': {
+				'type': Consts.INSTRUCTION_TYPES.BUILTIN,
+				'value': 'print'
+			},
 			'args': [{
 				'type': Consts.INSTRUCTION_TYPES.STRING,
 				'value': "12345"
@@ -507,8 +510,11 @@ var test_params = [
 		'identifier': 'built in with multiple arguments',
 		'input': "highlight(5, 6)",
 		'expected': {
-			'type': Consts.INSTRUCTION_TYPES.BUILTIN,
-			'function': 'highlight',
+			'type': Consts.INSTRUCTION_TYPES.CALL,
+			'function': {
+				'type': Consts.INSTRUCTION_TYPES.BUILTIN,
+				'value': 'highlight'
+			},
 			'args': [{
 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
 				'value': 5
@@ -523,7 +529,10 @@ var test_params = [
 		'input': "x[5]",
 		'expected': {
 			'type': Consts.INSTRUCTION_TYPES.INDEX,
-			'value': 'x',
+			'value': {
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': 'x'
+			},
 			'index': {
 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
 				'value': 5
@@ -535,7 +544,10 @@ var test_params = [
 		'input': "x[5 + 6]",
 		'expected': {
 			'type': Consts.INSTRUCTION_TYPES.INDEX,
-			'value': 'x',
+			'value': {
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': 'x'
+			},
 			'index': {
 				'type': Consts.INSTRUCTION_TYPES.NUMBER,
 				'value': {
@@ -558,11 +570,125 @@ var test_params = [
 		'input': "test_function('asdf')",
 		'expected': {
 			'type': Consts.INSTRUCTION_TYPES.CALL,
-			'function': 'test_function',
+			'function': {
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': 'test_function'
+			},
 			'args': [{
 				'type': Consts.INSTRUCTION_TYPES.STRING,
 				'value': 'asdf'
 			}]
+		}
+	},
+	{
+		'identifier': 'function call with expression argument',
+		'input': "test_function(5 + 6)",
+		'expected': {
+			'type': Consts.INSTRUCTION_TYPES.CALL,
+			'function': {
+				'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+				'value': 'test_function'
+			},
+			'args': [{
+				'type': Consts.INSTRUCTION_TYPES.OPERATION,
+					'operator': '+',
+					'left': {
+						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+						'value': 5
+					},
+					'right': {
+						'type': Consts.INSTRUCTION_TYPES.NUMBER,
+						'value': 6
+					}
+			}]
+		}
+	},
+	{
+		'identifier': 'allows calling function from array index',
+		'input': "test_function[1]('asdf')",
+		'expected': {
+			'type': Consts.INSTRUCTION_TYPES.CALL,
+			'function': {
+				'type': Consts.INSTRUCTION_TYPES.INDEX,
+				'value': {
+					'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+					'value': 'test_function'
+				},
+				'index': {
+					'type': Consts.INSTRUCTION_TYPES.NUMBER,
+					'value': 5
+				}
+			},
+			'args': [{
+				'type': Consts.INSTRUCTION_TYPES.STRING,
+				'value': 'asdf'
+			}]
+		}
+	},
+	{
+		'identifier': 'allows indexing call result',
+		'input': "test_function('asdf')[1]",
+		'expected': {
+			'type': Consts.INSTRUCTION_TYPES.INDEX,
+			'value': {
+				'type': Consts.INSTRUCTION_TYPES.CALL,
+				'function': {
+					'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+					'value': 'test_function'
+				},
+				'args': [{
+					'type': Consts.INSTRUCTION_TYPES.STRING,
+					'value': 'asdf'
+				}]
+			},
+			'index': {
+				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+				'value': 5
+			}
+		}
+	},
+	{
+		'identifier': 'allows calling call result',
+		'input': "test_function('asdf')('sdfg')",
+		'expected': {
+			'type': Consts.INSTRUCTION_TYPES.CALL,
+			'function': {
+				'type': Consts.INSTRUCTION_TYPES.CALL,
+				'function': {
+					'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+					'value': 'test_function'
+				},
+				'args': [{
+					'type': Consts.INSTRUCTION_TYPES.STRING,
+					'value': 'asdf'
+				}]
+			},
+			'args': [{
+				'type': Consts.INSTRUCTION_TYPES.STRING,
+				'value': 'sdfg'
+			}]
+		}
+	},
+	{
+		'identifier': 'allows indexing array index',
+		'input': "x[5][3]",
+		'expected': {
+			'type': Consts.INSTRUCTION_TYPES.INDEX,
+			'value': {
+				'type': Consts.INSTRUCTION_TYPES.INDEX,
+				'value': {
+					'type': Consts.INSTRUCTION_TYPES.VARIABLE,
+					'value': 'x'
+				},
+				'index': {
+					'type': Consts.INSTRUCTION_TYPES.NUMBER,
+					'value': 5
+				}
+			},
+			'index': {
+				'type': Consts.INSTRUCTION_TYPES.NUMBER,
+				'value': 3
+			}
 		}
 	},
 ]
@@ -602,6 +728,8 @@ func assert_instruction(instruction, expected_instruction, identifier):
 						for i in range(instruction['value'].size()):
 							assert_instruction(instruction['value'][i]['key'], expected_instruction['value'][i]['key'], identifier)
 							assert_instruction(instruction['value'][i]['value'], expected_instruction['value'][i]['value'], identifier)
+				elif typeof(instruction['value']) == TYPE_OBJECT:
+					assert_instruction(instruction['value'], expected_instruction['value'], identifier)
 				else:
 					assert_eq(instruction[key], expected_instruction[key], identifier + ': values do not match, expected: ' + str(expected_instruction[key]) + ', actual: ' + str(instruction[key]))
 
